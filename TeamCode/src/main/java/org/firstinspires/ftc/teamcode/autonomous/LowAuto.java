@@ -116,8 +116,9 @@ public class LowAuto extends LinearOpMode
 
 	void Run()
 	{
-		Actions.runBlocking(purpleDrop);
-
-		Actions.runBlocking(yellowDrop);
+		Action action = mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
+				.lineToXConstantHeading(10)
+				.build();
+		Actions.runBlocking(action);
 	}
 }
