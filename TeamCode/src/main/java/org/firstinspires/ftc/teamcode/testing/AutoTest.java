@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
+@Autonomous(name = "Auto Test", group = "Testing")
 public class AutoTest extends LinearOpMode
 {
 	MecanumDrive mecanumDrive;
@@ -14,6 +16,7 @@ public class AutoTest extends LinearOpMode
 	public void runOpMode()
 	{
 		Init();
+		waitForStart();
 		Run();
 	}
 
