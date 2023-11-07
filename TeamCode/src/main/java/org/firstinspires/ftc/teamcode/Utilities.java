@@ -11,7 +11,7 @@ public class Utilities
 				Thread.sleep(delay);
 				runnable.run();
 			} catch (Exception e) {
-				System.err.println(e);
+				e.printStackTrace();
 			}
 		}).start();
 	}

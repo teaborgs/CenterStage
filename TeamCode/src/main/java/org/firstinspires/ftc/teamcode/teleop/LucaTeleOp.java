@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
 
-@TeleOp(name = "Standard TeleOp", group = "TeleOp")
+@TeleOp(name = "Luca TeleOp", group = "TeleOp")
 public final class LucaTeleOp extends BaseOpMode
 {
 	// Wheel motors

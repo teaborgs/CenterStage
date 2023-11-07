@@ -38,7 +38,7 @@ public class InputSystem
 			}
 			return Boolean.TRUE.equals(keyStates.get(key));
 		} catch (Exception e) {
-			print("Could not get key " + key.getId());
+			print("[ERROR] Could not get key " + key.getId());
 			return false;
 		}
 	}
@@ -56,7 +56,7 @@ public class InputSystem
 		try {
 			return (boolean) gamepadClass.getField(key.getId()).getBoolean(gamepad);
 		} catch (Exception e) {
-			print("Could not get key " + key.getId());
+			print("[ERROR] Could not get key " + key.getId());
 			return false;
 		}
 	}
@@ -74,7 +74,7 @@ public class InputSystem
 		try {
 			return (double) gamepadClass.getField(key.getId()).getDouble(gamepad);
 		} catch (Exception e) {
-			print("Could not get key " + key.getId());
+			print("[ERROR] Could not get key " + key.getId());
 			return 0d;
 		}
 	}
@@ -82,7 +82,7 @@ public class InputSystem
 	private void print(String message)
 	{
 		if (telemetry != null) return;
-		telemetry.addData("[InputSystem] ", message);
+		telemetry.addLine("[InputSystem] " + message);
 		telemetry.update();
 	}
 

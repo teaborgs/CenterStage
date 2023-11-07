@@ -51,8 +51,6 @@ public class Constants
 		}
 	}
 
-
-
 	public static class Data
 	{
 		public static class Tumbler
@@ -60,7 +58,7 @@ public class Constants
 			public static final int LOAD = 0;
 			public static final int IDLE = 400;
 			public static final int BACKDROP = 810;
-			public static final int[] STACK_POSES = { 1495, 1460, 1420, 1395, 1350 };
+			public static final int[] STACK_POSES = {1495, 1460, 1420, 1395, 1350};
 		}
 
 		public static class Lift

@@ -42,7 +42,6 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 
 		Imgproc.resize(input, input, new Size(160 * 5, 90 * 5));
 
-
 		Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 		for (int i = 0; i < LOWER_BOUNDS.size(); i++)
 			detectAndDrawBlobs(hsv, input, LOWER_BOUNDS.get(i), UPPER_BOUNDS.get(i), i);
@@ -70,7 +69,7 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 				contour2f.fromArray(contour.toArray());
 				Imgproc.approxPolyDP(contour2f, approx, 0.04 * contour2f.rows(), true);
 				long vertices = approx.total();
-				if (true) {  // Check for hexagon shape
+				if (vertices >= 5 && vertices <= 12) {  // Check for hexagon shape
 					detections.add(contour);
 
 					Rect rect = Imgproc.boundingRect(contour);
