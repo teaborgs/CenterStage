@@ -268,7 +268,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Telemetry()
 	{
-		telemetry.addData("Robot pos: ", mecanumDrive.updatePoseEstimate().linearVel);
+		telemetry.addData("Robot pos: ", mecanumDrive.updatePoseEstimate().component1());
 
 		telemetry.addData("Intake Power: ", intakeMotor.getPower());
 

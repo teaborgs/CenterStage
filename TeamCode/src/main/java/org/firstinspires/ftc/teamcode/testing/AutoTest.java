@@ -28,7 +28,7 @@ public class AutoTest extends LinearOpMode
 	private void Run()
 	{
 		Actions.runBlocking(mecanumDrive.actionBuilder(new Pose2d(0,0, 0))
-				.lineToX(10)
+				.lineToYConstantHeading(39.37)
 				.build());
 	}
 }
