@@ -81,7 +81,7 @@ public class InputSystem
 
 	private void print(String message)
 	{
-		if (telemetry != null) return;
+		if (telemetry == null) return;
 		telemetry.addLine("[InputSystem] " + message);
 		telemetry.update();
 	}

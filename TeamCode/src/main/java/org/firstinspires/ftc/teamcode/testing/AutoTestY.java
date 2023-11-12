@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
+/*
+ * Move 1 meter on the Y axis
+ */
 @Autonomous(name = "Auto Test Y", group = "Testing")
 public class AutoTestY extends LinearOpMode
 {
-	MecanumDrive mecanumDrive;
+	private MecanumDrive mecanumDrive;
 
 	@Override
 	public void runOpMode()

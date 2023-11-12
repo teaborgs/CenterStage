@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Constants
 {
-	public static final int TOLERANCE = 5;
+	public static final int TOLERANCE = 10;
 
 	public static class Camera
 	{
@@ -63,7 +63,7 @@ public class Constants
 
 		public static class Lift
 		{
-			public static final int PICKUP = -50;
+			public static final int PICKUP = -10;
 			public static final int LEVEL_1 = 950;
 			public static final int LEVEL_2 = 2150;
 		}

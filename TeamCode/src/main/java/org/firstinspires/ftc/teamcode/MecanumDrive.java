@@ -46,6 +46,28 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * === Configuration ===
+ * Control Hub:
+ * > Servos:
+ * slot0 - locker (servo2)
+ * slot1 - plane release (servo3)
+ * slot2 - plane level (servo4)
+ * > Motors:
+ * slot0 - left-front wheel (leftFront) + par0 odometry
+ * slot1 - left-back wheel (leftBack) + par1 odometry
+ * slot2 - right-back wheel (rightBack) + perp odometry
+ * slot3 - right-front wheel (rightFront)
+ * Expansion Hub:
+ * > Servos:
+ * slot0 - rotator (servo0)
+ * slot1 - claw (servo1)
+ * > Motors:
+ * slot0 - intake (slot4)
+ * slot1 - lift1 (slot5)
+ * slot2 - lift2 (slot6)
+ * slot3 - tumbler (slot7)
+ */
 @Config
 public class MecanumDrive
 {

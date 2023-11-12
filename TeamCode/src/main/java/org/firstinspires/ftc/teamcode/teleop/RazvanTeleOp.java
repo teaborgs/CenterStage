@@ -121,9 +121,9 @@ public final class RazvanTeleOp extends BaseOpMode
 	{
 		Telemetry();
 		UpdateMotorPowers();
-		Wheels();
 		Suspender();
-		if (isSuspending) return;
+		if (!robotSuspended) Wheels();
+		if (suspending) return;
 		Leveler();
 		Pickup();
 		Arm();
@@ -142,22 +142,20 @@ public final class RazvanTeleOp extends BaseOpMode
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier,
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier
 		).times(turbo ? 1.0 : suppress ? 0.3 : 0.6);
-
-		// Drive
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle));
 	}
 
-	private Utilities.PickupMode pickupMode = Utilities.PickupMode.LOAD;
+	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
 
 	private void Pickup()
 	{
 		if (wheelInput.wasPressedThisFrame(Bindings.Wheel.TOGGLE_PICKUP_MODE_KEY)) {
-			pickupMode = pickupMode == Utilities.PickupMode.LOAD ? Utilities.PickupMode.STACK : Utilities.PickupMode.LOAD;
+			pickupMode = pickupMode == Utilities.PickupMode.INTAKE ? Utilities.PickupMode.STACK : Utilities.PickupMode.INTAKE;
 			if (pickupMode == Utilities.PickupMode.STACK) intakeMotor.setMotorDisable();
 			else intakeMotor.setMotorEnable();
 			gamepad2.rumble(500);
 		}
-		if (pickupMode == Utilities.PickupMode.LOAD)
+		if (pickupMode == Utilities.PickupMode.INTAKE)
 			intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? 0.8 : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -0.8 : 0);
 	}
 
@@ -165,12 +163,17 @@ public final class RazvanTeleOp extends BaseOpMode
 	{
 		if (Math.abs(liftMotor1.getCurrentPosition() - liftMotor1.getTargetPosition()) > TOLERANCE)
 			liftMotor1.setPower(1);
-		else
+		else if (liftMotor1.getTargetPosition() == Constants.Data.Lift.PICKUP && liftMotor1.getCurrentPosition() <= Constants.Data.Lift.PICKUP + TOLERANCE)
 			liftMotor1.setPower(0);
+		else
+			liftMotor1.setPower(0.05);
 		if (Math.abs(liftMotor2.getCurrentPosition() - liftMotor2.getTargetPosition()) > TOLERANCE)
 			liftMotor2.setPower(1);
-		else
+		else if (liftMotor2.getTargetPosition() == Constants.Data.Lift.PICKUP && liftMotor2.getCurrentPosition() <= Constants.Data.Lift.PICKUP + TOLERANCE)
 			liftMotor2.setPower(0);
+		else
+			liftMotor2.setPower(0.05);
+
 		if (Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE)
 			tumblerMotor.setPower(0.8);
 		else
@@ -189,17 +192,18 @@ public final class RazvanTeleOp extends BaseOpMode
 
 	private Utilities.State armState = Utilities.State.IDLE;
 	private volatile boolean armBusy = false;
+	private boolean atLevel = false;
+	private boolean pixelInStorage = false;
+	private boolean waitingSecondInstruction = false;
 	private short stackLevel = 5;
-	private boolean isAtLevel = false;
-	private boolean isOutOfBounds = false;
-	private boolean has2StackPixels = false;
-	private boolean isWaitingForSecondInstruction = false;
 
 	private void Arm()
 	{
+		// Prevent moving the arm while it's busy
 		if (armBusy) return;
-		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_CONFIRM_KEY) && isWaitingForSecondInstruction && !has2StackPixels) {
-			armBusy = true;
+		armBusy = true;
+
+		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_CONFIRM_KEY) && waitingSecondInstruction && !pixelInStorage) { // Can be called once a pixel from stack was picked up to put it in the load
 			rotatorServo.setPosition(Constants.Data.Rotator.IDLE);
 			setTimeout(() -> {
 				tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
@@ -208,14 +212,13 @@ public final class RazvanTeleOp extends BaseOpMode
 					setTimeout(() -> {
 						tumblerMotor.setTargetPosition(Constants.Data.Tumbler.IDLE);
 						armBusy = false;
-						isWaitingForSecondInstruction = false;
-						has2StackPixels = true;
+						waitingSecondInstruction = false;
+						pixelInStorage = true;
 					}, 500);
 				}, 500);
 			}, 500);
 		} else if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) {
-			if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle
-				armBusy = true;
+			if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle - Same for both Pickup Modes
 				clawServo.setPosition(Constants.Data.Claw.IDLE);
 				setTimeout(() -> {
 					tumblerMotor.setTargetPosition(Constants.Data.Tumbler.IDLE);
@@ -227,9 +230,8 @@ public final class RazvanTeleOp extends BaseOpMode
 						armBusy = false;
 					}, 500);
 				}, 500);
-			} else { // Pickup Pixel and go to Backdrop
-				if (pickupMode == Utilities.PickupMode.LOAD) {
-					armBusy = true;
+			} else { // Pickup Pixel - Different for each Pickup Mode
+				if (pickupMode == Utilities.PickupMode.INTAKE) { // Move tumbler to storage and pickup the pixel
 					tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
 					setTimeout(() -> {
 						clawServo.setPosition(Constants.Data.Claw.BUSY);
@@ -239,41 +241,38 @@ public final class RazvanTeleOp extends BaseOpMode
 							tumblerMotor.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
 							setTimeout(() -> {
 								rotatorServo.setPosition(Constants.Data.Rotator.BUSY);
+								pixelInStorage = false;
 								armBusy = false;
 								armState = Utilities.State.BUSY;
 							}, 200 * liftLevel);
 						}, 500);
 					}, 500);
-				} else if (!isOutOfBounds) {
-					if (!isAtLevel && !isWaitingForSecondInstruction) {
-						armBusy = true;
+				} else if (stackLevel > 0) {
+					if (waitingSecondInstruction) { // Move the lift to the desired level
+						liftMotor1.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
+						liftMotor2.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
+						armBusy = false;
+						waitingSecondInstruction = false;
+						armState = Utilities.State.BUSY;
+					} else if (!atLevel) { // Move tumbler above the stack level and wait for confirmation
 						rotatorServo.setPosition(Constants.Data.Rotator.BUSY);
 						setTimeout(() -> {
 							tumblerMotor.setTargetPosition(Constants.Data.Tumbler.STACK_POSES[stackLevel - 1] - 80);
-							isAtLevel = true;
+							atLevel = true;
 							armBusy = false;
 						}, 100);
-					} else if (isAtLevel && !isWaitingForSecondInstruction) {
-						armBusy = true;
+					} else { // (if at level) Move tumbler to stack level and pick up the pixel
 						tumblerMotor.setTargetPosition(Constants.Data.Tumbler.STACK_POSES[stackLevel - 1]);
 						setTimeout(() -> {
 							clawServo.setPosition(Constants.Data.Claw.BUSY);
 							setTimeout(() -> {
 								tumblerMotor.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
 								armBusy = false;
-								isAtLevel = false;
-								isWaitingForSecondInstruction = true;
+								atLevel = false;
+								waitingSecondInstruction = true;
 								stackLevel--;
-								if (stackLevel == 0) isOutOfBounds = true;
 							}, 500);
 						}, 300);
-					} else if (!isAtLevel) {
-						armBusy = true;
-						liftMotor1.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
-						liftMotor2.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
-						armBusy = false;
-						isWaitingForSecondInstruction = false;
-						armState = Utilities.State.BUSY;
 					}
 				}
 			}
@@ -298,7 +297,7 @@ public final class RazvanTeleOp extends BaseOpMode
 	}
 
 	private boolean robotSuspended = false;
-	private boolean isSuspending = false;
+	private boolean suspending = false;
 
 	private void Suspender()
 	{
@@ -310,45 +309,38 @@ public final class RazvanTeleOp extends BaseOpMode
 		}
 
 		// Lift
-		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && isSuspending && !robotSuspended) {
-			isSuspending = false;
+		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended) {
+			suspending = false;
 			liftMotor2.setTargetPosition(Constants.Data.Suspender.IDLE);
 			liftMotor1.setTargetPosition(Constants.Data.Suspender.IDLE);
-			RestorePower(tumblerMotor, intakeMotor);
+			RestorePower(tumblerMotor, intakeMotor); // Restore power in case the suspension was interrupted
 		} else if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_KEY)) {
-			if (liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE) {
-				CutPower(tumblerMotor, intakeMotor);
-				isSuspending = true;
+			if (!suspending) {
+				CutPower(tumblerMotor, intakeMotor); // Cut power to the wheels as it's not needed
+				suspending = true;
 				liftMotor2.setTargetPosition(Constants.Data.Suspender.SUSPEND);
 				liftMotor1.setTargetPosition(Constants.Data.Suspender.SUSPEND);
-			}
-			if (liftMotor1.getCurrentPosition() >= Constants.Data.Suspender.SUSPEND - TOLERANCE && liftMotor2.getCurrentPosition() >= Constants.Data.Suspender.SUSPEND - TOLERANCE) {
+			} else if (liftMotor1.getCurrentPosition() >= Constants.Data.Suspender.SUSPEND - TOLERANCE && liftMotor2.getCurrentPosition() >= Constants.Data.Suspender.SUSPEND - TOLERANCE) {
 				liftMotor2.setTargetPosition(Constants.Data.Suspender.LOCK);
 				liftMotor1.setTargetPosition(Constants.Data.Suspender.LOCK);
+				CutPower(mecanumDrive.leftBack, mecanumDrive.leftFront, mecanumDrive.rightBack, mecanumDrive.rightFront); // Cut power to the wheels as it's not needed
 				robotSuspended = true;
 			}
 		}
 	}
 
-	@Override
-	protected void OnStop()
-	{
-		if (robotSuspended) return;
-		tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
-		while (tumblerMotor.getCurrentPosition() > Constants.Data.Tumbler.LOAD + TOLERANCE)
-			tumblerMotor.setPower(0.8);
-	}
-
 	private void Telemetry()
 	{
-		if (isOutOfBounds && pickupMode == Utilities.PickupMode.STACK) {
+		// Warn the user if the robot is out of bounds
+		if (stackLevel == 0 && pickupMode == Utilities.PickupMode.STACK) {
 			telemetry.clearAll();
 			telemetry.addLine("[WARN] Robot is out of bounds. Please change pickup mode!");
 			telemetry.update();
 			return;
 		}
 
-		if (isSuspending) {
+		// Warn the user if the robot is in suspension mode
+		if (suspending) {
 			telemetry.clearAll();
 			if (!robotSuspended)
 				telemetry.addLine("[WARN] Currently in suspension mode. Press Y to cancel.");
@@ -376,10 +368,10 @@ public final class RazvanTeleOp extends BaseOpMode
 			telemetry.addData("[DEBUG] Plane Level", planeLevelServo.getPosition());
 			telemetry.addData("[DEBUG] Plane Release", planeReleaseServo.getPosition());
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);
-			telemetry.addData("[DEBUG] Arm Waiting", isWaitingForSecondInstruction);
-			telemetry.addData("[DEBUG] Arm At Level", isAtLevel);
-			telemetry.addData("[DEBUG] Arm Out Of Bounds", isOutOfBounds);
-			telemetry.addData("[DEBUG] Arm Has 2 Stack Pixels", has2StackPixels);
+			telemetry.addData("[DEBUG] Arm Waiting", waitingSecondInstruction);
+			telemetry.addData("[DEBUG] Arm At Level", atLevel);
+			telemetry.addData("[DEBUG] Arm Out Of Bounds", stackLevel == 0);
+			telemetry.addData("[DEBUG] Arm Has 2 Stack Pixels", pixelInStorage);
 			telemetry.addData("[DEBUG] Stack Level", stackLevel);
 		}
 

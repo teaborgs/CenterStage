@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Test the camera by displaying the AprilTag detections on the screen
  */
 @TeleOp(name = "Camera Test", group = "Testing")
-public final class CameraTest extends BaseOpMode
+public final class AprilTagDetectionTest extends BaseOpMode
 {
 	private OpenCvCamera camera;
 	private AprilTagDetectionPipeline detectionPipeline;

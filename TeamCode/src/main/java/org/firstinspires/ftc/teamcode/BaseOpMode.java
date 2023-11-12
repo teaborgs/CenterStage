@@ -7,6 +7,9 @@ public abstract class BaseOpMode extends LinearOpMode
 	@Override
 	public void runOpMode() throws InterruptedException
 	{
+		telemetry.addLine("[STATUS] Initializing...");
+		telemetry.update();
+
 		// Initialize the robot
 		OnInitialize();
 
@@ -19,7 +22,7 @@ public abstract class BaseOpMode extends LinearOpMode
 
 		// Stop the robot
 		telemetry.clearAll();
-		telemetry.addData("Status", "Stopping...");
+		telemetry.addLine("[STATUS] Stopping...");
 		telemetry.update();
 		OnStop();
 	}
