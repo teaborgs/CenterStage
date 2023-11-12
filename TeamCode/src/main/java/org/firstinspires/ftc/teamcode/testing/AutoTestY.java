@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "Auto Test", group = "Testing")
-public class AutoTest extends LinearOpMode
+@Autonomous(name = "Auto Test Y", group = "Testing")
+public class AutoTestY extends LinearOpMode
 {
 	MecanumDrive mecanumDrive;
 
@@ -27,8 +27,9 @@ public class AutoTest extends LinearOpMode
 
 	private void Run()
 	{
-		Actions.runBlocking(mecanumDrive.actionBuilder(new Pose2d(0,0, 0))
-				.lineToYConstantHeading(39.37)
+		Actions.runBlocking(mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
+				.setTangent(Math.PI / 2)
+				.lineToY(39.37)
 				.build());
 	}
 }

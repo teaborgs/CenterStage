@@ -52,31 +52,31 @@ public class MecanumDrive
 	public static class Params
 	{
 		// drive model parameters
-		public double inPerTick = 0.0010610429861205; // 78.74 / 74400, 73850, 74380 = 78.74 / 74210
-		public double lateralInPerTick = 5.273690300277451e-7; // 4.968424872937266e-7, 5.900503145452014e-7, 4.952142882443072e-7
-		public double trackWidthTicks = 26597.34195506918; // 26676.88567641236, 26517.7982337260
+		public double inPerTick = 0.0005321888412017167; // 78.74 / 147812, 148353, 147700 = 78.74 / 147955
+		public double lateralInPerTick = 0.0003700523839750763; // 4.968424872937266e-7, 5.900503145452014e-7, 4.952142882443072e-7
+		public double trackWidthTicks = 26633.67414601156; // 26676.88567641236, 26517.7982337260
 
 		// feedforward parameters (in tick units)
-		public double kS = 0.9088530858735429; // 0.879314465242226, 0.9252003103342217, 0.9220444820441811
-		public double kV = 1.049508808797667e-4; // 0.0001053065027925, 0.0001050622866056, 0.0001044838532412
+		public double kS = 1.039794550189749; // 1.047416071305751, 1.09214133758827, 0.979826241675227
+		public double kV = 1.030009400753333e-4; // 0.000102501988216, 0.000102369121350, 0.00010413171066
 		public double kA = 0.00001;
 
 		// path profile parameters (in inches)
-		public double maxWheelVel = 50;
-		public double minProfileAccel = -30;
-		public double maxProfileAccel = 50;
+		public double maxWheelVel = 40;
+		public double minProfileAccel = -40;
+		public double maxProfileAccel = 40;
 
 		// turn profile parameters (in radians)
 		public double maxAngVel = Math.PI; // shared with path
 		public double maxAngAccel = Math.PI;
 
 		// path controller gains
-		public double axialGain = 0.5;
-		public double lateralGain = 0.5;
-		public double headingGain = 0.5; // shared with turn
+		public double axialGain = 6.0;
+		public double lateralGain = 6.0;
+		public double headingGain = 6.0; // shared with turn
 
 		public double axialVelGain = 0.5;
-		public double lateralVelGain = 0.5;
+		public double lateralVelGain = 1.0;
 		public double headingVelGain = 0.5; // shared with turn
 	}
 
@@ -207,8 +207,8 @@ public class MecanumDrive
 
 		imu = hardwareMap.get(IMU.class, "imu");
 		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-				RevHubOrientationOnRobot.LogoFacingDirection.UP,
-				RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+				RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+				RevHubOrientationOnRobot.UsbFacingDirection.UP));
 		imu.initialize(parameters);
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -247,7 +247,7 @@ public class MecanumDrive
 
 			List<Double> disps = com.acmerobotics.roadrunner.Math.range(
 					0, t.path.length(),
-					(int) Math.ceil(t.path.length() / 2));
+					Math.max(2, (int) Math.ceil(t.path.length() / 2)));
 			xPoints = new double[disps.size()];
 			yPoints = new double[disps.size()];
 			for (int i = 0; i < disps.size(); i++) {
