@@ -77,7 +77,7 @@ public class Constants
 
 		public static class Claw
 		{
-			public static final double IDLE = 0.5;
+			public static final double IDLE = 0.45;
 			public static final double BUSY = 0;
 		}
 
@@ -122,6 +122,9 @@ public class Constants
 
 		private static final Scalar YELLOW_LOWER = new Scalar(10, 100, 150);
 		private static final Scalar YELLOW_UPPER = new Scalar(40, 255, 255);
+
+		public static final Scalar RED_LOWER = new Scalar(0, 20, 30);
+		public static final Scalar RED_UPPER = new Scalar(20, 255, 255);
 
 		public static final List<Scalar> LOWER_BOUNDS = Arrays.asList(WHITE_LOWER, GREEN_LOWER, PURPLE_LOWER, YELLOW_LOWER);
 		public static final List<Scalar> UPPER_BOUNDS = Arrays.asList(WHITE_UPPER, GREEN_UPPER, PURPLE_UPPER, YELLOW_UPPER);

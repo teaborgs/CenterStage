@@ -199,11 +199,9 @@ public final class RazvanTeleOp extends BaseOpMode
 
 	private void Arm()
 	{
-		// Prevent moving the arm while it's busy
 		if (armBusy) return;
-		armBusy = true;
-
-		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_CONFIRM_KEY) && waitingSecondInstruction && !pixelInStorage) { // Can be called once a pixel from stack was picked up to put it in the load
+		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_CONFIRM_KEY) && waitingSecondInstruction && !pixelInStorage) {
+			armBusy = true;
 			rotatorServo.setPosition(Constants.Data.Rotator.IDLE);
 			setTimeout(() -> {
 				tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
@@ -218,7 +216,8 @@ public final class RazvanTeleOp extends BaseOpMode
 				}, 500);
 			}, 500);
 		} else if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) {
-			if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle - Same for both Pickup Modes
+			if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle
+				armBusy = true;
 				clawServo.setPosition(Constants.Data.Claw.IDLE);
 				setTimeout(() -> {
 					tumblerMotor.setTargetPosition(Constants.Data.Tumbler.IDLE);
@@ -230,8 +229,9 @@ public final class RazvanTeleOp extends BaseOpMode
 						armBusy = false;
 					}, 500);
 				}, 500);
-			} else { // Pickup Pixel - Different for each Pickup Mode
-				if (pickupMode == Utilities.PickupMode.INTAKE) { // Move tumbler to storage and pickup the pixel
+			} else { // Pickup Pixel and go to Backdrop
+				if (pickupMode == Utilities.PickupMode.INTAKE) {
+					armBusy = true;
 					tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
 					setTimeout(() -> {
 						clawServo.setPosition(Constants.Data.Claw.BUSY);
@@ -241,27 +241,22 @@ public final class RazvanTeleOp extends BaseOpMode
 							tumblerMotor.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
 							setTimeout(() -> {
 								rotatorServo.setPosition(Constants.Data.Rotator.BUSY);
-								pixelInStorage = false;
 								armBusy = false;
 								armState = Utilities.State.BUSY;
 							}, 200 * liftLevel);
 						}, 500);
 					}, 500);
 				} else if (stackLevel > 0) {
-					if (waitingSecondInstruction) { // Move the lift to the desired level
-						liftMotor1.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
-						liftMotor2.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
-						armBusy = false;
-						waitingSecondInstruction = false;
-						armState = Utilities.State.BUSY;
-					} else if (!atLevel) { // Move tumbler above the stack level and wait for confirmation
+					if (!atLevel && !waitingSecondInstruction) {
+						armBusy = true;
 						rotatorServo.setPosition(Constants.Data.Rotator.BUSY);
 						setTimeout(() -> {
 							tumblerMotor.setTargetPosition(Constants.Data.Tumbler.STACK_POSES[stackLevel - 1] - 80);
 							atLevel = true;
 							armBusy = false;
 						}, 100);
-					} else { // (if at level) Move tumbler to stack level and pick up the pixel
+					} else if (atLevel && !waitingSecondInstruction) {
+						armBusy = true;
 						tumblerMotor.setTargetPosition(Constants.Data.Tumbler.STACK_POSES[stackLevel - 1]);
 						setTimeout(() -> {
 							clawServo.setPosition(Constants.Data.Claw.BUSY);
@@ -273,6 +268,13 @@ public final class RazvanTeleOp extends BaseOpMode
 								stackLevel--;
 							}, 500);
 						}, 300);
+					} else if (!atLevel) {
+						armBusy = true;
+						liftMotor1.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
+						liftMotor2.setTargetPosition(liftLevel == 1 ? Constants.Data.Lift.LEVEL_1 : Constants.Data.Lift.LEVEL_2);
+						armBusy = false;
+						waitingSecondInstruction = false;
+						armState = Utilities.State.BUSY;
 					}
 				}
 			}

@@ -32,7 +32,7 @@ public class AutoTestX extends LinearOpMode
 	private void Run()
 	{
 		Actions.runBlocking(mecanumDrive.actionBuilder(new Pose2d(0,0, 0))
-				.lineToX(39.37)
+				.lineToX(39.37 * 2)
 				.build());
 	}
 }
