@@ -18,6 +18,11 @@ public class Utilities
 		}).start();
 	}
 
+	public static double centimetersToInches(double centimeters)
+	{
+		return centimeters / 2.54;
+	}
+
 	public static Scalar hsvToRgb(double h, double s, double v)
 	{
 		// Normalize to 0..1

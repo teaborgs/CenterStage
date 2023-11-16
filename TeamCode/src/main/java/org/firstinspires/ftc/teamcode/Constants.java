@@ -72,13 +72,13 @@ public class Constants
 		{
 			public static final int IDLE = 0;
 			public static final int SUSPEND = 1870;
-			public static final int LOCK = -250;
+			public static final int LOCK = -50;
 		}
 
 		public static class Claw
 		{
 			public static final double IDLE = 0.45;
-			public static final double BUSY = 0;
+			public static final double BUSY = 1;
 		}
 
 		public static class Rotator
@@ -97,8 +97,8 @@ public class Constants
 		{
 			public static class Leveler
 			{
-				public static final double IDLE = 0;
-				public static final double BUSY = 0.5;
+				public static final double IDLE = 0.5;
+				public static final double BUSY = 0.7;
 			}
 
 			public static class Releaser
