@@ -242,7 +242,7 @@ public class MecanumDrive
 
 	public void setDrivePowers(PoseVelocity2d powers)
 	{
-		MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(15.35).inverse(
+		MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(14.17).inverse(
 				PoseVelocity2dDual.constant(powers, 1));
 
 		double maxPowerMag = 1;

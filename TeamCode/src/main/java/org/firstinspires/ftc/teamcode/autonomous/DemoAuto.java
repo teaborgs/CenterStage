@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,7 @@ public class DemoAuto extends LinearOpMode
 				},
 				new SleepAction(0.5),
 				new ParallelAction(
-						mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
+						mecanumDrive.actionBuilder(mecanumDrive.pose)
 								.lineToX(-centimetersToInches(60))
 								.build(),
 						new SequentialAction(
@@ -136,14 +137,104 @@ public class DemoAuto extends LinearOpMode
 				telemetryPacket -> {
 					rotatorServo.setPosition(Constants.Data.Rotator.IDLE);
 					tumblerMotor.setPower(1);
-					tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
+					tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD + 150);
 					return false;
 				},
 				telemetryPacket -> Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE,
 				telemetryPacket -> {
 					tumblerMotor.setPower(0.05);
 					return false;
-				}
+				},
+				new ParallelAction(
+						mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(60), 0, 0))
+								.setTangent(Math.PI / 2)
+								.lineToYSplineHeading(centimetersToInches(100), -Math.PI / 2)
+								.build(),
+						new SequentialAction(
+								telemetryPacket -> {
+									intakeMotor.setPower(0.8);
+									return false;
+								},
+								new SleepAction(1.5),
+								telemetryPacket -> {
+									intakeMotor.setPower(0);
+									tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
+									tumblerMotor.setPower(1);
+									return false;
+								},
+								telemetryPacket -> Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE,
+								telemetryPacket -> {
+									tumblerMotor.setPower(0.05);
+									return false;
+								},
+								new SleepAction(0.5),
+								telemetryPacket -> {
+									clawServo.setPosition(Constants.Data.Claw.BUSY);
+									return false;
+								},
+								new SleepAction(0.5),
+								new ParallelAction(
+										new ParallelAction(
+												new SequentialAction(
+														telemetryPacket -> {
+															tumblerMotor.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
+															tumblerMotor.setPower(1);
+															return false;
+														},
+														telemetryPacket -> Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE,
+														telemetryPacket -> {
+															tumblerMotor.setPower(0.05);
+															return false;
+														}
+												),
+												new SequentialAction(
+														new SleepAction(0.5),
+														telemetryPacket -> {
+															rotatorServo.setPosition(Constants.Data.Rotator.BUSY);
+															return false;
+														}
+												)
+										),
+										new SequentialAction(
+												telemetryPacket -> {
+													liftMotor1.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
+													liftMotor2.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
+													liftMotor1.setPower(1);
+													liftMotor2.setPower(1);
+													return false;
+												},
+												telemetryPacket -> Math.abs(liftMotor1.getCurrentPosition() - liftMotor1.getTargetPosition()) > TOLERANCE && Math.abs(liftMotor2.getCurrentPosition() - liftMotor2.getTargetPosition()) > TOLERANCE,
+												telemetryPacket -> {
+													liftMotor1.setPower(0.05);
+													liftMotor2.setPower(0.05);
+													return false;
+												}
+										)
+								)
+						)
+				),
+				new SleepAction(1),
+				telemetryPacket -> {
+					clawServo.setPosition(Constants.Data.Claw.IDLE);
+					return false;
+				},
+				new SleepAction(0.5),
+				new SequentialAction(
+						telemetryPacket -> {
+							tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
+							tumblerMotor.setPower(1);
+							return false;
+						},
+						telemetryPacket -> Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE,
+						telemetryPacket -> {
+							tumblerMotor.setPower(0.05);
+							return false;
+						}
+				),
+				mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(60), centimetersToInches(100), -Math.PI/2))
+						.setTangent(0)
+						.lineToX(centimetersToInches(5))
+						.build()
 		));
 	}
 }
