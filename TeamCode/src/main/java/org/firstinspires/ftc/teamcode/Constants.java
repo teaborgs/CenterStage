@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
 import org.opencv.core.Scalar;
 
@@ -59,6 +57,7 @@ public class Constants
 			public static final int IDLE = 400;
 			public static final int BACKDROP = 810;
 			public static final int[] STACK_POSES = {1495, 1460, 1420, 1395, 1350};
+			public static final int SPIKE_MARK = 1300;
 		}
 
 		public static class Lift
@@ -106,6 +105,11 @@ public class Constants
 				public static final double IDLE = 0.5;
 				public static final double BUSY = 0;
 			}
+		}
+
+		public static class Intake
+		{
+			public static final double MAX_POWER = 0.8;
 		}
 	}
 

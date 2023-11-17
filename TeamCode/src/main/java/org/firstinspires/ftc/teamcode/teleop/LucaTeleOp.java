@@ -156,7 +156,7 @@ public final class LucaTeleOp extends BaseOpMode
 			gamepad2.rumble(500);
 		}
 		if (pickupMode == Utilities.PickupMode.INTAKE)
-			intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? 0.8 : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -0.8 : 0);
+			intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.Data.Intake.MAX_POWER : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.Data.Intake.MAX_POWER : 0);
 	}
 
 	private void UpdateMotorPowers()

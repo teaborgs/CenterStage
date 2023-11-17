@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.opencv.core.Scalar;
 
@@ -21,6 +26,21 @@ public class Utilities
 	public static double centimetersToInches(double centimeters)
 	{
 		return centimeters / 2.54;
+	}
+
+	public static Action WaitFor(double delay)
+	{
+		return new SleepAction(delay);
+	}
+
+	public static Action RunInParallel(Action... actions)
+	{
+		return new ParallelAction(actions);
+	}
+
+	public static Action RunSequentially(Action... actions)
+	{
+		return new SequentialAction(actions);
 	}
 
 	public static Scalar hsvToRgb(double h, double s, double v)
@@ -77,14 +97,33 @@ public class Utilities
 		for (DcMotorEx device : devices) device.setMotorEnable();
 	}
 
-	public enum State {
+	public static void CutPower(Servo... devices)
+	{
+		for (Servo device : devices) device.getController().pwmDisable();
+	}
+
+	public static void RestorePower(Servo... devices)
+	{
+		for (Servo device : devices) device.getController().pwmEnable();
+	}
+
+	public enum State
+	{
 		IDLE,
 		BUSY
 	}
 
-	public enum PickupMode {
+	public enum PickupMode
+	{
 		INTAKE,
 		STACK
+	}
+
+	public enum DelayDirection
+	{
+		BEFORE,
+		AFTER,
+		BOTH
 	}
 
 	public enum DetectionCase

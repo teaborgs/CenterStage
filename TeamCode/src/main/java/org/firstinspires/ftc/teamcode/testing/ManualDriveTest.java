@@ -163,7 +163,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Intake()
 	{
-		intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? 0.8 : 0.0);
+		intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.Data.Intake.MAX_POWER : 0.0);
 	}
 
 	// ================ Arm ================
