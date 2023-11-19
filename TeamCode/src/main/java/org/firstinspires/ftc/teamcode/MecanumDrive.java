@@ -50,9 +50,9 @@ import java.util.List;
  * === Configuration ===
  * Control Hub:
  * > Servos:
- * slot0 - locker (servo2)
- * slot1 - plane release (servo3)
- * slot2 - plane level (servo4)
+ * slot0 - locker (locker)
+ * slot1 - plane release (shooter)
+ * slot2 - plane level (leveler)
  * > Motors:
  * slot0 - left-front wheel (leftFront) + par0 odometry
  * slot1 - left-back wheel (leftBack) + par1 odometry
@@ -60,13 +60,13 @@ import java.util.List;
  * slot3 - right-front wheel (rightFront)
  * Expansion Hub:
  * > Servos:
- * slot0 - rotator (servo0)
- * slot1 - claw (servo1)
+ * slot0 - rotator (rotator)
+ * slot1 - claw (claw)
  * > Motors:
- * slot0 - intake (slot4)
- * slot1 - lift1 (slot5)
- * slot2 - lift2 (slot6)
- * slot3 - tumbler (slot7)
+ * slot0 - intake (intake)
+ * slot1 - lift1 (lift1)
+ * slot2 - lift2 (lift2)
+ * slot3 - tumbler (tumbler)
  */
 @Config
 public class MecanumDrive

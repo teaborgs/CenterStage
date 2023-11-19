@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.impl;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
+import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 
 import com.acmerobotics.roadrunner.Action;
@@ -16,10 +17,16 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 public final class TumblerSystem extends SystemEx
 {
 	private final DcMotorEx motor;
+	private Utilities.RobotType robotType;
 
 	public TumblerSystem(DcMotorEx motor)
 	{
 		this.motor = motor;
+	}
+
+	public void setRobotType(Utilities.RobotType robotType)
+	{
+		this.robotType = robotType;
 	}
 
 	@Override
@@ -27,9 +34,9 @@ public final class TumblerSystem extends SystemEx
 	{
 		motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor.setDirection(DcMotorEx.Direction.REVERSE);
+		if(robotType == Utilities.RobotType.ROBOT_1) motor.setDirection(DcMotorEx.Direction.REVERSE);
 		motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-		motor.setTargetPosition(Constants.Data.Tumbler.IDLE);
+		motor.setTargetPosition(Constants.getTumblerIdle());
 		motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 	}
 

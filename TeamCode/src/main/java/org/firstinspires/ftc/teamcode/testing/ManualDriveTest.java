@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
 import com.acmerobotics.roadrunner.Pose2d;
@@ -26,9 +27,9 @@ public final class ManualDriveTest extends BaseOpMode
 	 * === Configuration ===
 	 * Control Hub:
 	 * > Servos:
-	 * slot0 - locker (servo2)
-	 * slot1 - plane release (servo3)
-	 * slot2 - plane level (servo4)
+	 * slot0 - locker (locker)
+	 * slot1 - plane release (shooter)
+	 * slot2 - plane level (leveler)
 	 * > Motors:
 	 * slot0 - left-front wheel (leftFront)
 	 * slot1 - left-back wheel (leftBack)
@@ -39,13 +40,13 @@ public final class ManualDriveTest extends BaseOpMode
 	 * slot2 - back odometry
 	 * Expansion Hub:
 	 * > Servos:
-	 * slot0 - rotator (servo0)
-	 * slot1 - claw (servo1)
+	 * slot0 - rotator (rotator)
+	 * slot1 - claw (claw)
 	 * > Motors:
-	 * slot0 - intake (slot4)
-	 * slot1 - lift1 (slot5)
-	 * slot2 - lift2 (slot6)
-	 * slot3 - tumbler (slot7)
+	 * slot0 - intake (intake)
+	 * slot1 - lift1 (lift1)
+	 * slot2 - lift2 (lift2)
+	 * slot3 - tumbler (tumbler)
 	 */
 
 	// Wheel motors
@@ -97,12 +98,12 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-		intakeMotor = hardwareMap.get(DcMotorEx.class, "slot4");
+		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 		intakeMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
-		liftMotors.add(hardwareMap.get(DcMotorEx.class, "slot5"));
-		liftMotors.add(hardwareMap.get(DcMotorEx.class, "slot6"));
+		liftMotors.add(hardwareMap.get(DcMotorEx.class, "lift1"));
+		liftMotors.add(hardwareMap.get(DcMotorEx.class, "lift2"));
 		liftMotors.forEach(motor -> {
 			motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 			motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -110,24 +111,26 @@ public final class ManualDriveTest extends BaseOpMode
 		});
 		liftMotors.get(0).setDirection(DcMotorEx.Direction.REVERSE);
 
-		tumblerMotor = hardwareMap.get(DcMotorEx.class, "slot7");
+		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_1)tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(0);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-		rotatorServo = hardwareMap.get(Servo.class, "servo0");
-		clawServo = hardwareMap.get(Servo.class, "servo1");
-		lockerServo = hardwareMap.get(Servo.class, "servo2");
-		planeReleaseServo = hardwareMap.get(Servo.class, "servo3");
-		planeLevelServo = hardwareMap.get(Servo.class, "servo4");
+		rotatorServo = hardwareMap.get(Servo.class, "rotator");
+		clawServo = hardwareMap.get(Servo.class, "claw");
+		lockerServo = hardwareMap.get(Servo.class, "locker");
+		planeReleaseServo = hardwareMap.get(Servo.class, "shooter");
+		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 
 		planeReleaseServo.setPosition(0.5);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
+
+		Constants.Init(GetCurrentRobotType(hardwareMap));
 
 		telemetry.setMsTransmissionInterval(50);
 	}
@@ -163,7 +166,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Intake()
 	{
-		intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.Data.Intake.MAX_POWER : 0.0);
+		intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : 0.0);
 	}
 
 	// ================ Arm ================
@@ -177,17 +180,17 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_BACKDROP_KEY))
 		{
-			tumblerMotor.setTargetPosition(Constants.Data.Tumbler.BACKDROP);
+			tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
 			stackTaps = 0;
 		}
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_LOAD_KEY))
 		{
-			tumblerMotor.setTargetPosition(Constants.Data.Tumbler.LOAD);
+			tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
 			stackTaps = 0;
 		}
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_IDLE_KEY))
 		{
-			tumblerMotor.setTargetPosition(Constants.Data.Tumbler.IDLE);
+			tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 			stackTaps = 0;
 		}
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_STACK_KEY))
@@ -196,7 +199,7 @@ public final class ManualDriveTest extends BaseOpMode
 			if (stackTaps > 5)
 				stackTaps = 1;
 
-			int targetPos = Constants.Data.Tumbler.STACK_POSES[stackTaps - 1];
+			int targetPos = Constants.getTumblerStackPoses()[stackTaps - 1];
 			tumblerMotor.setTargetPosition(targetPos);
 		}
 

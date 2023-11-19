@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.RunInParallel;
 import static org.firstinspires.ftc.teamcode.Utilities.RunSequentially;
 import static org.firstinspires.ftc.teamcode.Utilities.WaitFor;
@@ -56,11 +57,14 @@ public class DemoAuto extends LinearOpMode
 	{
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-		liftSystem = new LiftSystem(hardwareMap.get(DcMotorEx.class, "slot5"), hardwareMap.get(DcMotorEx.class, "slot6"));
-		tumblerSystem = new TumblerSystem(hardwareMap.get(DcMotorEx.class, "slot7"));
-		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "slot4"));
-		rotatorSystem = new RotatorSystem(hardwareMap.get(Servo.class, "servo0"));
-		clawSystem = new ClawSystem(hardwareMap.get(Servo.class, "servo1"));
+		liftSystem = new LiftSystem(hardwareMap.get(DcMotorEx.class, "lift1"), hardwareMap.get(DcMotorEx.class, "lift2"));
+		tumblerSystem = new TumblerSystem(hardwareMap.get(DcMotorEx.class, "tumbler"));
+		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "intake"));
+		rotatorSystem = new RotatorSystem(hardwareMap.get(Servo.class, "rotator"));
+		clawSystem = new ClawSystem(hardwareMap.get(Servo.class, "claw"));
+
+		tumblerSystem.setRobotType(GetCurrentRobotType(hardwareMap));
+
 		liftSystem.Init();
 		tumblerSystem.Init();
 		intakeSystem.Init();
@@ -74,18 +78,18 @@ public class DemoAuto extends LinearOpMode
 	{
 		Actions.runBlocking(
 				RunSequentially(
-						clawSystem.MoveToPosition(Constants.Data.Claw.BUSY),
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
 						WaitFor(0.5),
 						RunInParallel(
 								mecanumDrive.actionBuilder(mecanumDrive.pose)
 										.lineToX(-centimetersToInches(60))
 										.build(),
-								tumblerSystem.MoveToPosition(Constants.Data.Tumbler.SPIKE_MARK),
-								rotatorSystem.MoveToPositionWithDelay(Constants.Data.Rotator.BUSY, 0.1)
+								tumblerSystem.MoveToPosition(Constants.getTumblerSpikeMark()),
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.1)
 						),
-						clawSystem.MoveToPosition(Constants.Data.Claw.IDLE),
-						rotatorSystem.MoveToPositionWithDelay(Constants.Data.Rotator.IDLE, 0.1),
-						tumblerSystem.MoveToPosition(Constants.Data.Tumbler.LOAD + 150),
+						clawSystem.MoveToPosition(Constants.getClawIdle()),
+						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.1),
+						tumblerSystem.MoveToPosition(Constants.getTumblerLoad() + 150),
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(60), 0, 0))
 										.setTangent(Math.PI / 2)
@@ -93,20 +97,20 @@ public class DemoAuto extends LinearOpMode
 										.build(),
 								RunSequentially(
 										intakeSystem.RunIntakeFor(1.5),
-										tumblerSystem.MoveToPosition(Constants.Data.Tumbler.LOAD),
-										clawSystem.MoveToPositionWithDelay(Constants.Data.Claw.BUSY, 0.5, Utilities.DelayDirection.BOTH),
+										tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
+										clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.BOTH),
 										RunInParallel(
 												RunInParallel(
-														tumblerSystem.MoveToPosition(Constants.Data.Tumbler.BACKDROP),
-														rotatorSystem.MoveToPositionWithDelay(Constants.Data.Rotator.BUSY, 0.5)
+														tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
+														rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5)
 												),
-												liftSystem.MoveToPosition(Constants.Data.Lift.LEVEL_1)
+												liftSystem.MoveToPosition(Constants.getLiftLevel1())
 										)
 								)
 						),
 						WaitFor(0.5),
-						clawSystem.MoveToPositionWithDelay(Constants.Data.Claw.IDLE, 0.5, Utilities.DelayDirection.BOTH),
-						tumblerSystem.MoveToPosition(Constants.Data.Tumbler.LOAD),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.5, Utilities.DelayDirection.BOTH),
+						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
 						mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(60), centimetersToInches(100), -Math.PI / 2))
 								.setTangent(0)
 								.lineToX(centimetersToInches(5))

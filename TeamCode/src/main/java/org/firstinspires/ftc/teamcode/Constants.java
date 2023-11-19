@@ -5,10 +5,78 @@ import com.acmerobotics.roadrunner.Pose2d;
 import org.opencv.core.Scalar;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Constants
 {
+	public static Constants instance = new Constants();
+	private final HashMap<String, Object> robotConstants = new HashMap<>();
+
+	public static void Init(Utilities.RobotType robotType)
+	{
+		switch (robotType) {
+			case ROBOT_1:
+				instance.robotConstants.clear();
+				instance.robotConstants.put("tumblerLoad", 0);
+				instance.robotConstants.put("tumblerIdle", 400);
+				instance.robotConstants.put("tumblerBackdrop", 810);
+				instance.robotConstants.put("tumblerStackPoses", new int[]{1495, 1460, 1420, 1395, 1350});
+				instance.robotConstants.put("tumblerSpikeMark", 1300);
+				instance.robotConstants.put("liftPickup", -10);
+				instance.robotConstants.put("liftLevel1", 900);
+				instance.robotConstants.put("liftLevel2", 1400);
+				instance.robotConstants.put("liftLevel3", 1700);
+				instance.robotConstants.put("liftLevel4", 2200);
+				instance.robotConstants.put("suspenderIdle", 0);
+				instance.robotConstants.put("suspenderSuspend", 1870);
+				instance.robotConstants.put("suspenderLock", -50);
+				instance.robotConstants.put("clawIdle", 0.45d);
+				instance.robotConstants.put("clawBusy", 1d);
+				instance.robotConstants.put("rotatorIdle", 0d);
+				instance.robotConstants.put("rotatorBusy", 1d);
+				instance.robotConstants.put("lockerIdle", 0.5d);
+				instance.robotConstants.put("lockerBusy", 0d);
+				instance.robotConstants.put("planeLevelerIdle", 0.5d);
+				instance.robotConstants.put("planeLevelerBusy", 0.7d);
+				instance.robotConstants.put("planeShooterIdle", 0.5d);
+				instance.robotConstants.put("planeShooterBusy", 0d);
+				instance.robotConstants.put("intakeMaxPower", 0.8d);
+				instance.robotConstants.put("liftNormalPower", 1.0d);
+				instance.robotConstants.put("liftSuspendPower", 1.0d);
+				break;
+			case ROBOT_2:
+				instance.robotConstants.clear();
+				instance.robotConstants.put("tumblerLoad", 0);
+				instance.robotConstants.put("tumblerIdle", 400);
+				instance.robotConstants.put("tumblerBackdrop", 810);
+				instance.robotConstants.put("tumblerStackPoses", new int[]{1495, 1460, 1420, 1395, 1350});
+				instance.robotConstants.put("tumblerSpikeMark", 1300);
+				instance.robotConstants.put("liftPickup", 0);
+				instance.robotConstants.put("liftLevel1", 400);
+				instance.robotConstants.put("liftLevel2", 700);
+				instance.robotConstants.put("liftLevel3", 900);
+				instance.robotConstants.put("liftLevel4", 1200);
+				instance.robotConstants.put("suspenderIdle", 0);
+				instance.robotConstants.put("suspenderSuspend", 970);
+				instance.robotConstants.put("suspenderLock", -10);
+				instance.robotConstants.put("clawIdle", 0.45d);
+				instance.robotConstants.put("clawBusy", 1d);
+				instance.robotConstants.put("rotatorIdle", 0d);
+				instance.robotConstants.put("rotatorBusy", 1d);
+				instance.robotConstants.put("lockerIdle", 0d);
+				instance.robotConstants.put("lockerBusy", 0.5d);
+				instance.robotConstants.put("planeLevelerIdle", 0d);
+				instance.robotConstants.put("planeLevelerBusy", 0.5d);
+				instance.robotConstants.put("planeShooterIdle", 0.4d);
+				instance.robotConstants.put("planeShooterBusy", 0.5d);
+				instance.robotConstants.put("intakeMaxPower", 0.8d);
+				instance.robotConstants.put("liftNormalPower", 0.8d);
+				instance.robotConstants.put("liftSuspendPower", 1.0d);
+				break;
+		}
+	}
+
 	public static final int TOLERANCE = 10;
 
 	public static class Camera
@@ -30,87 +98,6 @@ public class Constants
 		public static final short CAMERA_TAG_LEFT = 1;
 		public static final short CAMERA_TAG_MIDDLE = 2;
 		public static final short CAMERA_TAG_RIGHT = 3;
-	}
-
-	public static class Autonomous
-	{
-		public static class YellowDropPos
-		{
-			public static final Pose2d Left = new Pose2d(3, 3, 0); // tbd
-			public static final Pose2d Center = new Pose2d(0, 0, 0); // tbd
-			public static final Pose2d Right = new Pose2d(0, 0, 0); // tbd
-		}
-
-		public static class PurpleDropPos
-		{
-			public static final Pose2d Left = new Pose2d(5, 5, 3.1415926); // tbd
-			public static final Pose2d Center = new Pose2d(0, 0, 0); // tbd
-			public static final Pose2d Right = new Pose2d(0, 0, 0); // tbd
-		}
-	}
-
-	public static class Data
-	{
-		public static class Tumbler
-		{
-			public static final int LOAD = 0;
-			public static final int IDLE = 400;
-			public static final int BACKDROP = 810;
-			public static final int[] STACK_POSES = {1495, 1460, 1420, 1395, 1350};
-			public static final int SPIKE_MARK = 1300;
-		}
-
-		public static class Lift
-		{
-			public static final int PICKUP = -10;
-			public static final int LEVEL_1 = 950;
-			public static final int LEVEL_2 = 2150;
-		}
-
-		public static class Suspender
-		{
-			public static final int IDLE = 0;
-			public static final int SUSPEND = 1870;
-			public static final int LOCK = -50;
-		}
-
-		public static class Claw
-		{
-			public static final double IDLE = 0.45;
-			public static final double BUSY = 1;
-		}
-
-		public static class Rotator
-		{
-			public static final double IDLE = 0;
-			public static final double BUSY = 1;
-		}
-
-		public static class Locker
-		{
-			public static final double IDLE = 0.5;
-			public static final double BUSY = 0;
-		}
-
-		public static class Plane
-		{
-			public static class Leveler
-			{
-				public static final double IDLE = 0.5;
-				public static final double BUSY = 0.7;
-			}
-
-			public static class Releaser
-			{
-				public static final double IDLE = 0.5;
-				public static final double BUSY = 0;
-			}
-		}
-
-		public static class Intake
-		{
-			public static final double MAX_POWER = 0.8;
-		}
 	}
 
 	public static class Detection
@@ -139,5 +126,135 @@ public class Constants
 		public static final Scalar RED = new Scalar(255, 0, 0, 255);
 		public static final Scalar GREEN = new Scalar(0, 255, 0, 255);
 		public static final Scalar WHITE = new Scalar(255, 255, 255, 255);
+	}
+
+	public static int getTumblerLoad()
+	{
+		return (int) instance.robotConstants.get("tumblerLoad");
+	}
+
+	public static int getTumblerIdle()
+	{
+		return (int) instance.robotConstants.get("tumblerIdle");
+	}
+
+	public static int getTumblerBackdrop()
+	{
+		return (int) instance.robotConstants.get("tumblerBackdrop");
+	}
+
+	public static int[] getTumblerStackPoses()
+	{
+		return (int[]) instance.robotConstants.get("tumblerStackPoses");
+	}
+
+	public static int getTumblerSpikeMark()
+	{
+		return (int) instance.robotConstants.get("tumblerSpikeMark");
+	}
+
+	public static int getLiftPickup()
+	{
+		return (int) instance.robotConstants.get("liftPickup");
+	}
+
+	public static int getLiftLevel1()
+	{
+		return (int) instance.robotConstants.get("liftLevel1");
+	}
+
+	public static int getLiftLevel2()
+	{
+		return (int) instance.robotConstants.get("liftLevel2");
+	}
+
+	public static int getLiftLevel3()
+	{
+		return (int) instance.robotConstants.get("liftLevel3");
+	}
+
+	public static int getLiftLevel4()
+	{
+		return (int) instance.robotConstants.get("liftLevel4");
+	}
+
+	public static int getSuspenderIdle()
+	{
+		return (int) instance.robotConstants.get("suspenderIdle");
+	}
+
+	public static int getSuspenderSuspend()
+	{
+		return (int) instance.robotConstants.get("suspenderSuspend");
+	}
+
+	public static int getSuspenderLock()
+	{
+		return (int) instance.robotConstants.get("suspenderLock");
+	}
+
+	public static double getClawIdle()
+	{
+		return (double) instance.robotConstants.get("clawIdle");
+	}
+
+	public static double getClawBusy()
+	{
+		return (double) instance.robotConstants.get("clawBusy");
+	}
+
+	public static double getRotatorIdle()
+	{
+		return (double) instance.robotConstants.get("rotatorIdle");
+	}
+
+	public static double getRotatorBusy()
+	{
+		return (double) instance.robotConstants.get("rotatorBusy");
+	}
+
+	public static double getLockerIdle()
+	{
+		return (double) instance.robotConstants.get("lockerIdle");
+	}
+
+	public static double getLockerBusy()
+	{
+		return (double) instance.robotConstants.get("lockerBusy");
+	}
+
+	public static double getPlaneLevelerIdle()
+	{
+		return (double) instance.robotConstants.get("planeLevelerIdle");
+	}
+
+	public static double getPlaneLevelerBusy()
+	{
+		return (double) instance.robotConstants.get("planeLevelerBusy");
+	}
+
+	public static double getPlaneShooterIdle()
+	{
+		return (double) instance.robotConstants.get("planeShooterIdle");
+	}
+
+	public static double getPlaneShooterBusy()
+	{
+		return (double) instance.robotConstants.get("planeShooterBusy");
+	}
+
+	public static double getIntakeMaxPower()
+	{
+		return (double) instance.robotConstants.get("intakeMaxPower");
+	}
+
+	public static double getLiftNormalPower()
+	{
+		return (double) instance.robotConstants.get("liftNormalPower");
+	}
+
+	public static double getLiftSuspendPower()
+	{
+		return (double) instance.robotConstants.get("liftSuspendPower");
 	}
 }

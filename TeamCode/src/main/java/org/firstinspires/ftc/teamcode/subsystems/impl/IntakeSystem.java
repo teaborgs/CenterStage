@@ -49,7 +49,7 @@ public final class IntakeSystem extends SystemEx
 	{
 		return new SequentialAction(
 				telemetryPacket -> {
-					motor.setPower(Constants.Data.Intake.MAX_POWER);
+					motor.setPower(Constants.getIntakeMaxPower());
 					return false;
 				},
 				new SleepAction(time),

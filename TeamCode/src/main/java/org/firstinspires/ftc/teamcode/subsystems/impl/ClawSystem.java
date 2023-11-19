@@ -24,7 +24,7 @@ public final class ClawSystem extends SystemEx
 	@Override
 	public void Init()
 	{
-		servo.setPosition(Constants.Data.Claw.IDLE);
+		servo.setPosition(Constants.getClawIdle());
 	}
 
 	@Override

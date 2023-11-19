@@ -24,7 +24,7 @@ public final class RotatorSystem extends SystemEx
 	@Override
 	public void Init()
 	{
-		servo.setPosition(Constants.Data.Rotator.IDLE);
+		servo.setPosition(Constants.getRotatorIdle());
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.opencv.core.Scalar;
@@ -26,6 +27,32 @@ public class Utilities
 	public static double centimetersToInches(double centimeters)
 	{
 		return centimeters / 2.54;
+	}
+
+	public static RobotType GetCurrentRobotType(HardwareMap hardwareMap)
+	{
+		try {
+			if (hardwareMap.get("robot1") != null) return RobotType.ROBOT_1;
+			else if (hardwareMap.get("robot2") != null) return RobotType.ROBOT_2;
+			else throw new RuntimeException("No robot detected");
+		} catch (Exception e) {
+			try {
+				if (hardwareMap.get("robot2") != null) return RobotType.ROBOT_2;
+				else if (hardwareMap.get("robot1") != null) return RobotType.ROBOT_1;
+				else throw new RuntimeException("No robot detected");
+			} catch (Exception e2) {
+				throw new RuntimeException("No robot detected");
+			}
+		}
+	}
+
+	public static boolean IsDebugging(HardwareMap hardwareMap)
+	{
+		try {
+			return hardwareMap.get("debug") != null;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public static Action WaitFor(double delay)
@@ -129,5 +156,11 @@ public class Utilities
 	public enum DetectionCase
 	{
 		NONE, LEFT, CENTER, RIGHT
+	}
+
+	public enum RobotType
+	{
+		ROBOT_1,
+		ROBOT_2
 	}
 }
