@@ -96,6 +96,7 @@ public final class ManualDriveTest extends BaseOpMode
 	@Override
 	protected void OnInitialize()
 	{
+		Constants.Init(GetCurrentRobotType(hardwareMap));
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
@@ -110,6 +111,7 @@ public final class ManualDriveTest extends BaseOpMode
 			motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		});
 		liftMotors.get(0).setDirection(DcMotorEx.Direction.REVERSE);
+		liftMotors.get(1).setDirection(DcMotorEx.Direction.REVERSE);
 
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -125,12 +127,13 @@ public final class ManualDriveTest extends BaseOpMode
 		planeReleaseServo = hardwareMap.get(Servo.class, "shooter");
 		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 
-		planeReleaseServo.setPosition(0.5);
+		planeReleaseServo.setPosition(Constants.getPlaneShooterIdle());
+		lockerServo.setPosition(Constants.getLockerIdle());
+		clawServo.setPosition(Constants.getClawIdle());
+		rotatorServo.setPosition(Constants.getRotatorIdle());
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
-
-		Constants.Init(GetCurrentRobotType(hardwareMap));
 
 		telemetry.setMsTransmissionInterval(50);
 	}
@@ -264,9 +267,9 @@ public final class ManualDriveTest extends BaseOpMode
 		if (armInput.wasPressedThisFrame(Bindings.Arm.LOCKER_KEY))
 			lockerState = lockerState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
 		if (lockerState == Utilities.State.IDLE)
-			lockerServo.setPosition(0.5);
+			lockerServo.setPosition(Constants.getLockerIdle());
 		else
-			lockerServo.setPosition(0.0);
+			lockerServo.setPosition(Constants.getLockerBusy());
 	}
 
 	private void Telemetry()

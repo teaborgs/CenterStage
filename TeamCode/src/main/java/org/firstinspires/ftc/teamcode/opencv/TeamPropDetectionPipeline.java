@@ -24,50 +24,65 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 {
 	private boolean debug = false;
 
-	private final Mat hsv = new Mat();
-	private final Mat mask = new Mat();
-	private final Mat hierarchy = new Mat();
-	private final List<MatOfPoint> contours = new ArrayList<>();
-	private final MatOfPoint2f contour2f = new MatOfPoint2f();
-	private final MatOfPoint2f approx = new MatOfPoint2f();
-
-	private final List<MatOfPoint> detections = new ArrayList<>(); // TODO: Implement actual detection class with functionality
+	Mat hsvImage = new Mat();
+	Mat redMask = new Mat();
+	Mat blueMask = new Mat();
+	Mat sphereMask = new Mat();
+	List<Rect> boundingBoxes = new ArrayList<>();
 
 	@Override
 	public Mat processFrame(Mat input)
 	{
-		hsv.release();
-		hierarchy.release();
-		mask.release();
-		detections.clear();
-		Imgproc.resize(input, input, new Size(160 * 5, 90 * 5));
-//		Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-//		Scalar lower = new Scalar(300, 40, 40);
-//		Scalar upper = new Scalar(360, 255, 255);
-//		Core.inRange(hsv, lower, upper, mask);
-//		Core.bitwise_and(input, input, hierarchy, mask);
+		hsvImage.release();
+		redMask.release();
+		blueMask.release();
+		sphereMask.release();
+		Imgproc.cvtColor(input, hsvImage, Imgproc.COLOR_BGR2HSV);
 
-		Scalar lower = new Scalar(50, 0, 0);
-		Scalar upper = new Scalar(255, 100, 100);
+		// Define the range of red color in HSV
+		Scalar lowerRed = new Scalar(0, 100, 100);
+		Scalar upperRed = new Scalar(10, 255, 255);
+		Core.inRange(hsvImage, lowerRed, upperRed, redMask);
 
-		Core.inRange(input, lower, upper, mask);
-		Core.bitwise_and(input, input, hierarchy, mask);
+		// Define the range of blue color in HSV
+		Scalar lowerBlue = new Scalar(100, 100, 100);
+		Scalar upperBlue = new Scalar(140, 255, 255);
+		Core.inRange(hsvImage, lowerBlue, upperBlue, blueMask);
 
-		return mask;
-	}
+		// Combine the red and blue masks
+		Core.addWeighted(redMask, 1.0, blueMask, 1.0, 0.0, sphereMask);
 
-	private void filterMatrix(Mat input)
-	{
+		// Optional: Apply morphological operations to clean up the mask
+		Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
+		Imgproc.morphologyEx(sphereMask, sphereMask, Imgproc.MORPH_OPEN, kernel);
+		Imgproc.morphologyEx(sphereMask, sphereMask, Imgproc.MORPH_CLOSE, kernel);
 
+
+		// Find contours
+		List<MatOfPoint> contours = new ArrayList<>();
+		Mat hierarchy = new Mat();
+		Imgproc.findContours(sphereMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+		// Filter contours based on area (adjust as needed)
+		double minContourArea = 100.0;
+		boundingBoxes.clear();
+
+		for (MatOfPoint contour : contours) {
+			double contourArea = Imgproc.contourArea(contour);
+
+			if (contourArea > minContourArea) {
+				// Get bounding box
+				Rect boundingBox = Imgproc.boundingRect(contour);
+				Imgproc.rectangle(input, boundingBox.tl(), boundingBox.br(), new Scalar(0, 255, 0), 2);
+				boundingBoxes.add(boundingBox);
+			}
+		}
+
+		return input;
 	}
 
 	public void setDebug(boolean debug)
 	{
 		this.debug = debug;
-	}
-
-	public List<MatOfPoint> getLatestDetections()
-	{
-		return detections;
 	}
 }

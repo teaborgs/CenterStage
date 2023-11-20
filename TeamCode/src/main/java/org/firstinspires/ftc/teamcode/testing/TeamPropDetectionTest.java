@@ -45,7 +45,5 @@ public class TeamPropDetectionTest extends BaseOpMode
 	@Override
 	protected void OnRun()
 	{
-		telemetry.addData("No. Objects", detectionPipeline.getLatestDetections().size());
-		telemetry.update();
 	}
 }
