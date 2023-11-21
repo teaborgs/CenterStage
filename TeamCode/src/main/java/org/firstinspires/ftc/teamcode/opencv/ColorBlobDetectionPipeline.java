@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.opencv;
 
 import static org.firstinspires.ftc.teamcode.Constants.Detection.*;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.Pixels.LOWER_BOUNDS;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.Pixels.MIN_AREA;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.Pixels.UPPER_BOUNDS;
 import static org.firstinspires.ftc.teamcode.Utilities.hsvToRgb;
 
 import android.annotation.SuppressLint;

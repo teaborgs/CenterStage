@@ -35,6 +35,10 @@ import org.openftc.apriltag.AprilTagDetectorJNI;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import static org.firstinspires.ftc.teamcode.Constants.Detection.*;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.AprilTag.BLUE;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.AprilTag.GREEN;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.AprilTag.RED;
+import static org.firstinspires.ftc.teamcode.Constants.Detection.AprilTag.WHITE;
 
 import java.util.ArrayList;
 
@@ -63,11 +67,11 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 	private boolean needToSetDecimation;
 	private final Object decimationSync = new Object();
 
-	public AprilTagDetectionPipeline(double tagSize, double fx, double fy, double cx, double cy)
+	public AprilTagDetectionPipeline(double fx, double fy, double cx, double cy)
 	{
-		this.tagSize = tagSize;
-		this.tagSizeX = tagSize;
-		this.tagSizeY = tagSize;
+		this.tagSize = AprilTag.TAG_SIZE;
+		this.tagSizeX = AprilTag.TAG_SIZE;
+		this.tagSizeY = AprilTag.TAG_SIZE;
 		this.fx = fx;
 		this.fy = fy;
 		this.cx = cx;

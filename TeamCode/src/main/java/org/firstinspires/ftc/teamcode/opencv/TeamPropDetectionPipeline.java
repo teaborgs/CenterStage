@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.opencv;
 
-import static org.firstinspires.ftc.teamcode.Constants.Detection.MIN_AREA;
-import static org.firstinspires.ftc.teamcode.Utilities.hsvToRgb;
-
 import android.annotation.SuppressLint;
 
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Utilities;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -24,12 +21,16 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 {
 	private boolean debug = false;
 
-	Mat hsvImage = new Mat();
-	Mat redMask = new Mat();
-	Mat blueMask = new Mat();
-	Mat sphereMask = new Mat();
-	List<Rect> boundingBoxes = new ArrayList<>();
+	private final Mat hsvImage = new Mat();
+	private final Mat redMask = new Mat();
+	private final Mat blueMask = new Mat();
+	private final Mat sphereMask = new Mat();
+	private final Mat hierarchy = new Mat();
+	private final List<Rect> boundingBoxes = new ArrayList<>();
 
+	private Utilities.DetectionCase detectionCase = Utilities.DetectionCase.NONE;
+
+	@SuppressLint("DefaultLocale")
 	@Override
 	public Mat processFrame(Mat input)
 	{
@@ -37,17 +38,11 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 		redMask.release();
 		blueMask.release();
 		sphereMask.release();
+		hierarchy.release();
 		Imgproc.cvtColor(input, hsvImage, Imgproc.COLOR_BGR2HSV);
 
-		// Define the range of red color in HSV
-		Scalar lowerRed = new Scalar(0, 100, 100);
-		Scalar upperRed = new Scalar(10, 255, 255);
-		Core.inRange(hsvImage, lowerRed, upperRed, redMask);
-
-		// Define the range of blue color in HSV
-		Scalar lowerBlue = new Scalar(100, 100, 100);
-		Scalar upperBlue = new Scalar(140, 255, 255);
-		Core.inRange(hsvImage, lowerBlue, upperBlue, blueMask);
+		Core.inRange(hsvImage, Constants.Detection.TeamProp.RED_LOWER, Constants.Detection.TeamProp.RED_UPPER, redMask);
+		Core.inRange(hsvImage, Constants.Detection.TeamProp.BLUE_LOWER, Constants.Detection.TeamProp.BLUE_UPPER, blueMask);
 
 		// Combine the red and blue masks
 		Core.addWeighted(redMask, 1.0, blueMask, 1.0, 0.0, sphereMask);
@@ -60,23 +55,29 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 
 		// Find contours
 		List<MatOfPoint> contours = new ArrayList<>();
-		Mat hierarchy = new Mat();
 		Imgproc.findContours(sphereMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
 		// Filter contours based on area (adjust as needed)
-		double minContourArea = 100.0;
 		boundingBoxes.clear();
 
 		for (MatOfPoint contour : contours) {
 			double contourArea = Imgproc.contourArea(contour);
 
-			if (contourArea > minContourArea) {
-				// Get bounding box
-				Rect boundingBox = Imgproc.boundingRect(contour);
-				Imgproc.rectangle(input, boundingBox.tl(), boundingBox.br(), new Scalar(0, 255, 0), 2);
-				boundingBoxes.add(boundingBox);
-			}
+			if (contourArea < Constants.Detection.TeamProp.PROP_SIZE)
+				continue;
+
+			// Get bounding box
+			Rect boundingBox = Imgproc.boundingRect(contour);
+			Imgproc.rectangle(input, boundingBox.tl(), boundingBox.br(), new Scalar(0, 255, 0), 1);
+			Imgproc.putText(input, String.format("%.2f", contourArea), boundingBox.tl(), 0, 1, new Scalar(0, 255, 0));
+			boundingBoxes.add(boundingBox);
 		}
+
+		if (boundingBoxes.isEmpty())
+			detectionCase = Utilities.DetectionCase.LEFT;
+		else if (boundingBoxes.get(0).x + boundingBoxes.get(0).width / 2 < 300)
+			detectionCase = Utilities.DetectionCase.CENTER;
+		else detectionCase = Utilities.DetectionCase.RIGHT;
 
 		return input;
 	}
@@ -85,4 +86,6 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 	{
 		this.debug = debug;
 	}
+
+	public Utilities.DetectionCase getDetectionCase() { return detectionCase; }
 }

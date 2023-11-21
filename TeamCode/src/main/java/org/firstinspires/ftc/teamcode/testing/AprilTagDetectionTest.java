@@ -28,7 +28,6 @@ public final class AprilTagDetectionTest extends BaseOpMode
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		detectionPipeline = new AprilTagDetectionPipeline(
-				Constants.Camera.CAMERA_TAG_SIZE,
 				Constants.Camera.CAMERA_FX,
 				Constants.Camera.CAMERA_FY,
 				Constants.Camera.CAMERA_CX,
