@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -235,7 +237,8 @@ public class MecanumDrive
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-		localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_1) localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+		else localizer = new TwoDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick);
 
 		FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 	}

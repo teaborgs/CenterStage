@@ -192,7 +192,7 @@ public final class LucaTeleOp extends BaseOpMode
 		else
 			liftMotor2.setPower(0.05);
 
-		if (Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE)
+		if (Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE / 2)
 			tumblerMotor.setPower(0.8);
 		else
 			tumblerMotor.setPower(0);
