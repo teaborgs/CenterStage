@@ -187,10 +187,7 @@ public class Constants
 		return (int) instance.robotConstants.get("suspenderIdle");
 	}
 
-	public static int getSuspenderSuspend()
-	{
-		return (int) instance.robotConstants.get("suspenderSuspend");
-	}
+	public static int getSuspenderSuspend() { return (int) instance.robotConstants.get("suspenderSuspend"); }
 
 	public static int getSuspenderLock()
 	{
