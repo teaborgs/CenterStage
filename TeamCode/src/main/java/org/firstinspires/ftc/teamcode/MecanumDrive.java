@@ -488,7 +488,7 @@ public class MecanumDrive
 				break;
 			case ROBOT_2:
 				params.clear();
-				params.put("inPerTick", 0.0003700523839750763);
+				params.put("inPerTick", 0.0058577592620146); // 13418, 13523, 13355 = 13442
 				params.put("lateralInPerTick", 0.0003700523839750763);
 				params.put("trackWidthTicks", 26517.7982337260);
 				params.put("kS", 1.09214133758827);

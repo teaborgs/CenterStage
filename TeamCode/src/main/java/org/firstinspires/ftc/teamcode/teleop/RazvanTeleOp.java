@@ -93,7 +93,6 @@ public final class RazvanTeleOp extends BaseOpMode
 		liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor1.setDirection(DcMotorEx.Direction.REVERSE);
-		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_2) liftMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 		liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
@@ -174,8 +173,6 @@ public final class RazvanTeleOp extends BaseOpMode
 			liftMotor1.setPower(Constants.getLiftSuspendPower());
 		else if (Math.abs(liftMotor1.getCurrentPosition() - liftMotor1.getTargetPosition()) > TOLERANCE)
 			liftMotor1.setPower(Constants.getLiftNormalPower());
-		else if (liftMotor1.getTargetPosition() == Constants.getLiftPickup() && liftMotor1.getCurrentPosition() <= Constants.getLiftPickup() + TOLERANCE)
-			liftMotor1.setPower(0);
 		else
 			liftMotor1.setPower(0.05);
 
@@ -183,8 +180,6 @@ public final class RazvanTeleOp extends BaseOpMode
 			liftMotor2.setPower(Constants.getLiftSuspendPower());
 		else if (Math.abs(liftMotor2.getCurrentPosition() - liftMotor2.getTargetPosition()) > TOLERANCE)
 			liftMotor2.setPower(Constants.getLiftNormalPower());
-		else if (liftMotor2.getTargetPosition() == Constants.getLiftPickup() && liftMotor2.getCurrentPosition() <= Constants.getLiftPickup() + TOLERANCE)
-			liftMotor2.setPower(0);
 		else
 			liftMotor2.setPower(0.05);
 
