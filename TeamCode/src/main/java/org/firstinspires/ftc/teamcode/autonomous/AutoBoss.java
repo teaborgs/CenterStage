@@ -79,6 +79,8 @@ public class AutoBoss extends LinearOpMode
 		rotatorSystem.Init();
 		clawSystem.Init();
 
+
+
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		detectionPipeline = new TeamPropDetectionPipeline();
@@ -147,24 +149,40 @@ public class AutoBoss extends LinearOpMode
 		{
 			case LEFT:
 				Actions.runBlocking(RunSequentially(
+						// Place purple
 						RunInParallel(
 								clawSystem.MoveToPosition(Constants.getClawBusy()),
 								mecanumDrive.actionBuilder(mecanumDrive.pose)
-										.lineToXSplineHeading(-centimetersToInches(65), Math.PI / 2)
+										.lineToXSplineHeading(-centimetersToInches(70), Math.PI / 2)
 										.build(),
-								tumblerSystem.MoveToPosition(Constants.getTumblerSpikeMark()),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.1)
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 						),
-						WaitFor(0.2),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.BOTH),
+
+						// Place yellow
 						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(65), 0, Math.PI / 2))
-										.waitSeconds(0.2)
-										.lineToYSplineHeading(centimetersToInches(100), -Math.PI / 2)
+								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(70), 0, Math.PI / 2))
+										.splineToLinearHeading(new Pose2d(-centimetersToInches(80), centimetersToInches(100), -Math.PI / 2), Math.PI / 2)
 										.build(),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1),
-								intakeSystem.RunIntakeFor(1.5)
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
+								intakeSystem.RunIntakeFor(1)
+						),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
+						RunInParallel(
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
+						),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.BOTH),
+
+						// Reset positions and Park
+						RunInParallel(
+								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.2),
+								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(80), centimetersToInches(100), -Math.PI / 2))
+										.splineToConstantHeading(new Vector2d(-centimetersToInches(120), centimetersToInches(70)), -Math.PI / 2)
+										.build()
 						)
 				));
 				break;
