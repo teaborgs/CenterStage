@@ -153,8 +153,8 @@ public final class LucaTeleOp extends BaseOpMode
 		Vector2d wheelVel = new Vector2d(
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier,
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier
-		).times(turbo ? 1.0 : suppress ? 0.3 : 0.6);
-		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle * modifier));
+		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
+		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle));
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
