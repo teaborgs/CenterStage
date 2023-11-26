@@ -67,7 +67,7 @@ public class Constants
 				instance.robotConstants.put("planeLevelerIdle", 0d);
 				instance.robotConstants.put("planeLevelerBusy", 0.5d);
 				instance.robotConstants.put("planeShooterIdle", 0.4d);
-				instance.robotConstants.put("planeShooterBusy", 0.5d);
+				instance.robotConstants.put("planeShooterBusy", 0.6d);
 				instance.robotConstants.put("intakeMaxPower", 0.8d);
 				instance.robotConstants.put("liftNormalPower", 0.8d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);

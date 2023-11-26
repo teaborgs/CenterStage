@@ -11,7 +11,6 @@ import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -23,10 +22,8 @@ import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
 
-import java.security.spec.EncodedKeySpec;
-
-@TeleOp(name = "Luca TeleOp", group = "TeleOp")
-public final class LucaTeleOp extends BaseOpMode
+@TeleOp(name = "Alex TeleOp", group = "TeleOp")
+public final class AlexTeleOp extends BaseOpMode
 {
 	// Wheel motors
 	private MecanumDrive mecanumDrive;
@@ -53,8 +50,8 @@ public final class LucaTeleOp extends BaseOpMode
 	{
 		private final static class Wheel
 		{
-			private static final InputSystem.Key SUPPRESS_HARD_KEY = new InputSystem.Key("left_bumper");
-			private static final InputSystem.Key SUPPRESS_SOFT_KEY = new InputSystem.Key("right_bumper");
+			private static final InputSystem.Key TURBO_KEY = new InputSystem.Key("right_bumper");
+			private static final InputSystem.Key SUPPRESS_KEY = new InputSystem.Key("left_bumper");
 			private static final InputSystem.Axis DRIVE_AXIS_X = new InputSystem.Axis("left_stick_x");
 			private static final InputSystem.Axis DRIVE_AXIS_Y = new InputSystem.Axis("left_stick_y");
 			private static final InputSystem.Axis ROTATE_AXIS_L = new InputSystem.Axis("left_trigger");
@@ -126,7 +123,6 @@ public final class LucaTeleOp extends BaseOpMode
 		armInput = new InputSystem(gamepad2);
 
 		telemetry.setMsTransmissionInterval(50);
-		Telemetry();
 	}
 
 	@Override
@@ -146,14 +142,14 @@ public final class LucaTeleOp extends BaseOpMode
 	// ================ Wheels ================
 	private void Wheels()
 	{
-		boolean suppressHard = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_HARD_KEY);
-		boolean suppressSoft = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_SOFT_KEY);
+		boolean turbo = wheelInput.isPressed(Bindings.Wheel.TURBO_KEY);
+		boolean suppress = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_KEY);
 		int modifier = INVERTED ? -1 : 1;
-		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * (suppressHard ? 0.03 : suppressSoft ? 0.08 : 0.1);
+		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier,
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier
-		).times(suppressHard ? 0.3 : suppressSoft ? 0.8 : 1);
+		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle));
 	}
 
