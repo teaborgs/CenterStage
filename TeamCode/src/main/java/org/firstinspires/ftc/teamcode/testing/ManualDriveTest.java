@@ -111,7 +111,7 @@ public final class ManualDriveTest extends BaseOpMode
 			motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		});
 		liftMotors.get(0).setDirection(DcMotorEx.Direction.REVERSE);
-		liftMotors.get(1).setDirection(DcMotorEx.Direction.REVERSE);
+		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_2) liftMotors.get(1).setDirection(DcMotorEx.Direction.REVERSE);
 
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

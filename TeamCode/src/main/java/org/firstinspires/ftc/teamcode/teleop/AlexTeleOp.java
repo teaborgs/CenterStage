@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -46,6 +47,8 @@ public final class AlexTeleOp extends BaseOpMode
 	private boolean INVERTED = false;
 	private boolean DEBUG = false;
 
+	private Utilities.RobotType currentRobot = Utilities.RobotType.ROBOT_1;
+
 	private final static class Bindings
 	{
 		private final static class Wheel
@@ -79,9 +82,10 @@ public final class AlexTeleOp extends BaseOpMode
 	protected void OnInitialize()
 	{
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-		Constants.Init(GetCurrentRobotType(hardwareMap));
+		currentRobot = GetCurrentRobotType(hardwareMap);
+		Constants.Init(currentRobot);
 		DEBUG = IsDebugging(hardwareMap);
-		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_2) INVERTED = !INVERTED;
+		if(currentRobot == Utilities.RobotType.ROBOT_2) INVERTED = !INVERTED;
 
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -103,7 +107,7 @@ public final class AlexTeleOp extends BaseOpMode
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+		if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -315,10 +319,12 @@ public final class AlexTeleOp extends BaseOpMode
 	private void Suspender()
 	{
 		// Locker
-		if (robotSuspended && liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE) {
-			setTimeout(() -> {
-				lockerServo.setPosition(Constants.getLockerBusy());
-			}, 500);
+		if (currentRobot == Utilities.RobotType.ROBOT_2) {
+			if (robotSuspended && liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE) {
+				setTimeout(() -> {
+					lockerServo.setPosition(Constants.getLockerBusy());
+				}, 500);
+			}
 		}
 
 		// Lift
@@ -334,8 +340,15 @@ public final class AlexTeleOp extends BaseOpMode
 				liftMotor2.setTargetPosition(getSuspenderSuspend());
 				liftMotor1.setTargetPosition(Constants.getSuspenderSuspend());
 			} else if (liftMotor1.getCurrentPosition() >= Constants.getSuspenderSuspend() - TOLERANCE && liftMotor2.getCurrentPosition() >= Constants.getSuspenderSuspend() - TOLERANCE) {
-				liftMotor2.setTargetPosition(Constants.getSuspenderLock());
-				liftMotor1.setTargetPosition(Constants.getSuspenderLock());
+				if(currentRobot == Utilities.RobotType.ROBOT_1) {
+					liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+					liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+					liftMotor2.setTargetPosition(Constants.getSuspenderSuspend() - 800);
+					liftMotor1.setTargetPosition(Constants.getSuspenderSuspend() - 800);
+				} else {
+					liftMotor2.setTargetPosition(Constants.getSuspenderLock());
+					liftMotor1.setTargetPosition(Constants.getSuspenderLock());
+				}
 				CutPower(mecanumDrive.leftBack, mecanumDrive.leftFront, mecanumDrive.rightBack, mecanumDrive.rightFront); // Cut power to the wheels as it's not needed
 				robotSuspended = true;
 			}
