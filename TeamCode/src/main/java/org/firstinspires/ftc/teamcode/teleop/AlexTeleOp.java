@@ -188,9 +188,9 @@ public final class AlexTeleOp extends BaseOpMode
 			liftMotor2.setPower(0.05);
 
 		if (Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE / 2)
-			tumblerMotor.setPower(0.8);
+			tumblerMotor.setPower(1);
 		else
-			tumblerMotor.setPower(0);
+			tumblerMotor.setPower(0.05);
 	}
 
 	// ================ Arm ================
@@ -199,10 +199,15 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void Leveler()
 	{
+		int initialLevel = liftLevel;
 		if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_1_KEY)) liftLevel = 1;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_2_KEY)) liftLevel = 2;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_3_KEY)) liftLevel = 3;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 4;
+		if(initialLevel != liftLevel && armState == Utilities.State.BUSY) {
+			liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
+			liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
+		}
 	}
 
 	private Utilities.State armState = Utilities.State.IDLE;
@@ -243,7 +248,7 @@ public final class AlexTeleOp extends BaseOpMode
 						armState = Utilities.State.IDLE;
 						armBusy = false;
 					}, 500);
-				}, 500);
+				}, 750);
 			} else { // Pickup Pixel and go to Backdrop
 				if (pickupMode == Utilities.PickupMode.INTAKE) {
 					armBusy = true;
@@ -251,8 +256,8 @@ public final class AlexTeleOp extends BaseOpMode
 					setTimeout(() -> {
 						clawServo.setPosition(Constants.getClawBusy());
 						setTimeout(() -> {
-							liftMotor1.setTargetPosition(liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4());
-							liftMotor2.setTargetPosition(liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4());
+							liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
+							liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
 							tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
 							setTimeout(() -> {
 								rotatorServo.setPosition(Constants.getRotatorBusy());
@@ -285,8 +290,8 @@ public final class AlexTeleOp extends BaseOpMode
 						}, 300);
 					} else if (!atLevel) {
 						armBusy = true;
-						liftMotor1.setTargetPosition(liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4());
-						liftMotor2.setTargetPosition(liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4());
+						liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
+						liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
 						armBusy = false;
 						waitingSecondInstruction = false;
 						armState = Utilities.State.BUSY;
@@ -402,5 +407,10 @@ public final class AlexTeleOp extends BaseOpMode
 		}
 
 		telemetry.update();
+	}
+
+	private int LiftLevelToValue(int level)
+	{
+		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4();
 	}
 }
