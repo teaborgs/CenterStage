@@ -10,7 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
+
 
 public final class ClawSystem extends SystemEx
 {
@@ -50,5 +52,14 @@ public final class ClawSystem extends SystemEx
 				},
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
+	}
+
+	public Action ReleaseAtRest(MecanumDrive mecanumDrive)
+	{
+		return telemetryPacket -> {
+			while (mecanumDrive.updatePoseEstimate().linearVel.x != 0 || mecanumDrive.updatePoseEstimate().linearVel.y != 0);
+			servo.setPosition(Constants.getClawIdle());
+			return false;
+		};
 	}
 }

@@ -108,7 +108,8 @@ public class AutoBoss extends LinearOpMode
 	private void Run()
 	{
 		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
-		switch (detectionPipeline.getDetectionCase()) {
+		switch (detectionPipeline.getDetectionCase())
+		{
 			case LEFT:
 				Actions.runBlocking(RunSequentially(
 						// Place purple
@@ -119,7 +120,8 @@ public class AutoBoss extends LinearOpMode
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.BOTH),
+						clawSystem.ReleaseAtRest(mecanumDrive),
+						WaitFor(0.2),
 
 						// Place yellow
 						RunInParallel(
@@ -135,9 +137,8 @@ public class AutoBoss extends LinearOpMode
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.8),
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 1)
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.25, Utilities.DelayDirection.BOTH),
-						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerIdle(), 0.5),
-						WaitFor(0.2),
+						clawSystem.ReleaseAtRest(mecanumDrive),
+						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5, Utilities.DelayDirection.BOTH),
 
 						// Reset positions and Park
 						RunInParallel(
@@ -150,6 +151,7 @@ public class AutoBoss extends LinearOpMode
 				));
 				break;
 
+			// =========================================================================================================================================
 
 			case CENTER:
 				Actions.runBlocking(RunSequentially(
@@ -161,7 +163,8 @@ public class AutoBoss extends LinearOpMode
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.BOTH),
+						clawSystem.ReleaseAtRest(mecanumDrive),
+						WaitFor(0.2),
 
 						// Place yellow
 						RunInParallel(
@@ -177,9 +180,8 @@ public class AutoBoss extends LinearOpMode
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.25, Utilities.DelayDirection.BOTH),
-						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerIdle(), 0.5),
-						WaitFor(0.2),
+						clawSystem.ReleaseAtRest(mecanumDrive),
+						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5, Utilities.DelayDirection.BOTH),
 
 						// Reset positions and Park
 						RunInParallel(
@@ -192,6 +194,8 @@ public class AutoBoss extends LinearOpMode
 				));
 				break;
 
+			// =========================================================================================================================================
+
 			case RIGHT:
 				Actions.runBlocking(RunSequentially(
 								// Place purple
@@ -202,7 +206,8 @@ public class AutoBoss extends LinearOpMode
 										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.BOTH),
+								clawSystem.ReleaseAtRest(mecanumDrive),
+								WaitFor(0.2),
 
 								// Place yellow
 								RunInParallel(
@@ -218,9 +223,8 @@ public class AutoBoss extends LinearOpMode
 										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
 										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
 								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.25, Utilities.DelayDirection.BOTH),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-								WaitFor(0.2),
+								clawSystem.ReleaseAtRest(mecanumDrive),
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5, Utilities.DelayDirection.BOTH),
 
 								// Reset positions and Park
 								RunInParallel(
@@ -232,12 +236,12 @@ public class AutoBoss extends LinearOpMode
 								)
 						)
 				);
-
 				break;
 
 			case NONE:
 				telemetry.addLine("Invalid case! (NONE)");
 				telemetry.update();
+				break;
 		}
 	}
 }
