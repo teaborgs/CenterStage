@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -52,7 +53,6 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 		Imgproc.morphologyEx(sphereMask, sphereMask, Imgproc.MORPH_OPEN, kernel);
 		Imgproc.morphologyEx(sphereMask, sphereMask, Imgproc.MORPH_CLOSE, kernel);
 
-
 		// Find contours
 		List<MatOfPoint> contours = new ArrayList<>();
 		Imgproc.findContours(sphereMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -79,7 +79,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 			detectionCase = Utilities.DetectionCase.CENTER;
 		else detectionCase = Utilities.DetectionCase.RIGHT;
 
-		return input;
+		return sphereMask;
 	}
 
 	public void setDebug(boolean debug)
@@ -87,5 +87,8 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 		this.debug = debug;
 	}
 
-	public Utilities.DetectionCase getDetectionCase() { return detectionCase; }
+	public Utilities.DetectionCase getDetectionCase()
+	{
+		return detectionCase;
+	}
 }

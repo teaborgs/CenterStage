@@ -95,11 +95,11 @@ public class Constants
 	{
 		public static class TeamProp
 		{
-			public static final double PROP_SIZE = 3000;
+			public static final double PROP_SIZE = 0;
 			public static final Scalar RED_LOWER = new Scalar(0, 100, 100);
 			public static final Scalar RED_UPPER = new Scalar(10, 255, 255);
-			public static final Scalar BLUE_LOWER = new Scalar(100, 100, 100);
-			public static final Scalar BLUE_UPPER = new Scalar(140, 255, 255);
+			public static final Scalar BLUE_LOWER = new Scalar(10, 100, 100);
+			public static final Scalar BLUE_UPPER = new Scalar(110, 255, 255);
 		}
 
 		public static class AprilTag
