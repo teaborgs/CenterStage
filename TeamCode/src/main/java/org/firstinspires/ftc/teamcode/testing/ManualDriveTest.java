@@ -96,8 +96,8 @@ public final class ManualDriveTest extends BaseOpMode
 	@Override
 	protected void OnInitialize()
 	{
-		Constants.Init(GetCurrentRobotType(hardwareMap));
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+		Constants.Init(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
+		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Utilities.GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
 
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -111,11 +111,11 @@ public final class ManualDriveTest extends BaseOpMode
 			motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		});
 		liftMotors.get(0).setDirection(DcMotorEx.Direction.REVERSE);
-		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_2) liftMotors.get(1).setDirection(DcMotorEx.Direction.REVERSE);
+		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_2) liftMotors.get(1).setDirection(DcMotorEx.Direction.REVERSE);
 
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_1)tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_1)tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(0);

@@ -5,9 +5,11 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 
 public class Utilities
@@ -29,21 +31,34 @@ public class Utilities
 		return centimeters / 2.54;
 	}
 
-	public static RobotType GetCurrentRobotType(HardwareMap hardwareMap)
+	private static RobotType robotType = null;
+
+	public static RobotType GetCurrentRobotType(HardwareMap hardwareMap, Telemetry telemetry, Gamepad... gamepads)
 	{
-		try {
-			if (hardwareMap.get("robot1") != null) return RobotType.ROBOT_1;
-			else if (hardwareMap.get("robot2") != null) return RobotType.ROBOT_2;
-			else throw new RuntimeException("No robot detected");
-		} catch (Exception e) {
-			try {
-				if (hardwareMap.get("robot2") != null) return RobotType.ROBOT_2;
-				else if (hardwareMap.get("robot1") != null) return RobotType.ROBOT_1;
-				else throw new RuntimeException("No robot detected");
-			} catch (Exception e2) {
-				throw new RuntimeException("No robot detected");
+		if (robotType != null) return robotType;
+		if (hardwareMap.get("robot1") != null) robotType = RobotType.ROBOT_1;
+		else if (hardwareMap.get("robot2") != null) robotType = RobotType.ROBOT_2;
+		else {
+			if(telemetry == null) throw new Error("This mode requires the robot to be specified in the config!");
+			telemetry.addLine("Please select a robot");
+			telemetry.addLine("Press A for Robot 1");
+			telemetry.addLine("Press B for Robot 2");
+			telemetry.update();
+			robotType = WaitForRobotSelection(gamepads);
+		}
+		return robotType;
+	}
+
+	public static Utilities.RobotType WaitForRobotSelection(Gamepad... gamepads)
+	{
+		Utilities.RobotType robotType = null;
+		while (robotType == null) {
+			for (Gamepad gamepad : gamepads) {
+				if (gamepad.a) robotType = Utilities.RobotType.ROBOT_1;
+				else if (gamepad.b) robotType = Utilities.RobotType.ROBOT_2;
 			}
 		}
+		return robotType;
 	}
 
 	public static boolean IsDebugging(HardwareMap hardwareMap)
@@ -156,6 +171,11 @@ public class Utilities
 	public enum DetectionCase
 	{
 		NONE, LEFT, CENTER, RIGHT
+	}
+
+	public enum Alliance
+	{
+		BLUE, RED
 	}
 
 	public enum RobotType

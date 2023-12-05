@@ -161,10 +161,10 @@ public class MecanumDrive
 		}
 	}
 
-	public MecanumDrive(HardwareMap hardwareMap, Pose2d pose)
+	public MecanumDrive(HardwareMap hardwareMap, Pose2d pose, Utilities.RobotType robotType)
 	{
 		this.pose = pose;
-		SetupRobot(GetCurrentRobotType(hardwareMap));
+		SetupRobot(robotType);
 		kinematics  = new MecanumKinematics(params.get("inPerTick") * params.get("trackWidthTicks"), params.get("inPerTick") / params.get("lateralInPerTick"));
 		defaultTurnConstraints = new TurnConstraints(params.get("maxAngVel"), -params.get("maxAngAccel"), params.get("maxAngAccel"));
 		defaultVelConstraint = new MinVelConstraint(Arrays.asList(
@@ -210,7 +210,7 @@ public class MecanumDrive
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-		if(GetCurrentRobotType(hardwareMap) == Utilities.RobotType.ROBOT_1) localizer = new ThreeDeadWheelLocalizer(hardwareMap, params.get("inPerTick"));
+		if(robotType == Utilities.RobotType.ROBOT_1) localizer = new ThreeDeadWheelLocalizer(hardwareMap, params.get("inPerTick"));
 		else localizer = new TwoDeadWheelLocalizer(hardwareMap, imu, params.get("inPerTick"));
 
 //		FlightRecorder.write("MECANUM_PARAMS", params);

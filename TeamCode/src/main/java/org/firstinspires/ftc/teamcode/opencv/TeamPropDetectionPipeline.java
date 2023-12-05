@@ -79,7 +79,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 			detectionCase = Utilities.DetectionCase.CENTER;
 		else detectionCase = Utilities.DetectionCase.RIGHT;
 
-		return sphereMask;
+		return input;
 	}
 
 	public void setDebug(boolean debug)

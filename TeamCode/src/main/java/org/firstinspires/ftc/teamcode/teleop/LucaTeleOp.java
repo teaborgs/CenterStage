@@ -84,8 +84,8 @@ public final class LucaTeleOp extends BaseOpMode
 	@Override
 	protected void OnInitialize()
 	{
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-		currentRobot = GetCurrentRobotType(hardwareMap);
+		currentRobot = GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2);
+		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), currentRobot);
 		Constants.Init(currentRobot);
 		DEBUG = IsDebugging(hardwareMap);
 		if(currentRobot == Utilities.RobotType.ROBOT_2) INVERTED = !INVERTED;

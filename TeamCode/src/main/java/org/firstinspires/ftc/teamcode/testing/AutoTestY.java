@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Utilities;
 
 /*
  * Move 1 meter on the Y axis
@@ -25,7 +26,7 @@ public class AutoTestY extends LinearOpMode
 
 	private void Init()
 	{
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Utilities.GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
 	}
 
 	private void Run()
