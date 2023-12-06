@@ -39,7 +39,8 @@ public class Utilities
 		if (hardwareMap.get("robot1") != null) robotType = RobotType.ROBOT_1;
 		else if (hardwareMap.get("robot2") != null) robotType = RobotType.ROBOT_2;
 		else {
-			if(telemetry == null) throw new Error("This mode requires the robot to be specified in the config!");
+			if (telemetry == null)
+				throw new Error("This mode requires the robot to be specified in the config!");
 			telemetry.addLine("Please select a robot");
 			telemetry.addLine("Press A for Robot 1");
 			telemetry.addLine("Press B for Robot 2");
@@ -182,5 +183,10 @@ public class Utilities
 	{
 		ROBOT_1,
 		ROBOT_2
+	}
+
+	public enum PathType
+	{
+		SHORT, LONG
 	}
 }

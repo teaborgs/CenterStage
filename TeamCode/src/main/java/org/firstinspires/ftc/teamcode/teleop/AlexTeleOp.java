@@ -61,7 +61,6 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Axis ROTATE_AXIS_R = new InputSystem.Axis("right_trigger");
 			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
-			private static final InputSystem.Key TOGGLE_PICKUP_MODE_KEY = new InputSystem.Key("x");
 		}
 
 		private final static class Arm
@@ -75,6 +74,11 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key LEVEL_2_KEY = new InputSystem.Key("dpad_up");
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
 			private static final InputSystem.Key LEVEL_4_KEY = new InputSystem.Key("dpad_right");
+			private static final InputSystem.Key RESET_MODE_KEY = new InputSystem.Key("y");
+			private static final InputSystem.Axis RESET_AXIS = new InputSystem.Axis("left_stick_y");
+			private static final InputSystem.Key RESET_CONFIRM = new InputSystem.Key("b");
+			private static final InputSystem.Key RESET_STACK = new InputSystem.Key("start");
+			private static final InputSystem.Key TOGGLE_PICKUP_KEY = new InputSystem.Key("back");
 		}
 	}
 
@@ -137,10 +141,12 @@ public final class AlexTeleOp extends BaseOpMode
 		Suspender();
 		if (!robotSuspended) Wheels();
 		if (suspending) return;
+		ManualReset();
 		Leveler();
 		Pickup();
 		Arm();
 		Plane();
+		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_STACK)) stackLevel = 5;
 	}
 
 	// ================ Wheels ================
@@ -161,7 +167,7 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void Pickup()
 	{
-		if (wheelInput.wasPressedThisFrame(Bindings.Wheel.TOGGLE_PICKUP_MODE_KEY)) {
+		if (armInput.wasPressedThisFrame(Bindings.Arm.TOGGLE_PICKUP_KEY)) {
 			pickupMode = pickupMode == Utilities.PickupMode.INTAKE ? Utilities.PickupMode.STACK : Utilities.PickupMode.INTAKE;
 			if (pickupMode == Utilities.PickupMode.STACK) intakeMotor.setMotorDisable();
 			else intakeMotor.setMotorEnable();
@@ -187,6 +193,7 @@ public final class AlexTeleOp extends BaseOpMode
 		else
 			liftMotor2.setPower(0.05);
 
+		if(inResetMode) return;
 		if (Math.abs(tumblerMotor.getCurrentPosition() - tumblerMotor.getTargetPosition()) > TOLERANCE / 2)
 			tumblerMotor.setPower(1);
 		else
@@ -207,6 +214,25 @@ public final class AlexTeleOp extends BaseOpMode
 		if(initialLevel != liftLevel && armState == Utilities.State.BUSY) {
 			liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
 			liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
+		}
+	}
+
+	private boolean inResetMode = false;
+	private void ManualReset()
+	{
+		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
+		if(!inResetMode) return;
+		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_CONFIRM)) {
+			tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+			tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+			if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+			tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+			tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+			inResetMode = false;
+		} else {
+			tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+			tumblerMotor.setPower(armInput.getValue(Bindings.Arm.RESET_AXIS));
 		}
 	}
 
@@ -271,7 +297,7 @@ public final class AlexTeleOp extends BaseOpMode
 						armBusy = true;
 						rotatorServo.setPosition(Constants.getRotatorBusy());
 						setTimeout(() -> {
-							tumblerMotor.setTargetPosition(Constants.getTumblerStackPoses()[stackLevel - 1] - 80);
+							tumblerMotor.setTargetPosition(Constants.getTumblerStackPoses()[stackLevel - 1] - 100);
 							atLevel = true;
 							armBusy = false;
 						}, 100);
@@ -365,7 +391,16 @@ public final class AlexTeleOp extends BaseOpMode
 		// Warn the user if the robot is out of bounds
 		if (stackLevel == 0 && pickupMode == Utilities.PickupMode.STACK) {
 			telemetry.clearAll();
-			telemetry.addLine("[WARN] Robot is out of bounds. Please change pickup mode!");
+			telemetry.addLine("[WARN] Robot is out of bounds. Please change pickup mode or reset by pressing start!");
+			telemetry.update();
+			return;
+		}
+
+		// Warn the user when in manual override mode
+		if(inResetMode)
+		{
+			telemetry.clearAll();
+			telemetry.addLine("[WARN] Robot is in manual override mode. To exit press Y, to save changes press B");
 			telemetry.update();
 			return;
 		}
