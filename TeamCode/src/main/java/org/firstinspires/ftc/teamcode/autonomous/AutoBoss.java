@@ -255,7 +255,8 @@ public class AutoBoss extends LinearOpMode
 	private void RunRedShort()
 	{
 		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
-		switch (detectionPipeline.getDetectionCase()) {
+		switch (detectionPipeline.getDetectionCase())
+		{
 			case LEFT:
 				Actions.runBlocking(RunSequentially(
 						// Place purple
@@ -383,42 +384,50 @@ public class AutoBoss extends LinearOpMode
 	public void RunRedLong()
 	{
 		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
-		switch (detectionPipeline.getDetectionCase()) {
+		switch (detectionPipeline.getDetectionCase())
+		{
 			case RIGHT:
 				Actions.runBlocking(RunSequentially(
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-										.lineToXSplineHeading(-centimetersToInches(70), Math.PI / 2)
+										.splineToSplineHeading(new Pose2d(-centimetersToInches(65), -centimetersToInches(5), -Math.PI / 2), 0)
 										.build(),
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 						),
 						clawSystem.ReleaseAtRest(mecanumDrive),
 						WaitFor(0.2),
+
 						// Place yellow
 						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(70), centimetersToInches(5), Math.PI / 2))
-										.splineToSplineHeading(new Pose2d(-centimetersToInches(80), centimetersToInches(100), -Math.PI / 2), Math.PI / 2)
+								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(65), -centimetersToInches(5), -Math.PI / 2))
+										.setTangent(0)
+										.lineToX(-centimetersToInches(125))
+										.setTangent(Math.PI / 2)
+										.lineToY(centimetersToInches(160))
+										.splineToConstantHeading(new Vector2d(-centimetersToInches(54), centimetersToInches(223)), Math.PI / 2)
 										.build(),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-								intakeSystem.RunIntakeFor(1)
+								intakeSystem.RunIntakeFor(1),
+								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
+								tumblerSystem.MoveToPosition(Constants.getTumblerLoad())
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER),
 						RunInParallel(
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.8),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 1)
+								tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.7)
 						),
 						clawSystem.ReleaseAtRest(mecanumDrive),
-						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5, Utilities.DelayDirection.BOTH),
+						WaitFor(0.5),
+
 						// Reset positions and Park
 						RunInParallel(
+								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(54), centimetersToInches(223), -Math.PI / 2))
+										.splineToConstantHeading(new Vector2d(-centimetersToInches(120), centimetersToInches(200)), -Math.PI / 2)
+										.build(),
 								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(80), centimetersToInches(100), -Math.PI / 2))
-										.splineToConstantHeading(new Vector2d(-centimetersToInches(120), centimetersToInches(80)), -Math.PI / 2)
-										.build()
+								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
+								clawSystem.MoveToPosition(Constants.getClawIdle())
 						)
 				));
 				break;
@@ -428,36 +437,40 @@ public class AutoBoss extends LinearOpMode
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-										.splineToConstantHeading(new Vector2d(-centimetersToInches(60), centimetersToInches(10)), 0)
+										.lineToXSplineHeading(-centimetersToInches(130), -Math.PI)
 										.build(),
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 						),
 						clawSystem.ReleaseAtRest(mecanumDrive),
 						WaitFor(0.2),
+
 						// Place yellow
 						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(60), centimetersToInches(10), 0))
-										.splineToLinearHeading(new Pose2d(-centimetersToInches(65), centimetersToInches(100), -Math.PI / 2), Math.PI / 2)
+								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(130), 0, Math.PI))
+										.splineToSplineHeading(new Pose2d(-centimetersToInches(130), centimetersToInches(160), -Math.PI / 2), Math.PI / 2)
+										.splineToConstantHeading(new Vector2d(-centimetersToInches(55), centimetersToInches(223)), Math.PI / 2)
 										.build(),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-								intakeSystem.RunIntakeFor(1)
+								intakeSystem.RunIntakeFor(1),
+								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
+								tumblerSystem.MoveToPosition(Constants.getTumblerLoad())
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER),
 						RunInParallel(
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
+								tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.7)
 						),
 						clawSystem.ReleaseAtRest(mecanumDrive),
-						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5, Utilities.DelayDirection.BOTH),
+						WaitFor(0.5),
+
 						// Reset positions and Park
 						RunInParallel(
+								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(55), centimetersToInches(223), -Math.PI / 2))
+										.splineToConstantHeading(new Vector2d(-centimetersToInches(120), centimetersToInches(200)), -Math.PI / 2)
+										.build(),
 								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-								mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(65), centimetersToInches(100), -Math.PI / 2))
-										.splineToConstantHeading(new Vector2d(-centimetersToInches(120), centimetersToInches(80)), -Math.PI / 2)
-										.build()
+								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
+								clawSystem.MoveToPosition(Constants.getClawIdle())
 						)
 				));
 				break;
@@ -467,40 +480,23 @@ public class AutoBoss extends LinearOpMode
 								// Place purple
 								RunInParallel(
 										mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-												.splineToLinearHeading(new Pose2d(-centimetersToInches(90), -centimetersToInches(60), -Math.PI / 2), Math.PI)
+												.splineToLinearHeading(new Pose2d(-centimetersToInches(90), centimetersToInches(5), Math.PI / 2), Math.PI)
 												.build(),
 										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 								),
 								clawSystem.ReleaseAtRest(mecanumDrive),
-								WaitFor(0.2),
+								WaitFor(0.2)
 								// Place yellow
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(90), -centimetersToInches(60), -Math.PI / 2))
-												.splineToSplineHeading(new Pose2d(-centimetersToInches(40), centimetersToInches(100), -Math.PI / 2), Math.PI / 2)
-												.build(),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-										intakeSystem.RunIntakeFor(1)
-								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
-								RunInParallel(
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
-								),
-								clawSystem.ReleaseAtRest(mecanumDrive),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5, Utilities.DelayDirection.BOTH),
+
+
 								// Reset positions and Park
-								RunInParallel(
-										rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-										mecanumDrive.actionBuilder(new Pose2d(-centimetersToInches(40), centimetersToInches(100), -Math.PI / 2))
-												.splineToConstantHeading(new Vector2d(-centimetersToInches(120), centimetersToInches(80)), -Math.PI / 2)
-												.build()
-								)
+
+
 						)
 				);
 				break;
+
 			case NONE:
 				telemetry.addLine("Invalid case! (NONE)");
 				telemetry.update();
@@ -515,9 +511,11 @@ public class AutoBoss extends LinearOpMode
 
 	private void Run()
 	{
-		switch (currentAlliance) {
+		switch (currentAlliance)
+		{
 			case RED:
-				switch (currentPath) {
+				switch (currentPath)
+				{
 					case SHORT:
 						RunRedShort();
 						break;
@@ -527,7 +525,8 @@ public class AutoBoss extends LinearOpMode
 				}
 				break;
 			case BLUE:
-				switch (currentPath) {
+				switch (currentPath)
+				{
 					case SHORT:
 						RunBlueShort();
 						break;
