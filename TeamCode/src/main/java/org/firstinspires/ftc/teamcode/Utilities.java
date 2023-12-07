@@ -36,9 +36,16 @@ public class Utilities
 	public static RobotType GetCurrentRobotType(HardwareMap hardwareMap, Telemetry telemetry, Gamepad... gamepads)
 	{
 		if (robotType != null) return robotType;
-		if (hardwareMap.get("robot1") != null) robotType = RobotType.ROBOT_1;
-		else if (hardwareMap.get("robot2") != null) robotType = RobotType.ROBOT_2;
-		else {
+		try {
+			if (hardwareMap.get("robot1") != null) robotType = RobotType.ROBOT_1;
+		} catch (Exception e) {
+			try {
+				if (hardwareMap.get("robot2") != null) robotType = RobotType.ROBOT_2;
+			} catch (Exception e2) {
+				robotType = null;
+			}
+		}
+		if(robotType == null) {
 			if (telemetry == null)
 				throw new Error("This mode requires the robot to be specified in the config!");
 			telemetry.addLine("Please select a robot");
