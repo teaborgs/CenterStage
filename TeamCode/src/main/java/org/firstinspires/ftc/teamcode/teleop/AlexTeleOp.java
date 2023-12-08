@@ -158,7 +158,7 @@ public final class AlexTeleOp extends BaseOpMode
 		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier,
-				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier
+				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1)
 		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle));
 	}

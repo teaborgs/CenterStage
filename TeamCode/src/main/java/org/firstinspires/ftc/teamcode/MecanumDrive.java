@@ -474,8 +474,8 @@ public class MecanumDrive
 				params.put("kS", 1.039794550189749);
 				params.put("kV", 1.030009400753333e-4);
 				params.put("kA", 0.00001);
-				params.put("maxWheelVel", 40d);
-				params.put("minProfileAccel", -40d);
+				params.put("maxWheelVel", 50d);
+				params.put("minProfileAccel", -30d);
 				params.put("maxProfileAccel", 40d);
 				params.put("maxAngVel", Math.PI);
 				params.put("maxAngAccel", Math.PI);

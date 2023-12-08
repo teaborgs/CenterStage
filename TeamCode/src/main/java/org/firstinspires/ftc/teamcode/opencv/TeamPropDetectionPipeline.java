@@ -29,7 +29,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 	private final Mat hierarchy = new Mat();
 	private final List<Rect> boundingBoxes = new ArrayList<>();
 
-	private Utilities.DetectionCase detectionCase = Utilities.DetectionCase.NONE;
+	private Utilities.DetectionCase detectionCase = Utilities.DetectionCase.LEFT;
 
 	@SuppressLint("DefaultLocale")
 	@Override
