@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.opencv.core.Scalar;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,8 @@ public class Constants
 
 	public static void Init(Utilities.RobotType robotType)
 	{
-		switch (robotType) {
+		switch (robotType)
+		{
 			case ROBOT_1:
 				instance.robotConstants.clear();
 				instance.robotConstants.put("tumblerLoad", 0);
@@ -43,6 +43,7 @@ public class Constants
 				instance.robotConstants.put("liftNormalPower", 1.0d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
 				break;
+
 			case ROBOT_2:
 				instance.robotConstants.clear();
 				instance.robotConstants.put("tumblerLoad", 0);
@@ -132,130 +133,30 @@ public class Constants
 		}
 	}
 
-	public static int getTumblerLoad()
-	{
-		return (int) instance.robotConstants.get("tumblerLoad");
-	}
-
-	public static int getTumblerIdle()
-	{
-		return (int) instance.robotConstants.get("tumblerIdle");
-	}
-
-	public static int getTumblerBackdrop()
-	{
-		return (int) instance.robotConstants.get("tumblerBackdrop");
-	}
-
-	public static int[] getTumblerStackPoses()
-	{
-		return (int[]) instance.robotConstants.get("tumblerStackPoses");
-	}
-
-	public static int getTumblerSpikeMark()
-	{
-		return (int) instance.robotConstants.get("tumblerSpikeMark");
-	}
-
-	public static int getLiftPickup()
-	{
-		return (int) instance.robotConstants.get("liftPickup");
-	}
-
-	public static int getLiftLevel1()
-	{
-		return (int) instance.robotConstants.get("liftLevel1");
-	}
-
-	public static int getLiftLevel2()
-	{
-		return (int) instance.robotConstants.get("liftLevel2");
-	}
-
-	public static int getLiftLevel3()
-	{
-		return (int) instance.robotConstants.get("liftLevel3");
-	}
-
-	public static int getLiftLevel4()
-	{
-		return (int) instance.robotConstants.get("liftLevel4");
-	}
-
-	public static int getSuspenderIdle()
-	{
-		return (int) instance.robotConstants.get("suspenderIdle");
-	}
-
+	public static int getTumblerLoad() { return (int) instance.robotConstants.get("tumblerLoad"); }
+	public static int getTumblerIdle() { return (int) instance.robotConstants.get("tumblerIdle"); }
+	public static int getTumblerBackdrop() { return (int) instance.robotConstants.get("tumblerBackdrop"); }
+	public static int[] getTumblerStackPoses() { return (int[]) instance.robotConstants.get("tumblerStackPoses"); }
+	public static int getTumblerSpikeMark() { return (int) instance.robotConstants.get("tumblerSpikeMark"); }
+	public static int getLiftPickup() {	return (int) instance.robotConstants.get("liftPickup"); }
+	public static int getLiftLevel1() {	return (int) instance.robotConstants.get("liftLevel1");	}
+	public static int getLiftLevel2() { return (int) instance.robotConstants.get("liftLevel2");	}
+	public static int getLiftLevel3() { return (int) instance.robotConstants.get("liftLevel3");	}
+	public static int getLiftLevel4() { return (int) instance.robotConstants.get("liftLevel4"); }
+	public static int getSuspenderIdle() { return (int) instance.robotConstants.get("suspenderIdle"); }
 	public static int getSuspenderSuspend() { return (int) instance.robotConstants.get("suspenderSuspend"); }
-
-	public static int getSuspenderLock()
-	{
-		return (int) instance.robotConstants.get("suspenderLock");
-	}
-
-	public static double getClawIdle()
-	{
-		return (double) instance.robotConstants.get("clawIdle");
-	}
-
-	public static double getClawBusy()
-	{
-		return (double) instance.robotConstants.get("clawBusy");
-	}
-
-	public static double getRotatorIdle()
-	{
-		return (double) instance.robotConstants.get("rotatorIdle");
-	}
-
-	public static double getRotatorBusy()
-	{
-		return (double) instance.robotConstants.get("rotatorBusy");
-	}
-
-	public static double getLockerIdle()
-	{
-		return (double) instance.robotConstants.get("lockerIdle");
-	}
-
-	public static double getLockerBusy()
-	{
-		return (double) instance.robotConstants.get("lockerBusy");
-	}
-
-	public static double getPlaneLevelerIdle()
-	{
-		return (double) instance.robotConstants.get("planeLevelerIdle");
-	}
-
-	public static double getPlaneLevelerBusy()
-	{
-		return (double) instance.robotConstants.get("planeLevelerBusy");
-	}
-
-	public static double getPlaneShooterIdle()
-	{
-		return (double) instance.robotConstants.get("planeShooterIdle");
-	}
-
-	public static double getPlaneShooterBusy()
-	{
-		return (double) instance.robotConstants.get("planeShooterBusy");
-	}
-
-	public static double getIntakeMaxPower()
-	{
-		return (double) instance.robotConstants.get("intakeMaxPower");
-	}
-
-	public static double getLiftNormalPower()
-	{
-		return (double) instance.robotConstants.get("liftNormalPower");
-	}
-
-	public static double getLiftSuspendPower()
-	{
-		return (double) instance.robotConstants.get("liftSuspendPower");
-	}
+	public static int getSuspenderLock() { return (int) instance.robotConstants.get("suspenderLock"); }
+	public static double getClawIdle() { return (double) instance.robotConstants.get("clawIdle"); }
+	public static double getClawBusy() { return (double) instance.robotConstants.get("clawBusy"); }
+	public static double getRotatorIdle() { return (double) instance.robotConstants.get("rotatorIdle"); }
+	public static double getRotatorBusy() { return (double) instance.robotConstants.get("rotatorBusy"); }
+	public static double getLockerIdle() { return (double) instance.robotConstants.get("lockerIdle"); }
+	public static double getLockerBusy() { return (double) instance.robotConstants.get("lockerBusy"); }
+	public static double getPlaneLevelerIdle() { return (double) instance.robotConstants.get("planeLevelerIdle"); }
+	public static double getPlaneLevelerBusy() { return (double) instance.robotConstants.get("planeLevelerBusy"); }
+	public static double getPlaneShooterIdle() { return (double) instance.robotConstants.get("planeShooterIdle"); }
+	public static double getPlaneShooterBusy() { return (double) instance.robotConstants.get("planeShooterBusy"); }
+	public static double getIntakeMaxPower() { return (double) instance.robotConstants.get("intakeMaxPower"); }
+	public static double getLiftNormalPower() {	return (double) instance.robotConstants.get("liftNormalPower"); }
+	public static double getLiftSuspendPower() { return (double) instance.robotConstants.get("liftSuspendPower"); }
 }
