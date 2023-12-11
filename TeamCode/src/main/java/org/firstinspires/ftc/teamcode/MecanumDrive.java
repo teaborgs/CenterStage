@@ -488,14 +488,14 @@ public class MecanumDrive
 				break;
 			case ROBOT_2:
 				params.clear();
-				params.put("inPerTick", 0.0058577592620146); //
-				params.put("lateralInPerTick", 0.0003700523839750763);
-				params.put("trackWidthTicks", 26517.7982337260);
-				params.put("kS", 1.09214133758827);
-				params.put("kV", 0.000102369121350);
+				params.put("inPerTick", 0.0029438815568101); // 26786, 26758, 26697
+				params.put("lateralInPerTick", -0.0018229134651507612); // DUBIOUS!!!1111!!!11!11!!1
+				params.put("trackWidthTicks", -4587.149154167252);
+				params.put("kS", 1.45741682852298); //1.473189456272397, 1.488972102215801, 1.410088927080743
+				params.put("kV", -0.0004179205649249333); //-0.0004183863917338, -0.000414885592430, -0.000420489710611
 				params.put("kA", 0.00001);
-				params.put("maxWheelVel", 40d);
-				params.put("minProfileAccel", -40d);
+				params.put("maxWheelVel", 50d);
+				params.put("minProfileAccel", -30d);
 				params.put("maxProfileAccel", 40d);
 				params.put("maxAngVel", Math.PI);
 				params.put("maxAngAccel", Math.PI);
