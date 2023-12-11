@@ -235,7 +235,9 @@ public class AutoBoss extends LinearOpMode
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
 						),
 						clawSystem.ReleaseAtRest(mecanumDrive),
-						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.25, Utilities.DelayDirection.BOTH),
+						WaitFor(0.2),
+						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
+						WaitFor(0.5),
 
 						// Reset positions and Park
 						RunInParallel(

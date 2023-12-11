@@ -5,10 +5,8 @@ import android.annotation.SuppressLint;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -30,6 +28,12 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 	private final List<Rect> boundingBoxes = new ArrayList<>();
 
 	private Utilities.DetectionCase detectionCase = Utilities.DetectionCase.LEFT;
+	private Utilities.Alliance currentAlliance = null;
+
+	public void setAlliance(Utilities.Alliance alliance)
+	{
+		currentAlliance = alliance;
+	}
 
 	@SuppressLint("DefaultLocale")
 	@Override
@@ -45,7 +49,6 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 		Core.inRange(hsvImage, Constants.Detection.TeamProp.RED_LOWER, Constants.Detection.TeamProp.RED_UPPER, redMask);
 		Core.inRange(hsvImage, Constants.Detection.TeamProp.BLUE_LOWER, Constants.Detection.TeamProp.BLUE_UPPER, blueMask);
 
-		// Combine the red and blue masks
 		Core.addWeighted(redMask, 1.0, blueMask, 1.0, 0.0, sphereMask);
 
 		// Optional: Apply morphological operations to clean up the mask
