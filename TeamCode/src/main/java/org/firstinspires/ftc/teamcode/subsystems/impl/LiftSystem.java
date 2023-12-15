@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
@@ -15,13 +16,13 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 public final class LiftSystem extends SystemEx
 {
 	private final DcMotorEx motor1, motor2;
-	
+
 	public LiftSystem(DcMotorEx motor1, DcMotorEx motor2)
 	{
 		this.motor1 = motor1;
 		this.motor2 = motor2;
 	}
-	
+
 	@Override
 	public void Init()
 	{
@@ -62,7 +63,7 @@ public final class LiftSystem extends SystemEx
 					motor2.setPower(1);
 					return false;
 				},
-				telemetryPacket -> Math.abs(motor1.getCurrentPosition() - motor1.getTargetPosition()) > Constants.TOLERANCE && Math.abs(motor2.getCurrentPosition() - motor2.getTargetPosition()) > Constants.TOLERANCE,
+				telemetryPacket -> Math.abs(motor1.getCurrentPosition() - motor1.getTargetPosition()) > Constants.TOLERANCE || Math.abs(motor2.getCurrentPosition() - motor2.getTargetPosition()) > Constants.TOLERANCE,
 				telemetryPacket -> {
 					motor1.setPower(0.05);
 					motor2.setPower(0.05);
