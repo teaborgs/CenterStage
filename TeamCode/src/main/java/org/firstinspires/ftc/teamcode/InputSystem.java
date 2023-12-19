@@ -13,10 +13,7 @@ public class InputSystem
 	private final Telemetry telemetry;
 	private final HashMap<Key, Boolean> keyStates = new HashMap<>();
 
-	public InputSystem(Gamepad gamepad)
-	{
-		this(gamepad, null);
-	}
+	public InputSystem(Gamepad gamepad) { this(gamepad, null); }
 
 	public InputSystem(Gamepad gamepad, Telemetry telemetry)
 	{
@@ -90,31 +87,19 @@ public class InputSystem
 	{
 		private final String id;
 
-		public Binding(String id)
-		{
-			this.id = id;
-		}
+		public Binding(String id) { this.id = id; }
 
-		public String getId()
-		{
-			return id;
-		}
+		public String getId() { return id; }
 	}
 
 	public static class Key extends Binding
 	{
-		public Key(String id)
-		{
-			super(id);
-		}
+		public Key(String id) { super(id); }
 	}
 
 	public static class Axis extends Binding
 	{
-		public Axis(String id)
-		{
-			super(id);
-		}
+		public Axis(String id) { super(id); }
 	}
 
 	public static class BindingCombo extends Binding
@@ -132,9 +117,6 @@ public class InputSystem
 					throw new IllegalArgumentException("BindingCombo cannot contain BindingCombos");
 		}
 
-		public Binding[] getBindings()
-		{
-			return bindings;
-		}
+		public Binding[] getBindings() { return bindings; }
 	}
 }

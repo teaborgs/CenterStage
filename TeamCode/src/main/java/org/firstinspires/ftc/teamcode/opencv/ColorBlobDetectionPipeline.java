@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opencv;
 
-import static org.firstinspires.ftc.teamcode.Constants.Detection.*;
 import static org.firstinspires.ftc.teamcode.Constants.Detection.Pixels.LOWER_BOUNDS;
 import static org.firstinspires.ftc.teamcode.Constants.Detection.Pixels.MIN_AREA;
 import static org.firstinspires.ftc.teamcode.Constants.Detection.Pixels.UPPER_BOUNDS;
@@ -8,11 +7,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.hsvToRgb;
 
 import android.annotation.SuppressLint;
 
-import androidx.appcompat.widget.AppCompatImageHelper;
-
-import org.firstinspires.ftc.teamcode.testing.ColorBlobDetectionTest;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -66,7 +61,8 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 		contours.clear();
 		Core.inRange(hsv, lower, upper, mask);
 		Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-		for (MatOfPoint contour : contours) {
+		for (MatOfPoint contour : contours)
+		{
 			double contourSize = Imgproc.contourArea(contour);
 			if (contourSize > MIN_AREA) { // Filter by area
 				// Approximate contour shape and check for hexagon-like shape
@@ -83,7 +79,8 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 					// Draw rounded bounding box
 					Imgproc.rectangle(output, rect.tl(), rect.br(), color, 1);
 
-					if (debug) {
+					if (debug)
+					{
 						// Draw label
 						Imgproc.putText(output, "Pixel", new Point(rect.x + rect.width + 5, rect.y + rect.height), Imgproc.FONT_HERSHEY_SIMPLEX, 0.2, color, 1);
 
@@ -108,13 +105,7 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 		}
 	}
 
-	public void setDebug(boolean debug)
-	{
-		this.debug = debug;
-	}
+	public void setDebug(boolean debug) { this.debug = debug; }
 
-	public List<MatOfPoint> getLatestDetections()
-	{
-		return detections;
-	}
+	public List<MatOfPoint> getLatestDetections() { return detections; }
 }

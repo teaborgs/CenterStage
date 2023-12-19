@@ -14,7 +14,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
@@ -332,7 +331,8 @@ public final class RazvanTeleOp extends BaseOpMode
 
 	private void Plane()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched) {
+		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched)
+		{
 			planeLaunched = true;
 			planeLevelServo.setPosition(Constants.getPlaneLevelerBusy());
 			setTimeout(() -> {
@@ -351,13 +351,9 @@ public final class RazvanTeleOp extends BaseOpMode
 	private void Suspender()
 	{
 		// Locker
-		if (currentRobot == Utilities.RobotType.ROBOT_2) {
-			if (robotSuspended && liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE) {
-				setTimeout(() -> {
-					lockerServo.setPosition(Constants.getLockerBusy());
-				}, 500);
-			}
-		}
+		if (currentRobot == Utilities.RobotType.ROBOT_2)
+			if (robotSuspended && liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE)
+				setTimeout(() -> lockerServo.setPosition(Constants.getLockerBusy()), 500);
 
 		// Lift
 		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended) {

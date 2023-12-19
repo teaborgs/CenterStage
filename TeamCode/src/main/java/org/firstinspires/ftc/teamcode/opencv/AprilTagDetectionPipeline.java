@@ -87,13 +87,14 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 	protected void finalize()
 	{
 		// Might be null if createApriltagDetector() threw an exception
-		if (nativeApriltagPtr != 0) {
+		if (nativeApriltagPtr != 0)
+		{
 			// Delete the native context we created in the constructor
 			AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
 			nativeApriltagPtr = 0;
-		} else {
-			System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
 		}
+		else
+			System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
 	}
 
 	@Override
@@ -102,8 +103,10 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 		// Convert to greyscale
 		Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
-		synchronized (decimationSync) {
-			if (needToSetDecimation) {
+		synchronized (decimationSync)
+		{
+			if (needToSetDecimation)
+			{
 				AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation);
 				needToSetDecimation = false;
 			}
@@ -112,13 +115,15 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 		// Run AprilTag
 		detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagSize, fx, fy, cx, cy);
 
-		synchronized (detectionsUpdateSync) {
+		synchronized (detectionsUpdateSync)
+		{
 			detectionsUpdate = detections;
 		}
 
 		// For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
 		// OpenCV because I haven't yet figuRED out how to re-use AprilTag's pose in OpenCV.
-		for (AprilTagDetection detection : detections) {
+		for (AprilTagDetection detection : detections)
+		{
 			Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagSizeX, tagSizeY);
 			drawAxisMarker(input, tagSizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
 			draw3dCubeMarker(input, tagSizeX, tagSizeX, tagSizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
@@ -129,20 +134,19 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 
 	public void setDecimation(float decimation)
 	{
-		synchronized (decimationSync) {
+		synchronized (decimationSync)
+		{
 			this.decimation = decimation;
 			needToSetDecimation = true;
 		}
 	}
 
-	public ArrayList<AprilTagDetection> getLatestDetections()
-	{
-		return detections;
-	}
+	public ArrayList<AprilTagDetection> getLatestDetections() { return detections; }
 
 	public ArrayList<AprilTagDetection> getDetectionsUpdate()
 	{
-		synchronized (detectionsUpdateSync) {
+		synchronized (detectionsUpdateSync)
+		{
 			ArrayList<AprilTagDetection> ret = detectionsUpdate;
 			detectionsUpdate = null;
 			return ret;
@@ -201,13 +205,17 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 		Point[] projectedPoints = matProjectedPoints.toArray();
 
 
-		if (detections.isEmpty()) {
+		if (detections.isEmpty())
+		{
 			// Draw the marker!
 			Imgproc.line(buf, projectedPoints[0], projectedPoints[1], RED, thickness);
 			Imgproc.line(buf, projectedPoints[0], projectedPoints[2], GREEN, thickness);
 			Imgproc.line(buf, projectedPoints[0], projectedPoints[3], BLUE, thickness);
-		} else {
-			for (AprilTagDetection tag : detections) {
+		}
+		else
+		{
+			for (AprilTagDetection tag : detections)
+			{
 				if (tag.id == 1) {
 					Imgproc.line(buf, projectedPoints[0], projectedPoints[1], RED, thickness);
 					Imgproc.line(buf, projectedPoints[0], projectedPoints[2], RED, thickness);
@@ -228,7 +236,6 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 				}
 			}
 		}
-
 
 		Imgproc.circle(buf, projectedPoints[0], thickness, WHITE, -1);
 	}

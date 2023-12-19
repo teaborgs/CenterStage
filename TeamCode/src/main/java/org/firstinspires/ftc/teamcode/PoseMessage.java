@@ -17,4 +17,3 @@ public final class PoseMessage
 		this.heading = pose.heading.log();
 	}
 }
-

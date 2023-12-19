@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems.impl;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
-import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 
 import com.acmerobotics.roadrunner.Action;
@@ -19,15 +18,9 @@ public final class TumblerSystem extends SystemEx
 	private final DcMotorEx motor;
 	private Utilities.RobotType robotType;
 
-	public TumblerSystem(DcMotorEx motor)
-	{
-		this.motor = motor;
-	}
+	public TumblerSystem(DcMotorEx motor) { this.motor = motor; }
 
-	public void setRobotType(Utilities.RobotType robotType)
-	{
-		this.robotType = robotType;
-	}
+	public void setRobotType(Utilities.RobotType robotType) { this.robotType = robotType; }
 
 	@Override
 	public void Init()
@@ -41,16 +34,10 @@ public final class TumblerSystem extends SystemEx
 	}
 
 	@Override
-	public void Disable()
-	{
-		CutPower(motor);
-	}
+	public void Disable() { CutPower(motor); }
 
 	@Override
-	public void Enable()
-	{
-		RestorePower(motor);
-	}
+	public void Enable() { RestorePower(motor); }
 
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)

@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
@@ -40,16 +39,10 @@ public final class LiftSystem extends SystemEx
 	}
 
 	@Override
-	public void Disable()
-	{
-		CutPower(motor1, motor2);
-	}
+	public void Disable() { CutPower(motor1, motor2); }
 
 	@Override
-	public void Enable()
-	{
-		RestorePower(motor1, motor2);
-	}
+	public void Enable() { RestorePower(motor1, motor2); }
 
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)

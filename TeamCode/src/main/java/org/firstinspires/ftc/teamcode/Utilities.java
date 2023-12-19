@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,10 +27,7 @@ public class Utilities
 		}).start();
 	}
 
-	public static double centimetersToInches(double centimeters)
-	{
-		return centimeters / 2.54;
-	}
+	public static double centimetersToInches(double centimeters) { return centimeters / 2.54; }
 
 	private static RobotType robotType = null;
 
@@ -45,7 +43,8 @@ public class Utilities
 				robotType = null;
 			}
 		}
-		if(robotType == null) {
+		if(robotType == null)
+		{
 			if (telemetry == null)
 				throw new Error("This mode requires the robot to be specified in the config!");
 			telemetry.addLine("Please select a robot");
@@ -60,7 +59,8 @@ public class Utilities
 	public static Utilities.RobotType WaitForRobotSelection(Gamepad... gamepads)
 	{
 		Utilities.RobotType robotType = null;
-		while (robotType == null) {
+		while (robotType == null)
+		{
 			for (Gamepad gamepad : gamepads) {
 				if (gamepad.a) robotType = Utilities.RobotType.ROBOT_1;
 				else if (gamepad.b) robotType = Utilities.RobotType.ROBOT_2;
@@ -78,20 +78,19 @@ public class Utilities
 		}
 	}
 
-	public static Action WaitFor(double delay)
+	public static Action WaitForMovementStop(MecanumDrive mecanumDrive)
 	{
-		return new SleepAction(delay);
+		return telemetryPacket -> {
+			while (!mecanumDrive.updatePoseEstimate().linearVel.equals(new Vector2d(0, 0)));
+			return false;
+		};
 	}
 
-	public static Action RunInParallel(Action... actions)
-	{
-		return new ParallelAction(actions);
-	}
+	public static Action WaitFor(double delay) { return new SleepAction(delay); }
 
-	public static Action RunSequentially(Action... actions)
-	{
-		return new SequentialAction(actions);
-	}
+	public static Action RunInParallel(Action... actions) { return new ParallelAction(actions); }
+
+	public static Action RunSequentially(Action... actions) { return new SequentialAction(actions); }
 
 	public static Scalar hsvToRgb(double h, double s, double v)
 	{
@@ -156,6 +155,8 @@ public class Utilities
 	{
 		for (Servo device : devices) device.getController().pwmEnable();
 	}
+
+
 
 	public enum State
 	{

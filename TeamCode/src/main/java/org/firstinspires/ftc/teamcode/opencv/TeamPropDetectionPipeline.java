@@ -30,10 +30,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 	private Utilities.DetectionCase detectionCase = Utilities.DetectionCase.LEFT;
 	private Utilities.Alliance currentAlliance = null;
 
-	public void setAlliance(Utilities.Alliance alliance)
-	{
-		currentAlliance = alliance;
-	}
+	public void setAlliance(Utilities.Alliance alliance) { currentAlliance = alliance; }
 
 	@SuppressLint("DefaultLocale")
 	@Override
@@ -63,7 +60,8 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 		// Filter contours based on area (adjust as needed)
 		boundingBoxes.clear();
 
-		for (MatOfPoint contour : contours) {
+		for (MatOfPoint contour : contours)
+		{
 			double contourArea = Imgproc.contourArea(contour);
 
 			if (contourArea < Constants.Detection.TeamProp.PROP_SIZE)
@@ -85,13 +83,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 		return input;
 	}
 
-	public void setDebug(boolean debug)
-	{
-		this.debug = debug;
-	}
+	public void setDebug(boolean debug) { this.debug = debug; }
 
-	public Utilities.DetectionCase getDetectionCase()
-	{
-		return detectionCase;
-	}
+	public Utilities.DetectionCase getDetectionCase() { return detectionCase; }
 }

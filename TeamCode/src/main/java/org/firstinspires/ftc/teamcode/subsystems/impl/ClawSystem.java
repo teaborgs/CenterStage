@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 
@@ -18,28 +17,16 @@ public final class ClawSystem extends SystemEx
 {
 	private final Servo servo;
 
-	public ClawSystem(Servo servo)
-	{
-		this.servo = servo;
-	}
+	public ClawSystem(Servo servo){ this.servo = servo; }
 
 	@Override
-	public void Init()
-	{
-		servo.setPosition(Constants.getClawIdle());
-	}
+	public void Init() { servo.setPosition(Constants.getClawIdle()); }
 
 	@Override
-	public void Disable()
-	{
-		CutPower(servo);
-	}
+	public void Disable() { CutPower(servo); }
 
 	@Override
-	public void Enable()
-	{
-		RestorePower(servo);
-	}
+	public void Enable() { RestorePower(servo); }
 
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)
@@ -52,14 +39,5 @@ public final class ClawSystem extends SystemEx
 				},
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
-	}
-
-	public Action ReleaseAtRest(MecanumDrive mecanumDrive)
-	{
-		return telemetryPacket -> {
-			while (mecanumDrive.updatePoseEstimate().linearVel.x != 0 || mecanumDrive.updatePoseEstimate().linearVel.y != 0);
-			servo.setPosition(Constants.getClawIdle());
-			return false;
-		};
 	}
 }

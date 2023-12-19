@@ -16,28 +16,16 @@ public final class RotatorSystem extends SystemEx
 {
 	private final Servo servo;
 
-	public RotatorSystem(Servo servo)
-	{
-		this.servo = servo;
-	}
+	public RotatorSystem(Servo servo) { this.servo = servo; }
 
 	@Override
-	public void Init()
-	{
-		servo.setPosition(Constants.getRotatorIdle());
-	}
+	public void Init() { servo.setPosition(Constants.getRotatorIdle()); }
 
 	@Override
-	public void Disable()
-	{
-		CutPower(servo);
-	}
+	public void Disable() { CutPower(servo); }
 
 	@Override
-	public void Enable()
-	{
-		RestorePower(servo);
-	}
+	public void Enable() { RestorePower(servo); }
 
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)

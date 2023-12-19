@@ -16,28 +16,16 @@ public final class IntakeSystem extends SystemEx
 {
 	private final DcMotorEx motor;
 
-	public IntakeSystem(DcMotorEx motor)
-	{
-		this.motor = motor;
-	}
+	public IntakeSystem(DcMotorEx motor) { this.motor = motor; }
 
 	@Override
-	public void Init()
-	{
-		motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-	}
+	public void Init() { motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER); }
 
 	@Override
-	public void Disable()
-	{
-		CutPower(motor);
-	}
+	public void Disable() { CutPower(motor); }
 
 	@Override
-	public void Enable()
-	{
-		RestorePower(motor);
-	}
+	public void Enable() { RestorePower(motor); }
 
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)
