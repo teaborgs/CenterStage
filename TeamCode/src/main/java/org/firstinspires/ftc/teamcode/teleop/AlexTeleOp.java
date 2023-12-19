@@ -11,11 +11,13 @@ import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.InputSystem;
@@ -40,6 +42,9 @@ public final class AlexTeleOp extends BaseOpMode
 	// Servos
 	private Servo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
 
+	// Distance Sensor
+	private Rev2mDistanceSensor distanceSensor;
+
 	// Input System
 	private InputSystem wheelInput, armInput;
 
@@ -60,6 +65,7 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Axis ROTATE_AXIS_R = new InputSystem.Axis("right_trigger");
 			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
+			private static final InputSystem.Key ALIGN_KEY = new InputSystem.Key("x");
 		}
 
 		private final static class Arm
@@ -126,6 +132,8 @@ public final class AlexTeleOp extends BaseOpMode
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
 
+		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
+
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
 
@@ -138,7 +146,11 @@ public final class AlexTeleOp extends BaseOpMode
 		Telemetry();
 		UpdateMotorPowers();
 		Suspender();
-		if (!robotSuspended) Wheels();
+		if (!robotSuspended)
+		{
+			AlignToBackdrop();
+			Wheels();
+		}
 		if (suspending) return;
 		ManualReset();
 		Leveler();
@@ -147,6 +159,7 @@ public final class AlexTeleOp extends BaseOpMode
 		Plane();
 		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_STACK)) stackLevel = 5;
 	}
+
 
 	// ================ Wheels ================
 	private void Wheels()
@@ -157,9 +170,21 @@ public final class AlexTeleOp extends BaseOpMode
 		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1),
-				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1)
+				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1) * frontBackMovementEnable
 		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle));
+	}
+
+	private int frontBackMovementEnable = 1;
+	private void AlignToBackdrop()
+	{
+		if (wheelInput.isPressed(Bindings.Wheel.ALIGN_KEY))
+		{
+			frontBackMovementEnable = 0;
+			mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance()),
+															-mecanumDrive.pose.heading.real));
+		}
+		else frontBackMovementEnable = 1;
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
