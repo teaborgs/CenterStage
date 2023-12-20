@@ -40,7 +40,7 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    implementation "com.acmerobotics.roadrunner:ftc:0.1.10"
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.9"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.13"
 
     implementation 'org.team11260:fast-load:0.1.1'
