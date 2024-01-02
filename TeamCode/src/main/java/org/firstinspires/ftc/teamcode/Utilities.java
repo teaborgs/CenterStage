@@ -136,25 +136,11 @@ public class Utilities
 		return new Scalar(r, g, b);
 	}
 
-	public static void CutPower(PhotonDcMotor... devices)
-	{
-		for (PhotonDcMotor device : devices) device.setMotorDisable();
-	}
+	public static void CutPower(PhotonDcMotor... devices) { for (PhotonDcMotor device : devices) device.setMotorDisable(); }
+	public static void RestorePower(PhotonDcMotor... devices) { for (PhotonDcMotor device : devices) device.setMotorEnable(); }
 
-	public static void RestorePower(PhotonDcMotor... devices)
-	{
-		for (PhotonDcMotor device : devices) device.setMotorEnable();
-	}
-
-	public static void CutPower(PhotonServo... devices)
-	{
-		for (PhotonServo device : devices) device.getController().pwmDisable();
-	}
-
-	public static void RestorePower(PhotonServo... devices)
-	{
-		for (PhotonServo device : devices) device.getController().pwmEnable();
-	}
+	public static void CutPower(PhotonServo... devices) { for (PhotonServo device : devices) device.getController().pwmDisable(); }
+	public static void RestorePower(PhotonServo... devices) { for (PhotonServo device : devices) device.getController().pwmEnable(); }
 
 	public enum State
 	{
