@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
@@ -49,19 +50,17 @@ public final class LiftSystem extends SystemEx
 	{
 		return new SequentialAction(
 				new SleepAction(delayDirection == Utilities.DelayDirection.BEFORE ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0),
-				telemetryPacket -> {
+				new InstantAction(() -> {
 					motor1.setTargetPosition((int) position);
 					motor2.setTargetPosition((int) position);
 					motor1.setPower(1);
 					motor2.setPower(1);
-					return false;
-				},
+				}),
 				telemetryPacket -> Math.abs(motor1.getCurrentPosition() - motor1.getTargetPosition()) > Constants.TOLERANCE || Math.abs(motor2.getCurrentPosition() - motor2.getTargetPosition()) > Constants.TOLERANCE,
-				telemetryPacket -> {
-					motor1.setPower(0.05);
-					motor2.setPower(0.05);
-					return false;
-				},
+				new InstantAction(() -> {
+					motor1.setPower(0);
+					motor2.setPower(0);
+				}),
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
 	}
