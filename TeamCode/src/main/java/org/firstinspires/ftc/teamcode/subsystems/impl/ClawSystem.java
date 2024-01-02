@@ -6,18 +6,17 @@ import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
-
 public final class ClawSystem extends SystemEx
 {
-	private final Servo servo;
+	private final PhotonServo servo;
 
-	public ClawSystem(Servo servo){ this.servo = servo; }
+	public ClawSystem(PhotonServo servo){ this.servo = servo; }
 
 	@Override
 	public void Init() { servo.setPosition(Constants.getClawIdle()); }

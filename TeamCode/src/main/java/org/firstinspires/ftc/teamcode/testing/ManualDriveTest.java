@@ -6,11 +6,12 @@ import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -53,16 +54,16 @@ public final class ManualDriveTest extends BaseOpMode
 	private MecanumDrive mecanumDrive;
 
 	// Intake Motor
-	private DcMotorEx intakeMotor;
+	private PhotonDcMotor intakeMotor;
 
 	// Lift Motors
-	private final LinkedList<DcMotorEx> liftMotors = new LinkedList<>();
+	private final LinkedList<PhotonDcMotor> liftMotors = new LinkedList<>();
 
 	// Tumbler Motor
-	private DcMotorEx tumblerMotor;
+	private PhotonDcMotor tumblerMotor;
 
 	// Servos
-	private Servo clawServo, rotatorServo, planeLevelServo, planeReleaseServo, antennaServo;
+	private PhotonServo clawServo, rotatorServo, planeLevelServo, planeReleaseServo, antennaServo;
 
 	// Input System
 	private InputSystem wheelInput, armInput;
@@ -100,31 +101,31 @@ public final class ManualDriveTest extends BaseOpMode
 		Constants.Init(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Utilities.GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
 
-		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-		intakeMotor.setDirection(DcMotorEx.Direction.REVERSE);
+		intakeMotor = hardwareMap.get(PhotonDcMotor.class, "intake");
+		intakeMotor.setMode(PhotonDcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		intakeMotor.setDirection(PhotonDcMotor.Direction.REVERSE);
 
-		liftMotors.add(hardwareMap.get(DcMotorEx.class, "lift1"));
-		liftMotors.add(hardwareMap.get(DcMotorEx.class, "lift2"));
+		liftMotors.add(hardwareMap.get(PhotonDcMotor.class, "lift1"));
+		liftMotors.add(hardwareMap.get(PhotonDcMotor.class, "lift2"));
 		liftMotors.forEach(motor -> {
-			motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-			motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			motor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
+			motor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
 			motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		});
-		liftMotors.get(0).setDirection(DcMotorEx.Direction.REVERSE);
-		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_2) liftMotors.get(1).setDirection(DcMotorEx.Direction.REVERSE);
+		liftMotors.get(0).setDirection(PhotonDcMotor.Direction.REVERSE);
+		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_2) liftMotors.get(1).setDirection(PhotonDcMotor.Direction.REVERSE);
 
-		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
-		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		tumblerMotor = hardwareMap.get(PhotonDcMotor.class, "tumbler");
+		tumblerMotor.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
 		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_1)tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		tumblerMotor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(0);
-		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
 
-		rotatorServo = hardwareMap.get(Servo.class, "rotator");
-		clawServo = hardwareMap.get(Servo.class, "claw");
-		antennaServo = hardwareMap.get(Servo.class, "antenna");
+		rotatorServo = hardwareMap.get(PhotonServo.class, "rotator");
+		clawServo = hardwareMap.get(PhotonServo.class, "claw");
+		antennaServo = hardwareMap.get(PhotonServo.class, "antenna");
 
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
@@ -221,7 +222,7 @@ public final class ManualDriveTest extends BaseOpMode
 			tumblerMotor.setPower(0.8);
 		else
 			tumblerMotor.setPower(0.05);
-		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
 	}
 
 	private Utilities.State clawState = Utilities.State.BUSY;

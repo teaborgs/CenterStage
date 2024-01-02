@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.InputSystem;
@@ -14,12 +14,12 @@ public class SingleMotorTest extends BaseOpMode
 {
 	private final InputSystem.Axis MOTOR_KEY = new InputSystem.Axis("right_stick_y");
 	private InputSystem input;
-	private DcMotorEx motor;
+	private PhotonDcMotor motor;
 
 	@Override
 	protected void OnInitialize()
 	{
-		motor = hardwareMap.get(DcMotorEx.class, "slot0");
+		motor = hardwareMap.get(PhotonDcMotor.class, "slot0");
 		input = new InputSystem(gamepad1);
 	}
 

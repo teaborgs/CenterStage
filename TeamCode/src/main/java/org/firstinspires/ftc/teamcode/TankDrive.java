@@ -38,7 +38,7 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -95,7 +95,7 @@ public final class TankDrive
 	public final AccelConstraint defaultAccelConstraint =
 			new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-	public final List<DcMotorEx> leftMotors, rightMotors;
+	public final List<PhotonDcMotor> leftMotors, rightMotors;
 
 	public final IMU imu;
 
@@ -116,7 +116,7 @@ public final class TankDrive
 		{
 			{
 				List<Encoder> leftEncs = new ArrayList<>();
-				for (DcMotorEx m : leftMotors) {
+				for (PhotonDcMotor m : leftMotors) {
 					Encoder e = new OverflowEncoder(new RawEncoder(m));
 					leftEncs.add(e);
 					lastLeftPos += e.getPositionAndVelocity().position;
@@ -127,7 +127,7 @@ public final class TankDrive
 
 			{
 				List<Encoder> rightEncs = new ArrayList<>();
-				for (DcMotorEx m : rightMotors) {
+				for (PhotonDcMotor m : rightMotors) {
 					Encoder e = new OverflowEncoder(new RawEncoder(m));
 					rightEncs.add(e);
 					lastRightPos += e.getPositionAndVelocity().position;
@@ -186,13 +186,13 @@ public final class TankDrive
 			module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 		}
 
-		leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "left"));
-		rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "right"));
+		leftMotors = Arrays.asList(hardwareMap.get(PhotonDcMotor.class, "left"));
+		rightMotors = Arrays.asList(hardwareMap.get(PhotonDcMotor.class, "right"));
 
-		for (DcMotorEx m : leftMotors) {
+		for (PhotonDcMotor m : leftMotors) {
 			m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
-		for (DcMotorEx m : rightMotors) {
+		for (PhotonDcMotor m : rightMotors) {
 			m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
 
@@ -219,10 +219,10 @@ public final class TankDrive
 			maxPowerMag = Math.max(maxPowerMag, power.value());
 		}
 
-		for (DcMotorEx m : leftMotors) {
+		for (PhotonDcMotor m : leftMotors) {
 			m.setPower(wheelVels.left.get(0) / maxPowerMag);
 		}
-		for (DcMotorEx m : rightMotors) {
+		for (PhotonDcMotor m : rightMotors) {
 			m.setPower(wheelVels.right.get(0) / maxPowerMag);
 		}
 	}
@@ -262,10 +262,10 @@ public final class TankDrive
 			}
 
 			if (t >= timeTrajectory.duration) {
-				for (DcMotorEx m : leftMotors) {
+				for (PhotonDcMotor m : leftMotors) {
 					m.setPower(0);
 				}
-				for (DcMotorEx m : rightMotors) {
+				for (PhotonDcMotor m : rightMotors) {
 					m.setPower(0);
 				}
 
@@ -284,10 +284,10 @@ public final class TankDrive
 			TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 			double voltage = voltageSensor.getVoltage();
 			final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
-			for (DcMotorEx m : leftMotors) {
+			for (PhotonDcMotor m : leftMotors) {
 				m.setPower(feedforward.compute(wheelVels.left) / voltage);
 			}
-			for (DcMotorEx m : rightMotors) {
+			for (PhotonDcMotor m : rightMotors) {
 				m.setPower(feedforward.compute(wheelVels.right) / voltage);
 			}
 
@@ -351,10 +351,10 @@ public final class TankDrive
 			}
 
 			if (t >= turn.duration) {
-				for (DcMotorEx m : leftMotors) {
+				for (PhotonDcMotor m : leftMotors) {
 					m.setPower(0);
 				}
-				for (DcMotorEx m : rightMotors) {
+				for (PhotonDcMotor m : rightMotors) {
 					m.setPower(0);
 				}
 
@@ -376,10 +376,10 @@ public final class TankDrive
 			TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 			double voltage = voltageSensor.getVoltage();
 			final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
-			for (DcMotorEx m : leftMotors) {
+			for (PhotonDcMotor m : leftMotors) {
 				m.setPower(feedforward.compute(wheelVels.left) / voltage);
 			}
-			for (DcMotorEx m : rightMotors) {
+			for (PhotonDcMotor m : rightMotors) {
 				m.setPower(feedforward.compute(wheelVels.right) / voltage);
 			}
 

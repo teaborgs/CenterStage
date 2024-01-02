@@ -7,7 +7,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -15,22 +15,22 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 public final class TumblerSystem extends SystemEx
 {
-	private final DcMotorEx motor;
+	private final PhotonDcMotor motor;
 	private Utilities.RobotType robotType;
 
-	public TumblerSystem(DcMotorEx motor) { this.motor = motor; }
+	public TumblerSystem(PhotonDcMotor motor) { this.motor = motor; }
 
 	public void setRobotType(Utilities.RobotType robotType) { this.robotType = robotType; }
 
 	@Override
 	public void Init()
 	{
-		motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		if(robotType == Utilities.RobotType.ROBOT_1) motor.setDirection(DcMotorEx.Direction.REVERSE);
-		motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		motor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motor.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
+		if(robotType == Utilities.RobotType.ROBOT_1) motor.setDirection(PhotonDcMotor.Direction.REVERSE);
+		motor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
 		motor.setTargetPosition(Constants.getTumblerIdle());
-		motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		motor.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
 	}
 
 	@Override

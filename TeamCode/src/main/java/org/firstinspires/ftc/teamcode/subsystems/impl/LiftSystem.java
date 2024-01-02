@@ -6,7 +6,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 public final class LiftSystem extends SystemEx
 {
-	private final DcMotorEx motor1, motor2;
+	private final PhotonDcMotor motor1, motor2;
 
-	public LiftSystem(DcMotorEx motor1, DcMotorEx motor2)
+	public LiftSystem(PhotonDcMotor motor1, PhotonDcMotor motor2)
 	{
 		this.motor1 = motor1;
 		this.motor2 = motor2;
@@ -25,17 +25,17 @@ public final class LiftSystem extends SystemEx
 	@Override
 	public void Init()
 	{
-		motor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-		motor1.setDirection(DcMotorEx.Direction.REVERSE);
-		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motor1.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motor2.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motor1.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
+		motor2.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
+		motor1.setDirection(PhotonDcMotor.Direction.REVERSE);
+		motor1.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
+		motor2.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
 		motor1.setTargetPosition(Constants.getLiftPickup());
 		motor2.setTargetPosition(Constants.getLiftPickup());
-		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		motor1.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
+		motor2.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
 	}
 
 	@Override

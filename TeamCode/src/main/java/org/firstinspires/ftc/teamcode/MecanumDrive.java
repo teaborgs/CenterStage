@@ -34,7 +34,7 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -81,7 +81,7 @@ public class MecanumDrive
 	public final VelConstraint defaultVelConstraint;
 	public final AccelConstraint defaultAccelConstraint;
 
-	public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+	public final PhotonDcMotor leftFront, leftBack, rightBack, rightFront;
 
 	public final VoltageSensor voltageSensor;
 
@@ -179,10 +179,10 @@ public class MecanumDrive
 			module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 		}
 
-		leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-		leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-		rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-		rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+		leftFront = hardwareMap.get(PhotonDcMotor.class, "leftFront");
+		leftBack = hardwareMap.get(PhotonDcMotor.class, "leftBack");
+		rightBack = hardwareMap.get(PhotonDcMotor.class, "rightBack");
+		rightFront = hardwareMap.get(PhotonDcMotor.class, "rightFront");
 
 		leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

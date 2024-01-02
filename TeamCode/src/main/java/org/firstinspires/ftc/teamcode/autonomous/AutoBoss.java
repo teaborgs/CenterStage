@@ -10,10 +10,10 @@ import static org.firstinspires.ftc.teamcode.Utilities.centimetersToInches;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -90,11 +90,11 @@ public class AutoBoss extends LinearOpMode
 
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), robotType);
 
-		tumblerSystem = new TumblerSystem(hardwareMap.get(DcMotorEx.class, "tumbler"));
-		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "intake"));
-		rotatorSystem = new RotatorSystem(hardwareMap.get(Servo.class, "rotator"));
-		clawSystem = new ClawSystem(hardwareMap.get(Servo.class, "claw"));
-		liftSystem = new LiftSystem(hardwareMap.get(DcMotorEx.class, "lift1"), hardwareMap.get(DcMotorEx.class, "lift2"));
+		tumblerSystem = new TumblerSystem(hardwareMap.get(PhotonDcMotor.class, "tumbler"));
+		intakeSystem = new IntakeSystem(hardwareMap.get(PhotonDcMotor.class, "intake"));
+		rotatorSystem = new RotatorSystem(hardwareMap.get(PhotonServo.class, "rotator"));
+		clawSystem = new ClawSystem(hardwareMap.get(PhotonServo.class, "claw"));
+		liftSystem = new LiftSystem(hardwareMap.get(PhotonDcMotor.class, "lift1"), hardwareMap.get(PhotonDcMotor.class, "lift2"));
 
 		tumblerSystem.setRobotType(robotType);
 
