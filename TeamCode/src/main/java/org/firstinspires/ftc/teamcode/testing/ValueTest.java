@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.IsDebugging;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.Utilities;
 /*
  * Test the encoder value of a motor
  */
+
+@Photon
 @TeleOp(name = "Value Test", group = "Testing")
 public class ValueTest extends BaseOpMode
 {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 
@@ -9,6 +10,8 @@ import org.firstinspires.ftc.teamcode.InputSystem;
 /*
  * Test a single motor by controlling it with the right stick
  */
+
+@Photon
 @TeleOp(name = "Single Motor Test", group = "Testing")
 public class SingleMotorTest extends BaseOpMode
 {
