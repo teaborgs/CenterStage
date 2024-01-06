@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 public final class RotatorSystem extends SystemEx
 {
-	private final PhotonServo servo;
+	private final Servo servo;
 
-	public RotatorSystem(PhotonServo servo) { this.servo = servo; }
+	public RotatorSystem(Servo servo) { this.servo = servo; }
 
 	@Override
 	public void Init() { servo.setPosition(Constants.getRotatorIdle()); }

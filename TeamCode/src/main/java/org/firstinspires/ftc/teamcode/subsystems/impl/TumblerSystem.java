@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -16,22 +16,22 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 public final class TumblerSystem extends SystemEx
 {
-	private final PhotonDcMotor motor;
+	private final DcMotorEx motor;
 	private Utilities.RobotType robotType;
 
-	public TumblerSystem(PhotonDcMotor motor) { this.motor = motor; }
+	public TumblerSystem(DcMotorEx motor) { this.motor = motor; }
 
 	public void setRobotType(Utilities.RobotType robotType) { this.robotType = robotType; }
 
 	@Override
 	public void Init()
 	{
-		motor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		motor.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
-		if(robotType == Utilities.RobotType.ROBOT_1) motor.setDirection(PhotonDcMotor.Direction.REVERSE);
-		motor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
+		motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		if(robotType == Utilities.RobotType.ROBOT_1) motor.setDirection(DcMotorEx.Direction.REVERSE);
+		motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		motor.setTargetPosition(Constants.getTumblerIdle());
-		motor.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
+		motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public final class TumblerSystem extends SystemEx
 					motor.setPower(1);
 				}),
 				telemetryPacket -> Math.abs(motor.getCurrentPosition() - motor.getTargetPosition()) > TOLERANCE,
-				new InstantAction(() -> motor.setPower(0)),
+				new InstantAction(() -> motor.setPower(0.05)),
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
 	}

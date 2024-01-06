@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
 
-@Photon
 @Autonomous(name = "Auto Test Turn", group = "Testing")
 public class AutoTestTurn extends LinearOpMode
 {

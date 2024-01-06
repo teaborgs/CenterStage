@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -15,12 +15,12 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 public final class IntakeSystem extends SystemEx
 {
-	private final PhotonDcMotor motor;
+	private final DcMotorEx motor;
 
-	public IntakeSystem(PhotonDcMotor motor) { this.motor = motor; }
+	public IntakeSystem(DcMotorEx motor) { this.motor = motor; }
 
 	@Override
-	public void Init() { motor.setMode(PhotonDcMotor.RunMode.RUN_WITHOUT_ENCODER); }
+	public void Init() { motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER); }
 
 	@Override
 	public void Disable() { CutPower(motor); }

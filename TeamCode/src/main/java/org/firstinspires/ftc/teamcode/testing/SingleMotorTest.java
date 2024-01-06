@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing;
 
-import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.InputSystem;
@@ -10,19 +9,17 @@ import org.firstinspires.ftc.teamcode.InputSystem;
 /*
  * Test a single motor by controlling it with the right stick
  */
-
-@Photon
 @TeleOp(name = "Single Motor Test", group = "Testing")
 public class SingleMotorTest extends BaseOpMode
 {
 	private final InputSystem.Axis MOTOR_KEY = new InputSystem.Axis("right_stick_y");
 	private InputSystem input;
-	private PhotonDcMotor motor;
+	private DcMotorEx motor;
 
 	@Override
 	protected void OnInitialize()
 	{
-		motor = hardwareMap.get(PhotonDcMotor.class, "slot0");
+		motor = hardwareMap.get(DcMotorEx.class, "slot0");
 		input = new InputSystem(gamepad1);
 	}
 

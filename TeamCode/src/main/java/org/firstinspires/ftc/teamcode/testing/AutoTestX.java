@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.testing;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,8 +12,6 @@ import org.firstinspires.ftc.teamcode.Utilities;
 /*
  * Move 1 meter on the X axis
  */
-
-@Photon
 @Autonomous(name = "Auto Test X", group = "Testing")
 public class AutoTestX extends LinearOpMode
 {

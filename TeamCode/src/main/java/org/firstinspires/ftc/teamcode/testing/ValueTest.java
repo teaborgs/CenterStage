@@ -4,12 +4,10 @@ import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.IsDebugging;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.outoftheboxrobotics.photoncore.Photon;
-import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -19,8 +17,6 @@ import org.firstinspires.ftc.teamcode.Utilities;
 /*
  * Test the encoder value of a motor
  */
-
-@Photon
 @TeleOp(name = "Value Test", group = "Testing")
 public class ValueTest extends BaseOpMode
 {
@@ -28,16 +24,16 @@ public class ValueTest extends BaseOpMode
 	private MecanumDrive mecanumDrive;
 
 	// Intake Motor
-	private PhotonDcMotor intakeMotor;
+	private DcMotorEx intakeMotor;
 
 	// Lift Motors
-	private PhotonDcMotor liftMotor1, liftMotor2;
+	private DcMotorEx liftMotor1, liftMotor2;
 
 	// Tumbler Motor
-	private PhotonDcMotor tumblerMotor;
+	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private PhotonServo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
+	private Servo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
 
 	@Override
 	protected void OnInitialize()
@@ -45,28 +41,28 @@ public class ValueTest extends BaseOpMode
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
 		Constants.Init(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
 
-		intakeMotor = hardwareMap.get(PhotonDcMotor.class, "intake");
-		intakeMotor.setMode(PhotonDcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-		liftMotor1 = hardwareMap.get(PhotonDcMotor.class, "lift1");
-		liftMotor2 = hardwareMap.get(PhotonDcMotor.class, "lift2");
-		liftMotor1.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		liftMotor2.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		liftMotor1.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
-		liftMotor2.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
-		liftMotor1.setDirection(PhotonDcMotor.Direction.REVERSE);
+		liftMotor1 = hardwareMap.get(DcMotorEx.class, "lift1");
+		liftMotor2 = hardwareMap.get(DcMotorEx.class, "lift2");
+		liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		liftMotor1.setDirection(DcMotorEx.Direction.REVERSE);
 
-		tumblerMotor = hardwareMap.get(PhotonDcMotor.class, "tumbler");
-		tumblerMotor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
+		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		if (GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_1)
-			tumblerMotor.setDirection(PhotonDcMotor.Direction.REVERSE);
-		tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
+			tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-		rotatorServo = hardwareMap.get(PhotonServo.class, "rotator");
-		clawServo = hardwareMap.get(PhotonServo.class, "claw");
-		lockerServo = hardwareMap.get(PhotonServo.class, "locker");
-		planeShooterServo = hardwareMap.get(PhotonServo.class, "shooter");
-		planeLevelServo = hardwareMap.get(PhotonServo.class, "leveler");
+		rotatorServo = hardwareMap.get(Servo.class, "rotator");
+		clawServo = hardwareMap.get(Servo.class, "claw");
+		lockerServo = hardwareMap.get(Servo.class, "locker");
+		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
+		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 	}
 
 	@Override

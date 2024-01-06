@@ -11,13 +11,11 @@ import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.outoftheboxrobotics.photoncore.Photon;
-import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
-
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
@@ -26,7 +24,6 @@ import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
 
-@Photon
 @TeleOp(name = "Alex TeleOp", group = "TeleOp")
 public final class AlexTeleOp extends BaseOpMode
 {
@@ -34,16 +31,16 @@ public final class AlexTeleOp extends BaseOpMode
 	private MecanumDrive mecanumDrive;
 
 	// Intake Motor
-	private PhotonDcMotor intakeMotor;
+	private DcMotorEx intakeMotor;
 
 	// Lift Motors
-	private PhotonDcMotor liftMotor1, liftMotor2;
+	private DcMotorEx liftMotor1, liftMotor2;
 
 	// Tumbler Motor
-	private PhotonDcMotor tumblerMotor;
+	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private PhotonServo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
+	private Servo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
 
 	// Distance Sensor
 	private Rev2mDistanceSensor distanceSensor;
@@ -99,36 +96,36 @@ public final class AlexTeleOp extends BaseOpMode
 		DEBUG = IsDebugging(hardwareMap);
 		if(currentRobot == Utilities.RobotType.ROBOT_2) INVERTED = !INVERTED;
 
-		intakeMotor = hardwareMap.get(PhotonDcMotor.class, "intake");
-		intakeMotor.setMode(PhotonDcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-		liftMotor1 = hardwareMap.get(PhotonDcMotor.class, "lift1");
-		liftMotor2 = hardwareMap.get(PhotonDcMotor.class, "lift2");
-		liftMotor1.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		liftMotor2.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		liftMotor1.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
-		liftMotor2.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
-		liftMotor1.setDirection(PhotonDcMotor.Direction.REVERSE);
-		liftMotor1.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
-		liftMotor2.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
+		liftMotor1 = hardwareMap.get(DcMotorEx.class, "lift1");
+		liftMotor2 = hardwareMap.get(DcMotorEx.class, "lift2");
+		liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		liftMotor1.setDirection(DcMotorEx.Direction.REVERSE);
+		liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
 		liftMotor2.setTargetPosition(Constants.getSuspenderIdle());
-		liftMotor1.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
-		liftMotor2.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
+		liftMotor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		liftMotor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-		tumblerMotor = hardwareMap.get(PhotonDcMotor.class, "tumbler");
-		tumblerMotor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		tumblerMotor.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
-		if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(PhotonDcMotor.Direction.REVERSE);
-		tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
+		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
+		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-		tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
+		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-		rotatorServo = hardwareMap.get(PhotonServo.class, "rotator");
-		clawServo = hardwareMap.get(PhotonServo.class, "claw");
-		lockerServo = hardwareMap.get(PhotonServo.class, "locker");
-		planeShooterServo = hardwareMap.get(PhotonServo.class, "shooter");
-		planeLevelServo = hardwareMap.get(PhotonServo.class, "leveler");
+		rotatorServo = hardwareMap.get(Servo.class, "rotator");
+		clawServo = hardwareMap.get(Servo.class, "claw");
+		lockerServo = hardwareMap.get(Servo.class, "locker");
+		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
+		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 
 		planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
 		lockerServo.setPosition(Constants.getLockerIdle());
@@ -186,7 +183,8 @@ public final class AlexTeleOp extends BaseOpMode
 			frontBackMovementEnable = 0;
 			mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance()),
 															-mecanumDrive.pose.heading.real));
-		} else frontBackMovementEnable = 1;
+		}
+		else frontBackMovementEnable = 1;
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
@@ -249,12 +247,12 @@ public final class AlexTeleOp extends BaseOpMode
 		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
 		if(!inResetMode) return;
 		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_CONFIRM)) {
-			tumblerMotor.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-			tumblerMotor.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
-			if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(PhotonDcMotor.Direction.REVERSE);
-			tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
+			tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+			tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+			if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+			tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 			tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-			tumblerMotor.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
+			tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 			inResetMode = false;
 		} else {
 			tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

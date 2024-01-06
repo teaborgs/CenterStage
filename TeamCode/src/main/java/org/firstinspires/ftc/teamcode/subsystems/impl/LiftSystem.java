@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
 public final class LiftSystem extends SystemEx
 {
-	private final PhotonDcMotor motor1, motor2;
+	private final DcMotorEx motor1, motor2;
 
-	public LiftSystem(PhotonDcMotor motor1, PhotonDcMotor motor2)
+	public LiftSystem(DcMotorEx motor1, DcMotorEx motor2)
 	{
 		this.motor1 = motor1;
 		this.motor2 = motor2;
@@ -26,17 +26,17 @@ public final class LiftSystem extends SystemEx
 	@Override
 	public void Init()
 	{
-		motor1.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		motor2.setMode(PhotonDcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		motor1.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
-		motor2.setMode(PhotonDcMotor.RunMode.RUN_USING_ENCODER);
-		motor1.setDirection(PhotonDcMotor.Direction.REVERSE);
-		motor1.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
-		motor2.setZeroPowerBehavior(PhotonDcMotor.ZeroPowerBehavior.BRAKE);
+		motor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		motor1.setDirection(DcMotorEx.Direction.REVERSE);
+		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor1.setTargetPosition(Constants.getLiftPickup());
 		motor2.setTargetPosition(Constants.getLiftPickup());
-		motor1.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
-		motor2.setMode(PhotonDcMotor.RunMode.RUN_TO_POSITION);
+		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 	}
 
 	@Override
@@ -58,8 +58,8 @@ public final class LiftSystem extends SystemEx
 				}),
 				telemetryPacket -> Math.abs(motor1.getCurrentPosition() - motor1.getTargetPosition()) > Constants.TOLERANCE || Math.abs(motor2.getCurrentPosition() - motor2.getTargetPosition()) > Constants.TOLERANCE,
 				new InstantAction(() -> {
-					motor1.setPower(0);
-					motor2.setPower(0);
+					motor1.setPower(0.05);
+					motor2.setPower(0.05);
 				}),
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);

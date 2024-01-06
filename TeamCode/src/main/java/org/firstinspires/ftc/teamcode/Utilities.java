@@ -5,10 +5,10 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
-import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
@@ -136,11 +136,27 @@ public class Utilities
 		return new Scalar(r, g, b);
 	}
 
-	public static void CutPower(PhotonDcMotor... devices) { for (PhotonDcMotor device : devices) device.setMotorDisable(); }
-	public static void RestorePower(PhotonDcMotor... devices) { for (PhotonDcMotor device : devices) device.setMotorEnable(); }
+	public static void CutPower(DcMotorEx... devices)
+	{
+		for (DcMotorEx device : devices) device.setMotorDisable();
+	}
 
-	public static void CutPower(PhotonServo... devices) { for (PhotonServo device : devices) device.getController().pwmDisable(); }
-	public static void RestorePower(PhotonServo... devices) { for (PhotonServo device : devices) device.getController().pwmEnable(); }
+	public static void RestorePower(DcMotorEx... devices)
+	{
+		for (DcMotorEx device : devices) device.setMotorEnable();
+	}
+
+	public static void CutPower(Servo... devices)
+	{
+		for (Servo device : devices) device.getController().pwmDisable();
+	}
+
+	public static void RestorePower(Servo... devices)
+	{
+		for (Servo device : devices) device.getController().pwmEnable();
+	}
+
+
 
 	public enum State
 	{
