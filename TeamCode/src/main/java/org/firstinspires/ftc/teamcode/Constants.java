@@ -42,7 +42,7 @@ public class Constants
 				instance.robotConstants.put("intakeMaxPower", 0.8d);
 				instance.robotConstants.put("liftNormalPower", 1.0d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 3.0d);
+				instance.robotConstants.put("backdropDistance", 5.0d);
 				break;
 
 			case ROBOT_2:
@@ -73,7 +73,7 @@ public class Constants
 				instance.robotConstants.put("intakeMaxPower", 0.8d);
 				instance.robotConstants.put("liftNormalPower", 0.8d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 3.0d);
+				instance.robotConstants.put("backdropDistance", 5.0d);
 				break;
 		}
 	}

@@ -29,6 +29,11 @@ public class Utilities
 
 	public static double centimetersToInches(double centimeters) { return centimeters / 2.54; }
 
+	public static double Clamp(double val, double min, double max) {
+		if (val < min) return min;
+		else return Math.min(val, max);
+	}
+
 	private static RobotType robotType = null;
 
 	public static RobotType GetCurrentRobotType(HardwareMap hardwareMap, Telemetry telemetry, Gamepad... gamepads)

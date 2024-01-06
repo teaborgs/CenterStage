@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.Constants.getSuspenderSuspend;
-import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.IsDebugging;
-import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
 import com.acmerobotics.roadrunner.Pose2d;
@@ -16,7 +14,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -40,7 +37,7 @@ public final class AlexTeleOp extends BaseOpMode
 	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private Servo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
+	private Servo clawServo, rotatorServo, planeLevelServo, planeShooterServo;
 
 	// Distance Sensor
 	private Rev2mDistanceSensor distanceSensor;
@@ -106,6 +103,7 @@ public final class AlexTeleOp extends BaseOpMode
 		liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor1.setDirection(DcMotorEx.Direction.REVERSE);
+		liftMotor2.setDirection(DcMotorEx.Direction.REVERSE);
 		liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
@@ -116,19 +114,16 @@ public final class AlexTeleOp extends BaseOpMode
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		if(currentRobot == Utilities.RobotType.ROBOT_1) tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 		rotatorServo = hardwareMap.get(Servo.class, "rotator");
 		clawServo = hardwareMap.get(Servo.class, "claw");
-		lockerServo = hardwareMap.get(Servo.class, "locker");
 		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
 		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 
 		planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
-		lockerServo.setPosition(Constants.getLockerIdle());
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
 
@@ -167,7 +162,7 @@ public final class AlexTeleOp extends BaseOpMode
 		boolean turbo = wheelInput.isPressed(Bindings.Wheel.TURBO_KEY);
 		boolean suppress = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_KEY);
 		int modifier = INVERTED ? -1 : 1;
-		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
+		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1),
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1) * frontBackMovementEnable
@@ -181,14 +176,14 @@ public final class AlexTeleOp extends BaseOpMode
 		if (wheelInput.isPressed(Bindings.Wheel.ALIGN_KEY))
 		{
 			frontBackMovementEnable = 0;
-			mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance()),
-															-mecanumDrive.pose.heading.real));
-		}
-		else frontBackMovementEnable = 1;
+			double offset = distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance();
+			mecanumDrive.setDrivePowers(
+					new PoseVelocity2d(new Vector2d(0, Utilities.Clamp(offset, -1, 1)), // go towards desired distance
+										-mecanumDrive.pose.heading.real)); // Rotate towards 0
+		} else frontBackMovementEnable = 1;
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
-
 	private void Pickup()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TOGGLE_PICKUP_KEY)) {
@@ -224,10 +219,10 @@ public final class AlexTeleOp extends BaseOpMode
 			tumblerMotor.setPower(0.05);
 	}
 
+
 	// ================ Arm ================
 
 	private short liftLevel = 1;
-
 	private void Leveler()
 	{
 		int initialLevel = liftLevel;
@@ -266,7 +261,6 @@ public final class AlexTeleOp extends BaseOpMode
 	private boolean pixelInStorage = false;
 	private boolean waitingSecondInstruction = false;
 	private short stackLevel = 5;
-
 	private void Arm()
 	{
 		if (armBusy) return;
@@ -352,7 +346,6 @@ public final class AlexTeleOp extends BaseOpMode
 	}
 
 	private volatile boolean planeLaunched = false;
-
 	private void Plane()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched)
@@ -371,24 +364,17 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private boolean robotSuspended = false;
 	private boolean suspending = false;
-
 	private void Suspender()
 	{
-		// Locker
-		if (currentRobot == Utilities.RobotType.ROBOT_2) {
-			if (robotSuspended && liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE)
-				setTimeout(() -> lockerServo.setPosition(Constants.getLockerBusy()), 500);
-		}
-
 		// Lift
 		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended) {
 			suspending = false;
 			liftMotor2.setTargetPosition(Constants.getSuspenderIdle());
 			liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
-			RestorePower(tumblerMotor, intakeMotor); // Restore power in case the suspension was interrupted
+	//		RestorePower(tumblerMotor, intakeMotor); // Restore power in case the suspension was interrupted
 		} else if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_KEY)) {
 			if (!suspending) {
-				CutPower(tumblerMotor, intakeMotor); // Cut power to the wheels as it's not needed
+	//			CutPower(tumblerMotor, intakeMotor); // Cut power to the wheels as it's not needed
 				suspending = true;
 				liftMotor2.setTargetPosition(getSuspenderSuspend());
 				liftMotor1.setTargetPosition(Constants.getSuspenderSuspend());
@@ -402,7 +388,7 @@ public final class AlexTeleOp extends BaseOpMode
 					liftMotor2.setTargetPosition(Constants.getSuspenderLock());
 					liftMotor1.setTargetPosition(Constants.getSuspenderLock());
 				}
-				CutPower(mecanumDrive.leftBack, mecanumDrive.leftFront, mecanumDrive.rightBack, mecanumDrive.rightFront); // Cut power to the wheels as it's not needed
+	//			CutPower(mecanumDrive.leftBack, mecanumDrive.leftFront, mecanumDrive.rightBack, mecanumDrive.rightFront); // Cut power to the wheels as it's not needed
 				robotSuspended = true;
 			}
 		}
@@ -444,15 +430,19 @@ public final class AlexTeleOp extends BaseOpMode
 
 		if (DEBUG) {
 			telemetry.addLine();
+			telemetry.addData("[DEBUG] Distance Sensor: ", distanceSensor.getDistance(DistanceUnit.CM));
 			telemetry.addData("[DEBUG] Lift 1", liftMotor1.getCurrentPosition());
 			telemetry.addData("[DEBUG] Lift 2", liftMotor2.getCurrentPosition());
 			telemetry.addData("[DEBUG] Lift 1 Target", liftMotor1.getTargetPosition());
 			telemetry.addData("[DEBUG] Lift 2 Target", liftMotor2.getTargetPosition());
+			telemetry.addData("[DEBUG] Lift 1 Power", liftMotor2.getPower());
+			telemetry.addData("[DEBUG] Lift 2 Power", liftMotor2.getPower());
 			telemetry.addData("[DEBUG] Tumbler", tumblerMotor.getCurrentPosition());
 			telemetry.addData("[DEBUG] Tumbler Target", tumblerMotor.getTargetPosition());
+			telemetry.addData("[DEBUG] Tumbler Power", tumblerMotor.getPower());
+			telemetry.addData("[DEBUG] Intake Power", intakeMotor.getPower());
 			telemetry.addData("[DEBUG] Rotator", rotatorServo.getPosition());
 			telemetry.addData("[DEBUG] Claw", clawServo.getPosition());
-			telemetry.addData("[DEBUG] Locker", lockerServo.getPosition());
 			telemetry.addData("[DEBUG] Plane Level", planeLevelServo.getPosition());
 			telemetry.addData("[DEBUG] Plane Release", planeShooterServo.getPosition());
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);
