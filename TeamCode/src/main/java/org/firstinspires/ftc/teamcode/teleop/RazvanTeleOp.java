@@ -38,7 +38,7 @@ public final class RazvanTeleOp extends BaseOpMode
 	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private Servo clawServo, rotatorServo, lockerServo, planeLevelServo, planeShooterServo;
+	private Servo clawServo, rotatorServo, planeLevelServo, planeShooterServo;
 
 	// Input System
 	private InputSystem wheelInput, armInput;
@@ -118,12 +118,10 @@ public final class RazvanTeleOp extends BaseOpMode
 
 		rotatorServo = hardwareMap.get(Servo.class, "rotator");
 		clawServo = hardwareMap.get(Servo.class, "claw");
-		lockerServo = hardwareMap.get(Servo.class, "locker");
 		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
 		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 
 		planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
-		lockerServo.setPosition(Constants.getLockerIdle());
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
 
@@ -155,7 +153,7 @@ public final class RazvanTeleOp extends BaseOpMode
 		boolean turbo = wheelInput.isPressed(Bindings.Wheel.TURBO_KEY);
 		boolean suppress = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_KEY);
 		int modifier = INVERTED ? -1 : 1;
-		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
+		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1),
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier * (currentRobot == Utilities.RobotType.ROBOT_2 ? -1 : 1)
@@ -350,11 +348,6 @@ public final class RazvanTeleOp extends BaseOpMode
 
 	private void Suspender()
 	{
-		// Locker
-		if (currentRobot == Utilities.RobotType.ROBOT_2)
-			if (robotSuspended && liftMotor1.getCurrentPosition() <= TOLERANCE && liftMotor2.getCurrentPosition() <= TOLERANCE)
-				setTimeout(() -> lockerServo.setPosition(Constants.getLockerBusy()), 500);
-
 		// Lift
 		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended) {
 			suspending = false;
@@ -417,7 +410,6 @@ public final class RazvanTeleOp extends BaseOpMode
 			telemetry.addData("[DEBUG] Tumbler Target", tumblerMotor.getTargetPosition());
 			telemetry.addData("[DEBUG] Rotator", rotatorServo.getPosition());
 			telemetry.addData("[DEBUG] Claw", clawServo.getPosition());
-			telemetry.addData("[DEBUG] Locker", lockerServo.getPosition());
 			telemetry.addData("[DEBUG] Plane Level", planeLevelServo.getPosition());
 			telemetry.addData("[DEBUG] Plane Release", planeShooterServo.getPosition());
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);

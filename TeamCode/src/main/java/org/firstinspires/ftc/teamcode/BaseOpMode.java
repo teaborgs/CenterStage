@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public abstract class BaseOpMode extends LinearOpMode
 {
 	@Override
-	public final void runOpMode() throws InterruptedException
+	public void runOpMode() throws InterruptedException
 	{
 		telemetry.addLine("[STATUS] Initializing...");
 		telemetry.update();

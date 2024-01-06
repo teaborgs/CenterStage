@@ -102,7 +102,6 @@ public final class AlexTeleOp extends BaseOpMode
 		liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-		liftMotor1.setDirection(DcMotorEx.Direction.REVERSE);
 		liftMotor2.setDirection(DcMotorEx.Direction.REVERSE);
 		liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
