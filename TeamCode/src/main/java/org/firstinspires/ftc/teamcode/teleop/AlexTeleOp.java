@@ -14,12 +14,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Alex TeleOp", group = "TeleOp")
 public final class AlexTeleOp extends BaseOpMode
@@ -37,7 +41,7 @@ public final class AlexTeleOp extends BaseOpMode
 	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private Servo clawServo, rotatorServo, planeLevelServo, planeShooterServo;
+	private Servo clawServo, rotatorServo, planeLevelServo, planeShooterServo, antennaServo;
 
 	// Distance Sensor
 	private Rev2mDistanceSensor distanceSensor;
@@ -63,6 +67,7 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key ALIGN_KEY = new InputSystem.Key("x");
+			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 		}
 
 		private final static class Arm
@@ -113,18 +118,21 @@ public final class AlexTeleOp extends BaseOpMode
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-		rotatorServo = hardwareMap.get(Servo.class, "rotator");
 		clawServo = hardwareMap.get(Servo.class, "claw");
+		rotatorServo = hardwareMap.get(Servo.class, "rotator");
 		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
 		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
+		antennaServo = hardwareMap.get(Servo.class, "antenna");
 
 		planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
+		antennaServo.setPosition(Constants.getAntennaIdle());
 
 		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
 
@@ -140,6 +148,7 @@ public final class AlexTeleOp extends BaseOpMode
 		Telemetry();
 		UpdateMotorPowers();
 		Suspender();
+		Antenna();
 		if (!robotSuspended)
 		{
 			AlignToBackdrop();
@@ -187,12 +196,37 @@ public final class AlexTeleOp extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TOGGLE_PICKUP_KEY)) {
 			pickupMode = pickupMode == Utilities.PickupMode.INTAKE ? Utilities.PickupMode.STACK : Utilities.PickupMode.INTAKE;
-			if (pickupMode == Utilities.PickupMode.STACK) intakeMotor.setMotorDisable();
+			if (pickupMode == Utilities.PickupMode.STACK) { intakeMotor.setMotorDisable(); antennaServo.setPosition(Constants.getAntennaIdle()); }
 			else intakeMotor.setMotorEnable();
 			gamepad2.rumble(500);
 		}
-		if (pickupMode == Utilities.PickupMode.INTAKE)
+		if (pickupMode == Utilities.PickupMode.INTAKE && !wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaIntakeRunTime())
+		{
 			intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
+			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
+				antennaServo.setPosition(Constants.getAntennaGuide());
+			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
+				antennaServo.setPosition(Constants.getAntennaIdle());
+		}
+	}
+
+	ElapsedTime antennaPress = new ElapsedTime();
+	private void Antenna()
+	{
+		if (wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
+		{
+			antennaPress.reset();
+			antennaServo.setPosition(Constants.getAntennaGrab());
+			intakeMotor.setPower(Constants.getIntakeMaxPower());
+		}
+		else
+		{
+			if (!wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
+				antennaServo.setPosition(Constants.getAntennaIdle());
+
+			if (antennaPress.time(TimeUnit.SECONDS) > Constants.getAntennaIntakeRunTime())
+				intakeMotor.setPower(0);
+		}
 	}
 
 	private void UpdateMotorPowers()
@@ -230,8 +264,8 @@ public final class AlexTeleOp extends BaseOpMode
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_3_KEY)) liftLevel = 3;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 4;
 		if(initialLevel != liftLevel && armState == Utilities.State.BUSY) {
-			liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
-			liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
+			liftMotor1.setTargetPosition(LiftLevelToValue());
+			liftMotor2.setTargetPosition(LiftLevelToValue());
 		}
 	}
 
@@ -299,8 +333,8 @@ public final class AlexTeleOp extends BaseOpMode
 					setTimeout(() -> {
 						clawServo.setPosition(Constants.getClawBusy());
 						setTimeout(() -> {
-							liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
-							liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
+							liftMotor1.setTargetPosition(LiftLevelToValue());
+							liftMotor2.setTargetPosition(LiftLevelToValue());
 							tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
 							setTimeout(() -> {
 								rotatorServo.setPosition(Constants.getRotatorBusy());
@@ -333,8 +367,8 @@ public final class AlexTeleOp extends BaseOpMode
 						}, 300);
 					} else if (!atLevel) {
 						armBusy = true;
-						liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
-						liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
+						liftMotor1.setTargetPosition(LiftLevelToValue());
+						liftMotor2.setTargetPosition(LiftLevelToValue());
 						armBusy = false;
 						waitingSecondInstruction = false;
 						armState = Utilities.State.BUSY;
@@ -429,6 +463,8 @@ public final class AlexTeleOp extends BaseOpMode
 
 		if (DEBUG) {
 			telemetry.addLine();
+			telemetry.addData("{DEBUG} Antenna Pos", antennaServo.getPosition());
+			telemetry.addData("[DEBUG] Last Antenna press", antennaPress.seconds());
 			telemetry.addData("[DEBUG] Distance Sensor: ", distanceSensor.getDistance(DistanceUnit.CM));
 			telemetry.addData("[DEBUG] Lift 1", liftMotor1.getCurrentPosition());
 			telemetry.addData("[DEBUG] Lift 2", liftMotor2.getCurrentPosition());
@@ -455,7 +491,7 @@ public final class AlexTeleOp extends BaseOpMode
 		telemetry.update();
 	}
 
-	private int LiftLevelToValue(int level)
+	private int LiftLevelToValue()
 	{
 		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4();
 	}

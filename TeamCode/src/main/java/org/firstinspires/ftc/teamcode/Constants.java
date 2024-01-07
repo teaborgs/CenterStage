@@ -43,6 +43,10 @@ public class Constants
 				instance.robotConstants.put("liftNormalPower", 1.0d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
 				instance.robotConstants.put("backdropDistance", 5.0d);
+				instance.robotConstants.put("antennaIdle", 0.0d);
+				instance.robotConstants.put("antennaGuide", 0.5d);
+				instance.robotConstants.put("antennaGrab", 0.95d);
+				instance.robotConstants.put("antennaIntakeRunTime", 1.0d);
 				break;
 
 			case ROBOT_2:
@@ -74,6 +78,10 @@ public class Constants
 				instance.robotConstants.put("liftNormalPower", 0.8d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
 				instance.robotConstants.put("backdropDistance", 5.0d);
+				instance.robotConstants.put("antennaIdle", 0.0d);
+				instance.robotConstants.put("antennaGuide", 0.5d);
+				instance.robotConstants.put("antennaGrab", 0.95d);
+				instance.robotConstants.put("antennaIntakeRunTime", 1.0d);
 				break;
 		}
 	}
@@ -162,4 +170,8 @@ public class Constants
 	public static double getLiftNormalPower() {	return (double) instance.robotConstants.get("liftNormalPower"); }
 	public static double getLiftSuspendPower() { return (double) instance.robotConstants.get("liftSuspendPower"); }
 	public static double getBackdropDistance() { return (double) instance.robotConstants.get("backdropDistance"); }
+	public static double getAntennaIdle() { return (double) instance.robotConstants.get("antennaIdle"); }
+	public static double getAntennaGuide() { return (double) instance.robotConstants.get("antennaGuide"); }
+	public static double getAntennaGrab() { return (double) instance.robotConstants.get("antennaGrab"); }
+	public static double getAntennaIntakeRunTime() { return (double) instance.robotConstants.get("antennaIntakeRunTime"); }
 }
