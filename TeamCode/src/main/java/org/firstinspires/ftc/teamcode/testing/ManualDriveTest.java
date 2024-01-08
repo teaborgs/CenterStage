@@ -116,7 +116,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_1)tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+		tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(0);

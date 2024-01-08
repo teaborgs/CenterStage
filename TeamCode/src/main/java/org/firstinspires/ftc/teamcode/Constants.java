@@ -27,7 +27,7 @@ public class Constants
 				instance.robotConstants.put("liftLevel3", 950);
 				instance.robotConstants.put("liftLevel4", 1800);
 				instance.robotConstants.put("suspenderIdle", 0);
-				instance.robotConstants.put("suspenderSuspend", 1870);
+				instance.robotConstants.put("suspenderSuspend", 960);
 				instance.robotConstants.put("suspenderLock", -100);
 				instance.robotConstants.put("clawIdle", 0.45d);
 				instance.robotConstants.put("clawBusy", 1d);
@@ -42,7 +42,7 @@ public class Constants
 				instance.robotConstants.put("intakeMaxPower", 0.8d);
 				instance.robotConstants.put("liftNormalPower", 1.0d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 5.0d);
+				instance.robotConstants.put("backdropDistance", 10.0d);
 				instance.robotConstants.put("antennaIdle", 0.0d);
 				instance.robotConstants.put("antennaGuide", 0.5d);
 				instance.robotConstants.put("antennaGrab", 0.95d);
@@ -77,7 +77,7 @@ public class Constants
 				instance.robotConstants.put("intakeMaxPower", 0.8d);
 				instance.robotConstants.put("liftNormalPower", 0.8d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 5.0d);
+				instance.robotConstants.put("backdropDistance", 10.0d);
 				instance.robotConstants.put("antennaIdle", 0.0d);
 				instance.robotConstants.put("antennaGuide", 0.5d);
 				instance.robotConstants.put("antennaGrab", 0.95d);

@@ -194,8 +194,8 @@ public class MecanumDrive
 		rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-		rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-		rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		leftFront.setPower(0);
 		leftBack.setPower(0);
@@ -210,15 +210,14 @@ public class MecanumDrive
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-		if(robotType == Utilities.RobotType.ROBOT_1) localizer = new ThreeDeadWheelLocalizer(hardwareMap, params.get("inPerTick"));
-		else localizer = new TwoDeadWheelLocalizer(hardwareMap, imu, params.get("inPerTick"));
+		localizer = new ThreeDeadWheelLocalizer(hardwareMap, params.get("inPerTick"));
 
 //		FlightRecorder.write("MECANUM_PARAMS", params);
 	}
 
 	public void setDrivePowers(PoseVelocity2d powers)
 	{
-		MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(14.17).inverse(
+		MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(13.6).inverse(
 				PoseVelocity2dDual.constant(powers, 1));
 
 		double maxPowerMag = 1;
@@ -468,11 +467,11 @@ public class MecanumDrive
 		switch (robotType) {
 			case ROBOT_1:
 				params.clear();
-				params.put("inPerTick", 0.0005321888412017167);
-				params.put("lateralInPerTick", 0.0003700523839750763);
-				params.put("trackWidthTicks", 26633.67414601156);
-				params.put("kS", 1.039794550189749);
-				params.put("kV", 1.030009400753333e-4);
+				params.put("inPerTick", 0.0005321205076567505); // 78.74 / 148300, 147722, 147900 = 78.74 / 147.974
+				params.put("lateralInPerTick", 0.000354834738985669);
+				params.put("trackWidthTicks", 24777.315255578316);
+				params.put("kS", 1.542180753423393); // 1,55071531823552, 1,61127026686861, 1,46455667516605
+				params.put("kV", 0.00007379168673333333); //  0,00007358307296, 0,00007241681564,  0,0000753751716
 				params.put("kA", 0.00001);
 				params.put("maxWheelVel", 50d);
 				params.put("minProfileAccel", -20d);
