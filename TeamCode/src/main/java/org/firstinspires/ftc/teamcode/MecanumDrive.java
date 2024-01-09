@@ -204,7 +204,7 @@ public class MecanumDrive
 
 		imu = hardwareMap.get(IMU.class, "imu");
 		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-				RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+				RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
 				RevHubOrientationOnRobot.UsbFacingDirection.UP));
 		imu.initialize(parameters);
 
@@ -473,17 +473,17 @@ public class MecanumDrive
 				params.put("kS", 1.542180753423393); // 1,55071531823552, 1,61127026686861, 1,46455667516605
 				params.put("kV", 0.00007379168673333333); //  0,00007358307296, 0,00007241681564,  0,0000753751716
 				params.put("kA", 0.00001);
-				params.put("maxWheelVel", 50d);
-				params.put("minProfileAccel", -20d);
-				params.put("maxProfileAccel", 50d);
+				params.put("maxWheelVel", 100d);
+				params.put("minProfileAccel", -100d);
+				params.put("maxProfileAccel", 100d);
 				params.put("maxAngVel", Math.PI);
 				params.put("maxAngAccel", Math.PI);
 				params.put("axialGain", 6d);
 				params.put("lateralGain", 6d);
-				params.put("headingGain", 6d);
-				params.put("axialVelGain", 0.5d);
+				params.put("headingGain", -1d);
+				params.put("axialVelGain", 1d);
 				params.put("lateralVelGain", 1d);
-				params.put("headingVelGain", 0.5d);
+				params.put("headingVelGain", 0d);
 				break;
 			case ROBOT_2:
 				params.clear();
