@@ -467,21 +467,21 @@ public class MecanumDrive
 		switch (robotType) {
 			case ROBOT_1:
 				params.clear();
-				params.put("inPerTick", 0.000528651); // theoretical // 0.0005321205076567505
+				params.put("inPerTick", 0.0005321205076567505); // theoretical // 0.0005321205076567505
 				params.put("lateralInPerTick", 0.000354834738985669);
 				params.put("trackWidthTicks", 24777.315255578316);
-				params.put("kS", 1.542180753423393); // 1,55071531823552, 1,61127026686861, 1,46455667516605
-				params.put("kV", 0.00007379168673333333); //  0,00007358307296, 0,00007241681564,  0,0000753751716
-				params.put("kA", 0.00001);
-				params.put("maxWheelVel", 75d);
+				params.put("kS", 1.6005813399906477); // 1,55071531823552, 1,61127026686861, 1,46455667516605
+				params.put("kV", 0.00007387153415317561); //
+				params.put("kA", 0.00002);
+				params.put("maxWheelVel", 70d);
 				params.put("minProfileAccel", -40d);
-				params.put("maxProfileAccel", 70d);
+				params.put("maxProfileAccel", 50d);
 				params.put("maxAngVel", Math.PI);
 				params.put("maxAngAccel", Math.PI);
-				params.put("axialGain", 1d);
-				params.put("lateralGain", 1d);
-				params.put("headingGain", 1d);
-				params.put("axialVelGain", 1d);
+				params.put("axialGain", 8d);
+				params.put("lateralGain", 0d);
+				params.put("headingGain", 8d);
+				params.put("axialVelGain", 3d);
 				params.put("lateralVelGain", 1d);
 				params.put("headingVelGain", 1d);
 				break;
@@ -501,7 +501,7 @@ public class MecanumDrive
 				params.put("axialGain", 6d);
 				params.put("lateralGain", 6d);
 				params.put("headingGain", 6d);
-				params.put("axialVelGain", 0.5d);
+				params.put("axialVelGain", 2d);
 				params.put("lateralVelGain", 1d);
 				params.put("headingVelGain", 0.5d);
 				break;

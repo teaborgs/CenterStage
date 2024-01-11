@@ -49,7 +49,6 @@ public final class AlexTeleOp extends BaseOpMode
 	// Input System
 	private InputSystem wheelInput, armInput;
 
-	private boolean INVERTED = false;
 	private boolean DEBUG = false;
 
 	private Utilities.RobotType currentRobot = Utilities.RobotType.ROBOT_1;
@@ -96,7 +95,6 @@ public final class AlexTeleOp extends BaseOpMode
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), currentRobot);
 		Constants.Init(currentRobot);
 		DEBUG = IsDebugging(hardwareMap);
-		if(currentRobot == Utilities.RobotType.ROBOT_2) INVERTED = !INVERTED;
 
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -167,28 +165,30 @@ public final class AlexTeleOp extends BaseOpMode
 	// ================ Wheels ================
 	private void Wheels()
 	{
+		if(movementOverride) return;
 		boolean turbo = wheelInput.isPressed(Bindings.Wheel.TURBO_KEY);
 		boolean suppress = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_KEY);
-		int modifier = INVERTED ? -1 : 1;
 		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
-				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y) * modifier,
-				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * modifier * frontBackMovementEnable
+				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y),
+				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X)
 		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel.times(-1), -angle));
 	}
 
-	private int frontBackMovementEnable = 1;
+	private boolean movementOverride = false;
 	private void AlignToBackdrop()
 	{
 		if (wheelInput.isPressed(Bindings.Wheel.ALIGN_KEY))
 		{
-			frontBackMovementEnable = 0;
+			movementOverride = true;
 			double offset = distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance();
+			if (offset < 2) offset = 0;
 			mecanumDrive.setDrivePowers(
-					new PoseVelocity2d(new Vector2d(0, Utilities.Clamp(offset, -1, 1)), // go towards desired distance
-										-mecanumDrive.pose.heading.real)); // Rotate towards 0
-		} else frontBackMovementEnable = 1;
+					new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -30, 30) / 100,
+										-wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * 0.25), // go towards desired distance
+										0)); // Rotate towards 0
+		} else movementOverride = false;
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
