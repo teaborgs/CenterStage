@@ -183,11 +183,11 @@ public final class AlexTeleOp extends BaseOpMode
 		{
 			movementOverride = true;
 			double offset = distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance();
-			if (offset < 2) offset = 0;
+			if (offset < 1) offset = 0;
 			mecanumDrive.setDrivePowers(
-					new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -30, 30) / 100,
-										-wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * 0.25), // go towards desired distance
-										0)); // Rotate towards 0
+					new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -30, 30) / 80,
+										-wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * 0.3), // go towards desired distance
+							(wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * 0.03));
 		} else movementOverride = false;
 	}
 
@@ -337,6 +337,10 @@ public final class AlexTeleOp extends BaseOpMode
 							liftMotor2.setTargetPosition(LiftLevelToValue());
 							tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
 							setTimeout(() -> {
+								intakeMotor.setPower(1);
+								setTimeout(() -> {
+									intakeMotor.setPower(0);
+								}, 750);
 								rotatorServo.setPosition(Constants.getRotatorBusy());
 								armBusy = false;
 								armState = Utilities.State.BUSY;
@@ -463,7 +467,7 @@ public final class AlexTeleOp extends BaseOpMode
 
 		if (DEBUG) {
 			telemetry.addLine();
-			telemetry.addData("{DEBUG} Antenna Pos", antennaServo.getPosition());
+			telemetry.addData("[DEBUG] Antenna Pos", antennaServo.getPosition());
 			telemetry.addData("[DEBUG] Last Antenna press", antennaPress.seconds());
 			telemetry.addData("[DEBUG] Distance Sensor: ", distanceSensor.getDistance(DistanceUnit.CM));
 			telemetry.addData("[DEBUG] Lift 1", liftMotor1.getCurrentPosition());

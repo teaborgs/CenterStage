@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
+import static org.firstinspires.ftc.teamcode.Utilities.RunSequentially;
 
 import androidx.annotation.NonNull;
 
@@ -417,6 +418,21 @@ public class MecanumDrive
 		FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
 
 		return twist.velocity().value();
+	}
+
+	public Action awaitUpdatePoseEstimate()
+	{
+		return new InstantAction(() -> {
+			Twist2dDual<Time> twist = localizer.update();
+			pose = pose.plus(twist.value());
+
+			poseHistory.add(pose);
+			while (poseHistory.size() > 100) {
+				poseHistory.removeFirst();
+			}
+
+			FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
+		});
 	}
 
 	private void drawPoseHistory(Canvas c)

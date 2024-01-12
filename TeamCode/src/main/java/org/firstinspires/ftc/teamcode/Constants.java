@@ -18,11 +18,11 @@ public class Constants
 				instance.robotConstants.clear();
 				instance.robotConstants.put("tumblerLoad", 0);
 				instance.robotConstants.put("tumblerIdle", 400);
-				instance.robotConstants.put("tumblerBackdrop", 850);
+				instance.robotConstants.put("tumblerBackdrop", 800);
 				instance.robotConstants.put("tumblerStackPoses", new int[]{1550, 1510, 1480, 1440, 1400});
-				instance.robotConstants.put("tumblerSpikeMark", 1400);
+				instance.robotConstants.put("tumblerSpikeMark", 1200);
 				instance.robotConstants.put("liftPickup", -10);
-				instance.robotConstants.put("liftLevel1", 0);
+				instance.robotConstants.put("liftLevel1", 50);
 				instance.robotConstants.put("liftLevel2", 500);
 				instance.robotConstants.put("liftLevel3", 950);
 				instance.robotConstants.put("liftLevel4", 1800);
@@ -77,7 +77,7 @@ public class Constants
 				instance.robotConstants.put("intakeMaxPower", 0.8d);
 				instance.robotConstants.put("liftNormalPower", 0.8d);
 				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 10.0d);
+				instance.robotConstants.put("backdropDistance", 9.0d);
 				instance.robotConstants.put("antennaIdle", 0.0d);
 				instance.robotConstants.put("antennaGuide", 0.5d);
 				instance.robotConstants.put("antennaGrab", 0.95d);

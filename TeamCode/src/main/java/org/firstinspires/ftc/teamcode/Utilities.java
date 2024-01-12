@@ -29,6 +29,8 @@ public class Utilities
 
 	public static double centimetersToInches(double centimeters) { return centimeters / 2.54; }
 
+	public static double inchesToCentimeters(double inches) { return inches * 2.54; }
+
 	public static double Clamp(double val, double min, double max) {
 		if (val < min) return min;
 		else return Math.min(val, max);
