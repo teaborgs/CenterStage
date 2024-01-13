@@ -29,61 +29,17 @@ public class Utilities
 
 	public static double centimetersToInches(double centimeters) { return centimeters / 2.54; }
 
-	private static RobotType robotType = null;
-
-	public static RobotType GetCurrentRobotType(HardwareMap hardwareMap, Telemetry telemetry, Gamepad... gamepads)
-	{
-		if (robotType != null) return robotType;
-		try {
-			if (hardwareMap.get("robot1") != null) robotType = RobotType.ROBOT_1;
-		} catch (Exception e) {
-			try {
-				if (hardwareMap.get("robot2") != null) robotType = RobotType.ROBOT_2;
-			} catch (Exception e2) {
-				robotType = null;
-			}
-		}
-		if(robotType == null)
-		{
-			if (telemetry == null)
-				throw new Error("This mode requires the robot to be specified in the config!");
-			telemetry.addLine("Please select a robot");
-			telemetry.addLine("Press A for Robot 1");
-			telemetry.addLine("Press B for Robot 2");
-			telemetry.update();
-			robotType = WaitForRobotSelection(gamepads);
-		}
-		return robotType;
-	}
-
-	public static Utilities.RobotType WaitForRobotSelection(Gamepad... gamepads)
-	{
-		Utilities.RobotType robotType = null;
-		while (robotType == null)
-		{
-			for (Gamepad gamepad : gamepads) {
-				if (gamepad.a) robotType = Utilities.RobotType.ROBOT_1;
-				else if (gamepad.b) robotType = Utilities.RobotType.ROBOT_2;
-			}
-		}
-		return robotType;
-	}
-
-	public static boolean IsDebugging(HardwareMap hardwareMap)
-	{
-		try {
-			return hardwareMap.get("debug") != null;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	public static Action WaitForMovementStop(MecanumDrive mecanumDrive)
 	{
 		return telemetryPacket -> {
 			while (!mecanumDrive.updatePoseEstimate().linearVel.equals(new Vector2d(0, 0)));
 			return false;
 		};
+	}
+
+	public static int LiftLevelToValue(int liftLevel)
+	{
+		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4();
 	}
 
 	public static Action WaitFor(double delay) { return new SleepAction(delay); }
@@ -155,8 +111,6 @@ public class Utilities
 	{
 		for (Servo device : devices) device.getController().pwmEnable();
 	}
-
-
 
 	public enum State
 	{

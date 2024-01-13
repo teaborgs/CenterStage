@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
 import static org.firstinspires.ftc.teamcode.Utilities.RunInParallel;
 import static org.firstinspires.ftc.teamcode.Utilities.RunSequentially;
 import static org.firstinspires.ftc.teamcode.Utilities.WaitFor;
@@ -16,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.opencv.TeamPropDetectionPipeline;
@@ -81,11 +81,10 @@ public class AutoBoss extends LinearOpMode
 
 	private void Init()
 	{
-		// Robot systems
-		Utilities.RobotType robotType = GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2);
-		Constants.Init(robotType);
+		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
+		Constants.Init(Globals.GetCurrentRobotType());
 
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), robotType);
+		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
 
 		tumblerSystem = new TumblerSystem(hardwareMap.get(DcMotorEx.class, "tumbler"));
 		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "intake"), hardwareMap.get(Servo.class, "antenna"));
@@ -93,7 +92,7 @@ public class AutoBoss extends LinearOpMode
 		clawSystem = new ClawSystem(hardwareMap.get(Servo.class, "claw"));
 		liftSystem = new LiftSystem(hardwareMap.get(DcMotorEx.class, "lift1"), hardwareMap.get(DcMotorEx.class, "lift2"));
 
-		tumblerSystem.setRobotType(robotType);
+		tumblerSystem.setRobotType(Globals.GetCurrentRobotType());
 
 		tumblerSystem.Init();
 		intakeSystem.Init();
@@ -106,7 +105,7 @@ public class AutoBoss extends LinearOpMode
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		detectionPipeline = new TeamPropDetectionPipeline();
 		detectionPipeline.setAlliance(currentAlliance);
-		detectionPipeline.setDebug(Utilities.IsDebugging(hardwareMap));
+		detectionPipeline.setDebug(Globals.IsDebugging());
 		camera.setPipeline(detectionPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
 		{
@@ -159,7 +158,6 @@ public class AutoBoss extends LinearOpMode
 				break;
 		}
 	}
-
 
 	private void RunRedShort()
 	{

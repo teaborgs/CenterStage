@@ -43,6 +43,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

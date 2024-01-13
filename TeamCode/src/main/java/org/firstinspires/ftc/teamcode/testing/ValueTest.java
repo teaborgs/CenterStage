@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.testing;
 
-import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
-import static org.firstinspires.ftc.teamcode.Utilities.IsDebugging;
-
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.Utilities;
 
 /*
  * Test the encoder value of a motor
@@ -38,8 +34,9 @@ public class ValueTest extends BaseOpMode
 	@Override
 	protected void OnInitialize()
 	{
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
-		Constants.Init(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2));
+		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
+		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
+		Constants.Init(Globals.GetCurrentRobotType());
 
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 		intakeMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -54,8 +51,7 @@ public class ValueTest extends BaseOpMode
 
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		if (GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_1)
-			tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+		tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 		rotatorServo = hardwareMap.get(Servo.class, "rotator");
