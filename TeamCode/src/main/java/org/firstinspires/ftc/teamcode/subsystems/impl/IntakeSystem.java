@@ -4,10 +4,10 @@ import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
@@ -16,8 +16,12 @@ import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 public final class IntakeSystem extends SystemEx
 {
 	private final DcMotorEx motor;
+	private final Servo servo;
 
-	public IntakeSystem(DcMotorEx motor) { this.motor = motor; }
+	public IntakeSystem(DcMotorEx motor, Servo servo) {
+		this.motor = motor;
+		this.servo = servo;
+	}
 
 	@Override
 	public void Init() { motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER); }
@@ -37,9 +41,32 @@ public final class IntakeSystem extends SystemEx
 	public Action RunIntakeFor(double time)
 	{
 		return new SequentialAction(
-				new InstantAction(() -> motor.setPower(Constants.getIntakeMaxPower())),
+				telemetryPacket -> {
+					motor.setPower(Constants.getIntakeMaxPower());
+					return false;
+				},
 				new SleepAction(time),
-				new InstantAction(() -> motor.setPower(0))
+				telemetryPacket -> {
+					motor.setPower(0);
+					return false;
+				}
+		);
+	}
+
+	public Action RunIntakeWithAntennaFor(double time)
+	{
+		return new SequentialAction(
+				telemetryPacket -> {
+					motor.setPower(Constants.getIntakeMaxPower());
+					servo.setPosition(Constants.getAntennaGrab());
+					return false;
+				},
+				new SleepAction(time),
+				telemetryPacket -> {
+					motor.setPower(0);
+					servo.setPosition(Constants.getAntennaIdle());
+					return false;
+				}
 		);
 	}
 }

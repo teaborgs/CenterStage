@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -45,12 +44,16 @@ public final class TumblerSystem extends SystemEx
 	{
 		return new SequentialAction(
 				new SleepAction(delayDirection == Utilities.DelayDirection.BEFORE ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0),
-				new InstantAction(() -> {
+				telemetryPacket -> {
 					motor.setTargetPosition((int) position);
 					motor.setPower(1);
-				}),
+					return false;
+				},
 				telemetryPacket -> Math.abs(motor.getCurrentPosition() - motor.getTargetPosition()) > TOLERANCE,
-				new InstantAction(() -> motor.setPower(0.05)),
+				telemetryPacket -> {
+					motor.setPower(0.05);
+					return false;
+				},
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
 	}

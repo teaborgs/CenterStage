@@ -62,7 +62,7 @@ public final class ManualDriveTest extends BaseOpMode
 	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private Servo clawServo, rotatorServo, planeLevelServo, planeReleaseServo, antennaServo;
+	private Servo clawServo, rotatorServo, lockerServo, planeLevelServo, planeReleaseServo;
 
 	// Input System
 	private InputSystem wheelInput, armInput;
@@ -77,14 +77,13 @@ public final class ManualDriveTest extends BaseOpMode
 			private static final InputSystem.Axis ROTATE_AXIS_L = new InputSystem.Axis("left_trigger");
 			private static final InputSystem.Axis ROTATE_AXIS_R = new InputSystem.Axis("right_trigger");
 			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
-			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
-			private static final InputSystem.Key INTAKE_CLAW = new InputSystem.Key("x");
 		}
 
 		private static final class Arm
 		{
 			private static final InputSystem.Key CLAW_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key ROTATOR_KEY = new InputSystem.Key("b");
+			private static final InputSystem.Key LOCKER_KEY = new InputSystem.Key("y");
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Axis("left_trigger"), new InputSystem.Axis("right_trigger"));
 			private static final InputSystem.Key TUMBLER_LOAD_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key TUMBLER_BACKDROP_KEY = new InputSystem.Key("dpad_up");
@@ -116,7 +115,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+		if(GetCurrentRobotType(hardwareMap, telemetry, gamepad1, gamepad2) == Utilities.RobotType.ROBOT_1)tumblerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		tumblerMotor.setTargetPosition(0);
@@ -124,11 +123,14 @@ public final class ManualDriveTest extends BaseOpMode
 
 		rotatorServo = hardwareMap.get(Servo.class, "rotator");
 		clawServo = hardwareMap.get(Servo.class, "claw");
-		antennaServo = hardwareMap.get(Servo.class, "antenna");
+		lockerServo = hardwareMap.get(Servo.class, "locker");
+		planeReleaseServo = hardwareMap.get(Servo.class, "shooter");
+		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
 
+		planeReleaseServo.setPosition(Constants.getPlaneShooterIdle());
+		lockerServo.setPosition(Constants.getLockerIdle());
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
-		antennaServo.setPosition(0);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -142,10 +144,11 @@ public final class ManualDriveTest extends BaseOpMode
 		Wheels();
 		Intake();
 		Lift();
+		Locker();
 		Claw();
 		Rotator();
 		Tumbler();
-		//Plane();
+		Plane();
 		Telemetry();
 	}
 
@@ -164,23 +167,9 @@ public final class ManualDriveTest extends BaseOpMode
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel, angle));
 	}
 
-	short antennaIndex = 0;
 	private void Intake()
 	{
-		intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
-		if(wheelInput.wasPressedThisFrame(Bindings.Wheel.INTAKE_CLAW)) {
-			antennaIndex++;
-			if(antennaIndex > 1) antennaIndex = 0;
-		}
-		switch (antennaIndex)
-		{
-			case 0:
-				antennaServo.setPosition(0);
-				break;
-			case 1:
-				antennaServo.setPosition(0.5);
-				break;
-		}
+		intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : 0.0);
 	}
 
 	// ================ Arm ================
@@ -271,6 +260,18 @@ public final class ManualDriveTest extends BaseOpMode
 		}
 	}
 
+	private Utilities.State lockerState = Utilities.State.IDLE;
+
+	private void Locker()
+	{
+		if (armInput.wasPressedThisFrame(Bindings.Arm.LOCKER_KEY))
+			lockerState = lockerState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
+		if (lockerState == Utilities.State.IDLE)
+			lockerServo.setPosition(Constants.getLockerIdle());
+		else
+			lockerServo.setPosition(Constants.getLockerBusy());
+	}
+
 	private void Telemetry()
 	{
 		telemetry.addData("Robot pos: ", mecanumDrive.updatePoseEstimate().component1());
@@ -288,6 +289,9 @@ public final class ManualDriveTest extends BaseOpMode
 
 		telemetry.addData("Rotator Pos: ", rotatorServo.getPosition());
 		telemetry.addData("Claw Pos: ", clawServo.getPosition());
+		telemetry.addData("Lock Pos: ", lockerServo.getPosition());
+		telemetry.addData("PlaneLevel Pos: ", planeLevelServo.getPosition());
+		telemetry.addData("PlaneRelease Pos: ", planeReleaseServo.getPosition());
 
 		telemetry.update();
 	}

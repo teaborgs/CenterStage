@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Utilities.GetCurrentRobotType;
-import static org.firstinspires.ftc.teamcode.Utilities.RunSequentially;
 
 import androidx.annotation.NonNull;
 
@@ -195,8 +194,8 @@ public class MecanumDrive
 		rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		leftFront.setPower(0);
 		leftBack.setPower(0);
@@ -205,14 +204,13 @@ public class MecanumDrive
 
 		imu = hardwareMap.get(IMU.class, "imu");
 		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-				RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+				RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
 				RevHubOrientationOnRobot.UsbFacingDirection.UP));
 		imu.initialize(parameters);
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
 		localizer = new ThreeDeadWheelLocalizer(hardwareMap, params.get("inPerTick"));
-
 //		FlightRecorder.write("MECANUM_PARAMS", params);
 	}
 
@@ -420,21 +418,6 @@ public class MecanumDrive
 		return twist.velocity().value();
 	}
 
-	public Action awaitUpdatePoseEstimate()
-	{
-		return new InstantAction(() -> {
-			Twist2dDual<Time> twist = localizer.update();
-			pose = pose.plus(twist.value());
-
-			poseHistory.add(pose);
-			while (poseHistory.size() > 100) {
-				poseHistory.removeFirst();
-			}
-
-			FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
-		});
-	}
-
 	private void drawPoseHistory(Canvas c)
 	{
 		double[] xPoints = new double[poseHistory.size()];
@@ -483,23 +466,23 @@ public class MecanumDrive
 		switch (robotType) {
 			case ROBOT_1:
 				params.clear();
-				params.put("inPerTick", 0.0005321205076567505); // theoretical // 0.0005321205076567505
-				params.put("lateralInPerTick", 0.000354834738985669);
-				params.put("trackWidthTicks", 24777.315255578316);
-				params.put("kS", 1.6005813399906477); // 1,55071531823552, 1,61127026686861, 1,46455667516605
-				params.put("kV", 0.00007387153415317561); //
-				params.put("kA", 0.00002);
-				params.put("maxWheelVel", 70d);
-				params.put("minProfileAccel", -40d);
+				params.put("inPerTick", 0.0005343902596278814); // 78.74 / 147570, 147121 147345.5
+				params.put("lateralInPerTick", 0.00035364620110145); // 0.0003516766451389 0.000355615757064
+				params.put("trackWidthTicks", 24383.682763839); // 24432.28339319 24335.082134488
+				params.put("kS", 1.371419626666559); // 1.359373863166279 1.383465390166839
+				params.put("kV", 0.00007591796867535); // 0.0000758075429693 0.0000760283943814
+				params.put("kA", 0.00001);
+				params.put("maxWheelVel", 50d);
+				params.put("minProfileAccel", -50d);
 				params.put("maxProfileAccel", 50d);
 				params.put("maxAngVel", Math.PI);
 				params.put("maxAngAccel", Math.PI);
-				params.put("axialGain", 8d);
-				params.put("lateralGain", 0d);
-				params.put("headingGain", 8d);
-				params.put("axialVelGain", 3d);
+				params.put("axialGain", 6d);
+				params.put("lateralGain", 6d);
+				params.put("headingGain", 6d);
+				params.put("axialVelGain", 0.5d);
 				params.put("lateralVelGain", 1d);
-				params.put("headingVelGain", 1d);
+				params.put("headingVelGain", 0.5d);
 				break;
 			case ROBOT_2:
 				params.clear();
@@ -517,7 +500,7 @@ public class MecanumDrive
 				params.put("axialGain", 6d);
 				params.put("lateralGain", 6d);
 				params.put("headingGain", 6d);
-				params.put("axialVelGain", 2d);
+				params.put("axialVelGain", 0.5d);
 				params.put("lateralVelGain", 1d);
 				params.put("headingVelGain", 0.5d);
 				break;

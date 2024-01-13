@@ -65,7 +65,7 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Axis ROTATE_AXIS_R = new InputSystem.Axis("right_trigger");
 			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
-			private static final InputSystem.Key ALIGN_KEY = new InputSystem.Key("x");
+			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 		}
 
@@ -147,11 +147,7 @@ public final class AlexTeleOp extends BaseOpMode
 		UpdateMotorPowers();
 		Suspender();
 		Antenna();
-		if (!robotSuspended)
-		{
-			AlignToBackdrop();
-			Wheels();
-		}
+		if (!robotSuspended) Wheels();
 		if (suspending) return;
 		ManualReset();
 		Leveler();
@@ -165,7 +161,6 @@ public final class AlexTeleOp extends BaseOpMode
 	// ================ Wheels ================
 	private void Wheels()
 	{
-		if(movementOverride) return;
 		boolean turbo = wheelInput.isPressed(Bindings.Wheel.TURBO_KEY);
 		boolean suppress = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_KEY);
 		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
@@ -174,21 +169,6 @@ public final class AlexTeleOp extends BaseOpMode
 				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X)
 		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
 		mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel.times(-1), -angle));
-	}
-
-	private boolean movementOverride = false;
-	private void AlignToBackdrop()
-	{
-		if (wheelInput.isPressed(Bindings.Wheel.ALIGN_KEY))
-		{
-			movementOverride = true;
-			double offset = distanceSensor.getDistance(DistanceUnit.CM) - Constants.getBackdropDistance();
-			if (offset < 1) offset = 0;
-			mecanumDrive.setDrivePowers(
-					new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -30, 30) / 80,
-										-wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X) * 0.3), // go towards desired distance
-							(wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R)) * 0.03));
-		} else movementOverride = false;
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
@@ -337,10 +317,6 @@ public final class AlexTeleOp extends BaseOpMode
 							liftMotor2.setTargetPosition(LiftLevelToValue());
 							tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
 							setTimeout(() -> {
-								intakeMotor.setPower(1);
-								setTimeout(() -> {
-									intakeMotor.setPower(0);
-								}, 750);
 								rotatorServo.setPosition(Constants.getRotatorBusy());
 								armBusy = false;
 								armState = Utilities.State.BUSY;
@@ -408,10 +384,10 @@ public final class AlexTeleOp extends BaseOpMode
 			suspending = false;
 			liftMotor2.setTargetPosition(Constants.getSuspenderIdle());
 			liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
-	//		RestorePower(tumblerMotor, intakeMotor); // Restore power in case the suspension was interrupted
+			//		RestorePower(tumblerMotor, intakeMotor); // Restore power in case the suspension was interrupted
 		} else if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_KEY)) {
 			if (!suspending) {
-	//			CutPower(tumblerMotor, intakeMotor); // Cut power to the wheels as it's not needed
+				//			CutPower(tumblerMotor, intakeMotor); // Cut power to the wheels as it's not needed
 				suspending = true;
 				liftMotor2.setTargetPosition(getSuspenderSuspend());
 				liftMotor1.setTargetPosition(Constants.getSuspenderSuspend());
@@ -425,7 +401,7 @@ public final class AlexTeleOp extends BaseOpMode
 					liftMotor2.setTargetPosition(Constants.getSuspenderLock());
 					liftMotor1.setTargetPosition(Constants.getSuspenderLock());
 				}
-	//			CutPower(mecanumDrive.leftBack, mecanumDrive.leftFront, mecanumDrive.rightBack, mecanumDrive.rightFront); // Cut power to the wheels as it's not needed
+				//			CutPower(mecanumDrive.leftBack, mecanumDrive.leftFront, mecanumDrive.rightBack, mecanumDrive.rightFront); // Cut power to the wheels as it's not needed
 				robotSuspended = true;
 			}
 		}

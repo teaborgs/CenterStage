@@ -15,12 +15,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Utilities;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Razvan TeleOp", group = "TeleOp")
 public final class RazvanTeleOp extends BaseOpMode
@@ -38,7 +41,7 @@ public final class RazvanTeleOp extends BaseOpMode
 	private DcMotorEx tumblerMotor;
 
 	// Servos
-	private Servo clawServo, rotatorServo, planeLevelServo, planeShooterServo;
+	private Servo clawServo, rotatorServo, planeLevelServo, planeShooterServo, antennaServo;
 
 	// Input System
 	private InputSystem wheelInput, armInput;
@@ -60,6 +63,8 @@ public final class RazvanTeleOp extends BaseOpMode
 			private static final InputSystem.Axis ROTATE_AXIS_R = new InputSystem.Axis("right_trigger");
 			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
+			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("x");
+			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 		}
 
 		private final static class Arm
@@ -120,10 +125,12 @@ public final class RazvanTeleOp extends BaseOpMode
 		clawServo = hardwareMap.get(Servo.class, "claw");
 		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
 		planeLevelServo = hardwareMap.get(Servo.class, "leveler");
+		antennaServo = hardwareMap.get(Servo.class, "antenna");
 
 		planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
 		clawServo.setPosition(Constants.getClawIdle());
 		rotatorServo.setPosition(Constants.getRotatorIdle());
+		antennaServo.setPosition(Constants.getAntennaIdle());
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -142,6 +149,7 @@ public final class RazvanTeleOp extends BaseOpMode
 		ManualReset();
 		Leveler();
 		Pickup();
+		Antenna();
 		Arm();
 		Plane();
 		if(armInput.wasPressedThisFrame(Bindings.Arm.RESET_STACK)) stackLevel = 5;
@@ -162,17 +170,41 @@ public final class RazvanTeleOp extends BaseOpMode
 	}
 
 	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
-
 	private void Pickup()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TOGGLE_PICKUP_KEY)) {
 			pickupMode = pickupMode == Utilities.PickupMode.INTAKE ? Utilities.PickupMode.STACK : Utilities.PickupMode.INTAKE;
-			if (pickupMode == Utilities.PickupMode.STACK) intakeMotor.setMotorDisable();
+			if (pickupMode == Utilities.PickupMode.STACK) { intakeMotor.setMotorDisable(); antennaServo.setPosition(Constants.getAntennaIdle()); }
 			else intakeMotor.setMotorEnable();
 			gamepad2.rumble(500);
 		}
-		if (pickupMode == Utilities.PickupMode.INTAKE)
-			intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
+		if (pickupMode == Utilities.PickupMode.INTAKE && !wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaIntakeRunTime())
+		{
+			intakeMotor.setPower((wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) || wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY)) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
+			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
+				antennaServo.setPosition(Constants.getAntennaGuide());
+			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
+				antennaServo.setPosition(Constants.getAntennaIdle());
+		}
+	}
+
+	ElapsedTime antennaPress = new ElapsedTime();
+	private void Antenna()
+	{
+		if (wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
+		{
+			antennaPress.reset();
+			antennaServo.setPosition(Constants.getAntennaGrab());
+			intakeMotor.setPower(Constants.getIntakeMaxPower());
+		}
+		else
+		{
+			if (!wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
+				antennaServo.setPosition(Constants.getAntennaIdle());
+
+			if (antennaPress.time(TimeUnit.SECONDS) > Constants.getAntennaIntakeRunTime())
+				intakeMotor.setPower(0);
+		}
 	}
 
 	private void UpdateMotorPowers()
