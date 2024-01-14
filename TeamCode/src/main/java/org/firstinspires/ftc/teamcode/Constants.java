@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+@Config
 public class Constants
 {
 	private static final Constants instance = new Constants();
 
-	@Config
 	public static class Container
 	{
 		public int TUMBLER_LOAD = 0;

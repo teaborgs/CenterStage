@@ -31,10 +31,8 @@ public final class RazvanTeleOp extends BaseOpMode
 	private RobotHardware robotHardware;
 	private InputSystem wheelInput, armInput;
 
-	@Config
 	private final static class Bindings
 	{
-		@Config
 		private final static class Wheel
 		{
 			private static final InputSystem.Key TURBO_KEY = new InputSystem.Key("left_bumper");
@@ -49,7 +47,6 @@ public final class RazvanTeleOp extends BaseOpMode
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 		}
 
-		@Config
 		private final static class Arm
 		{
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Key("left_bumper"), new InputSystem.Key("right_bumper"));
@@ -80,7 +77,6 @@ public final class RazvanTeleOp extends BaseOpMode
 		armInput = new InputSystem(gamepad2);
 
 		telemetry.setMsTransmissionInterval(50);
-		FlightRecorder.write("Constants", Constants.getParameters());
 	}
 
 	@Override

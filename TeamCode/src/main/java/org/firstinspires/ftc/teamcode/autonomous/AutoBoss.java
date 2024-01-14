@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.WaitFor;
 import static org.firstinspires.ftc.teamcode.Utilities.WaitForMovementStop;
 import static org.firstinspires.ftc.teamcode.Utilities.centimetersToInches;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -103,14 +104,7 @@ public class AutoBoss extends LinearOpMode
 				RunShort();
 				break;
 			case LONG:
-				switch (currentAlliance) {
-					case RED:
-						RunRedLong();
-						break;
-					case BLUE:
-						RunBlueLong();
-						break;
-				}
+				RunLong();
 				break;
 		}
 	}
@@ -122,74 +116,76 @@ public class AutoBoss extends LinearOpMode
 		Pose2d parkPose = new Pose2d(0, 0, 0);
 		double purpleTangent = 0;
 		double yellowTangent = 0;
+		double offset1 = -centimetersToInches(25);
+		double offset2 = -centimetersToInches(10);
 
 		Utilities.DetectionCase detectionCase = detectionPipeline.getDetectionCase();
 
-		if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
-			purplePose = new Pose2d(centimetersToInches(60), -centimetersToInches(10), 0);
-			yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
-			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
-			purpleTangent = 0;
-			yellowTangent = Math.PI / 2;
-		} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-			if (currentAlliance == Utilities.Alliance.RED) {
-				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(90), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+		if (currentAlliance == Utilities.Alliance.RED) {
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
+				purplePose = new Pose2d(centimetersToInches(60), -centimetersToInches(10), 0);
+				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(97), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(97), -Math.PI / 2);
 				purpleTangent = 0;
 				yellowTangent = Math.PI / 2;
-			} else {
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(53), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(50), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = -Math.PI;
+				yellowTangent = Math.PI / 2;
+			}
+		} else {
+			offset1 *= -1;
+			offset2 *= -1;
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
+				purplePose = new Pose2d(centimetersToInches(60), centimetersToInches(10), 0);
+				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(108), Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = -Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(63), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(108), Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = -Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(8), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(90), centimetersToInches(108), Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
 				purpleTangent = Math.PI;
 				yellowTangent = -Math.PI / 2;
 			}
-		} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-			if (currentAlliance == Utilities.Alliance.RED) {
-				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(53), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(50), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
-				purpleTangent = Math.PI;
-				yellowTangent = -Math.PI / 2;
-			} else {
-				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(90), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
-				purpleTangent = 0;
-				yellowTangent = Math.PI / 2;
-			}
-		}
-
-		if (currentAlliance == Utilities.Alliance.BLUE) { // Flip poses and tangents if alliance is blue
-			purplePose = new Pose2d(purplePose.position.x, -purplePose.position.y, purplePose.heading.toDouble());
-			yellowPose = new Pose2d(yellowPose.position.x, -yellowPose.position.y, yellowPose.heading.toDouble());
-			parkPose = new Pose2d(parkPose.position.x, -parkPose.position.y, parkPose.heading.toDouble());
-			purpleTangent = -purpleTangent;
-			yellowTangent = -yellowTangent;
 		}
 
 		Actions.runBlocking( // Run the autonomous
 				RunSequentially(
-						clawSystem.MoveToPosition(Constants.getClawBusy()), // Close claw
+						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER), // Close claw
 						RunInParallel(
 								mecanumDrive.actionBuilder(mecanumDrive.pose)
 										.splineToSplineHeading(purplePose, purpleTangent)
 										.build(), // Move to purple
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5), // Move tumbler to spike mark
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75) // Move rotator to busy
+								tumblerSystem.MoveToPosition(Constants.getTumblerSpikeMark()), // Move tumbler to spike mark
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.25) // Move rotator to busy
 						),
 						WaitForMovementStop(mecanumDrive), // Wait for movement to stop
 						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.AFTER), // Open claw
 						RunInParallel(
 								mecanumDrive.actionBuilder(purplePose)
 										.setTangent(yellowTangent)
-										.lineToY(yellowPose.position.y / 5d)
-										.splineToSplineHeading(new Pose2d(yellowPose.position.x, yellowPose.position.y - (-centimetersToInches(10)), -Math.PI / 2), yellowTangent)
-										.lineToYSplineHeading(yellowPose.position.y, -Math.PI / 2)
+										.lineToY(yellowPose.position.y - offset1)
+										.splineToLinearHeading(new Pose2d(yellowPose.position.x, yellowPose.position.y - offset2, yellowPose.heading.toDouble()), yellowTangent)
+										.lineToYLinearHeading(yellowPose.position.y, yellowPose.heading.toDouble())
 										.build(), // Move to yellow
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5), // Move rotator to idle
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8), // Move tumbler to load
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25), // Move rotator to idle
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.25), // Move tumbler to load
 								intakeSystem.RunIntakeFor(1) // Run intake for 1 second to push yellow
 						),
 						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH), // Close claw
@@ -198,12 +194,10 @@ public class AutoBoss extends LinearOpMode
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8) // Move tumbler to backdrop
 						),
 						WaitForMovementStop(mecanumDrive),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.BOTH), // Open claw
-						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()), // Move tumbler to load
-						WaitFor(0.5), // Wait for 0.5 seconds
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.25d, Utilities.DelayDirection.BOTH), // Open claw
 						RunInParallel(
-								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25),
+								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
 								mecanumDrive.actionBuilder(yellowPose)
 										.setTangent(0)
 										.lineToX(parkPose.position.x)
@@ -213,337 +207,112 @@ public class AutoBoss extends LinearOpMode
 		);
 	}
 
-	private void RunRedShort()
+	public void RunLong()
 	{
-		switch (detectionPipeline.getDetectionCase()) {
-			case LEFT:
-				Actions.runBlocking(
-						RunSequentially(
-								// Place purple
-								RunInParallel(
-										mecanumDrive.actionBuilder(mecanumDrive.pose)
-												.splineToSplineHeading(new Pose2d(centimetersToInches(70), 0, Math.PI / 2), 0)
-												.build(),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
-								),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-								// Place yellow
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), 0, Math.PI / 2))
-												.lineToY(-centimetersToInches(10))
-												.splineToSplineHeading(new Pose2d(centimetersToInches(75), -centimetersToInches(100), -Math.PI / 2), Math.PI / 2)
-												.build(),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-										intakeSystem.RunIntakeFor(1)
-								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
-								RunInParallel(
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.8),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 1)
-								),
-								WaitFor(0.2),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-								WaitFor(0.5),
-								// Reset positions and Park
-								RunInParallel(
-										rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), -centimetersToInches(95), -Math.PI / 2))
-												.setTangent(0)
-												.lineToX(centimetersToInches(120))
-												.build()
-								)
-						));
-				break;
-			// =========================================================================================================================================
-			case CENTER:
-				Actions.runBlocking(RunSequentially(
-						// Place purple
-						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-										.splineToSplineHeading(new Pose2d(centimetersToInches(60), -centimetersToInches(10), 0), 0)
-										.build(),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
-						),
-						WaitForMovementStop(mecanumDrive),
-						clawSystem.MoveToPosition(Constants.getClawIdle()),
-						WaitFor(0.2),
+		Pose2d purplePose = new Pose2d(0, 0, 0);
+		Pose2d stackPose = new Pose2d(0, 0, 0);
+		Pose2d yellowPose = new Pose2d(0, 0, 0);
+		Pose2d parkPose = new Pose2d(0, 0, 0);
+		double purpleTangent = 0;
+		double stackTangent = 0;
+		double yellowTangent = 0;
+		double offset1 = -centimetersToInches(25);
+		double offset2 = -centimetersToInches(10);
 
-						// Place yellow
+		Utilities.DetectionCase detectionCase = detectionPipeline.getDetectionCase();
+
+		if (currentAlliance == Utilities.Alliance.RED) {
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
+				purplePose = new Pose2d(centimetersToInches(60), centimetersToInches(10), 0);
+				stackPose = new Pose2d(centimetersToInches(67), centimetersToInches(52), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(97), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(97), -Math.PI / 2);
+				purpleTangent = 0;
+				stackTangent = Math.PI / 2;
+				yellowTangent = Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(110), centimetersToInches(27), -Math.PI);
+				stackPose = new Pose2d(centimetersToInches(140), centimetersToInches(42), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = 0;
+				stackTangent = -Math.PI / 2;
+				yellowTangent = Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(10), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(52), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = -Math.PI;
+				stackTangent = -Math.PI / 2;
+				yellowTangent = Math.PI / 2;
+			}
+		} else {
+			offset1 *= -1;
+			offset2 *= -1;
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
+				purplePose = new Pose2d(centimetersToInches(60), centimetersToInches(10), 0);
+				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(108), Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = -Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(63), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(108), Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = -Math.PI / 2;
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(8), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(90), centimetersToInches(108), Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purpleTangent = Math.PI;
+				yellowTangent = -Math.PI / 2;
+			}
+		}
+
+		Actions.runBlocking( // Run the autonomous
+				RunSequentially(
+						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER), // Close claw
 						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(60), -centimetersToInches(10), 0))
-										.setTangent(-Math.PI / 2)
-										.lineToY(-centimetersToInches(20))
-										.splineToSplineHeading(new Pose2d(centimetersToInches(70), -centimetersToInches(86), -Math.PI / 2), Math.PI / 2)
-										.lineToYSplineHeading(-centimetersToInches(96), -Math.PI / 2)
-										.build(),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-								intakeSystem.RunIntakeFor(1)
+								mecanumDrive.actionBuilder(mecanumDrive.pose)
+										.splineToLinearHeading(purplePose, purpleTangent)
+										.build(), // Move to purple
+								tumblerSystem.MoveToPosition(Constants.getTumblerSpikeMark()), // Move tumbler to spike mark
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.25) // Move rotator to busy
 						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
+						WaitForMovementStop(mecanumDrive), // Wait for movement to stop
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.AFTER), // Open claw
 						RunInParallel(
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
+								mecanumDrive.actionBuilder(purplePose)
+										.splineToLinearHeading(stackPose, stackTangent)
+										.build(), // Move to yellow
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25), // Move rotator to idle
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.25), // Move tumbler to load
+								intakeSystem.RunIntakeFor(1) // Run intake for 1 second to push yellow
 						),
-						WaitFor(0.2),
-						WaitForMovementStop(mecanumDrive),
-						clawSystem.MoveToPosition(Constants.getClawIdle()),
-						WaitFor(0.2),
-						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-						WaitFor(0.5),
-						mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2))
-								.setTangent(Math.PI / 2)
-								.lineToYSplineHeading(centimetersToInches(177), -Math.PI / 2)
-								.build(),
-						telemetryPacket -> {
-							mecanumDrive.updatePoseEstimate();
-							telemetry.addData("heading", mecanumDrive.pose.heading);
-							telemetry.addData("x", mecanumDrive.pose.position.x);
-							telemetry.addData("y", mecanumDrive.pose.position.y);
-							telemetry.update();
-							return false;
-						},
-						intakeSystem.RunIntakeWithAntennaFor(1.5),
-						WaitFor(1),
-						intakeSystem.RunIntakeWithAntennaFor(1.5),
-						mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), centimetersToInches(177), -Math.PI / 2))
-								.lineToYSplineHeading(-centimetersToInches(96), -Math.PI / 2)
-								.build(),
-						telemetryPacket -> {
-							return true;
-						}
-						// Reset positions and Park
+						WaitFor(4),
+						mecanumDrive.actionBuilder(stackPose)
+								.lineToYLinearHeading(-centimetersToInches(150), -Math.PI / 2)
+								.build()
+//						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH), // Close claw
 //						RunInParallel(
-//								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-//								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-//								mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(60), -centimetersToInches(95), -Math.PI / 2))
+//								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5), // Move rotator to busy
+//								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8) // Move tumbler to backdrop
+//						),
+//						WaitForMovementStop(mecanumDrive),
+//						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.25d, Utilities.DelayDirection.BOTH), // Open claw
+//						RunInParallel(
+//								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25),
+//								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
+//								mecanumDrive.actionBuilder(yellowPose)
 //										.setTangent(0)
-//										.lineToX(centimetersToInches(120))
-//										.build()
+//										.lineToX(parkPose.position.x)
+//										.build() // Move to park
 //						)
-				));
-				break;
-			// =========================================================================================================================================
-			case RIGHT:
-				Actions.runBlocking(RunSequentially(
-								// Place purple
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-												.splineToLinearHeading(new Pose2d(centimetersToInches(70), -centimetersToInches(53), Math.PI / 2), Math.PI)
-												.build(),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
-								),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-
-								// Place yellow
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), -centimetersToInches(53), Math.PI / 2))
-												.splineToLinearHeading(new Pose2d(centimetersToInches(40), -centimetersToInches(100), -Math.PI / 2), Math.PI / 2)
-												.build(),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-										intakeSystem.RunIntakeFor(1)
-								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
-								RunInParallel(
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
-								),
-								WaitFor(0.2),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-								WaitFor(0.5),
-
-								// Reset positions and Park
-								RunInParallel(
-										rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(40), -centimetersToInches(95), -Math.PI / 2))
-												.setTangent(0)
-												.lineToX(centimetersToInches(120))
-												.build()
-								)
-						)
-				);
-				break;
-
-			case NONE:
-				telemetry.addLine("Invalid case! (NONE)");
-				telemetry.update();
-				break;
-		}
+				)
+		);
 	}
-
-
-	private void RunBlueShort()
-	{
-		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
-		switch (detectionPipeline.getDetectionCase()) {
-			case LEFT:
-				Actions.runBlocking(
-						RunSequentially(
-								// Place purple
-								RunInParallel(
-										mecanumDrive.actionBuilder(mecanumDrive.pose)
-												.splineToSplineHeading(new Pose2d(centimetersToInches(70), 0, -Math.PI / 2), 0)
-												.build(),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
-								),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-								// Place yellow
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), 0, -Math.PI / 2))
-												.lineToY(-centimetersToInches(10))
-												.splineToSplineHeading(new Pose2d(centimetersToInches(75), centimetersToInches(100), Math.PI / 2), -Math.PI / 2)
-												.build(),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-										intakeSystem.RunIntakeFor(1)
-								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
-								RunInParallel(
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.8),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 1)
-								),
-								WaitFor(0.2),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-								WaitFor(0.5),
-								// Reset positions and Park
-								RunInParallel(
-										rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), centimetersToInches(100), Math.PI / 2))
-												.setTangent(0)
-												.lineToX(centimetersToInches(120))
-												.build()
-								)
-						));
-				break;
-			// =========================================================================================================================================
-			case CENTER:
-				Actions.runBlocking(RunSequentially(
-						// Place purple
-						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-										.splineToSplineHeading(new Pose2d(centimetersToInches(60), centimetersToInches(10), 0), 0)
-										.build(),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
-						),
-						WaitForMovementStop(mecanumDrive),
-						clawSystem.MoveToPosition(Constants.getClawIdle()),
-						WaitFor(0.2),
-
-						// Place yellow
-						RunInParallel(
-								mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(60), centimetersToInches(10), 0))
-										.setTangent(-Math.PI / 2)
-										.lineToY(-centimetersToInches(30))
-										.splineToSplineHeading(new Pose2d(centimetersToInches(65), centimetersToInches(100), Math.PI / 2), -Math.PI / 2)
-										.build(),
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-								intakeSystem.RunIntakeFor(1)
-						),
-						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
-						RunInParallel(
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
-						),
-						WaitFor(0.2),
-						WaitForMovementStop(mecanumDrive),
-						clawSystem.MoveToPosition(Constants.getClawIdle()),
-						WaitFor(0.2),
-						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-						WaitFor(0.5),
-
-						// Reset positions and Park
-						RunInParallel(
-								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-								mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(65), centimetersToInches(100), Math.PI / 2))
-										.setTangent(0)
-										.lineToX(centimetersToInches(120))
-										.build()
-						)
-				));
-				break;
-			// =========================================================================================================================================
-			case RIGHT:
-				Actions.runBlocking(RunSequentially(
-								// Place purple
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-												.splineToLinearHeading(new Pose2d(centimetersToInches(70), centimetersToInches(53), -Math.PI / 2), -Math.PI)
-												.build(),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
-								),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-
-								// Place yellow
-								RunInParallel(
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), centimetersToInches(53), -Math.PI / 2))
-												.splineToLinearHeading(new Pose2d(centimetersToInches(40), centimetersToInches(100), Math.PI / 2), -Math.PI / 2)
-												.build(),
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8),
-										intakeSystem.RunIntakeFor(1)
-								),
-								clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH),
-								RunInParallel(
-										rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8)
-								),
-								WaitFor(0.2),
-								WaitForMovementStop(mecanumDrive),
-								clawSystem.MoveToPosition(Constants.getClawIdle()),
-								WaitFor(0.2),
-								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-								WaitFor(0.5),
-
-								// Reset positions and Park
-								RunInParallel(
-										rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
-										tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-										mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(40), centimetersToInches(95), Math.PI / 2))
-												.setTangent(0)
-												.lineToX(centimetersToInches(120))
-												.build()
-								)
-						)
-				);
-				break;
-
-			case NONE:
-				telemetry.addLine("Invalid case! (NONE)");
-				telemetry.update();
-				break;
-		}
-	}
-
 
 	public void RunRedLong()
 	{
