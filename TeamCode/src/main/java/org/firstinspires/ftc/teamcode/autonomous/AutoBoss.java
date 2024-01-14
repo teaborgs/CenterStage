@@ -28,7 +28,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "AutoBoss", group = "Auto")
+@Autonomous(name = "Auto Boss", group = "Auto")
 public class AutoBoss extends LinearOpMode
 {
 	private MecanumDrive mecanumDrive;
@@ -40,49 +40,25 @@ public class AutoBoss extends LinearOpMode
 
 	private OpenCvCamera camera;
 	private TeamPropDetectionPipeline detectionPipeline;
+
 	private Utilities.Alliance currentAlliance = null;
 	private Utilities.PathType currentPath = null;
+	private Utilities.ParkingPosition parkingType = null;
+	private double longDelay = -1;
 
 	@Override
 	public void runOpMode()
 	{
-		SelectAllianceAndPath();
+		ConfigureAutonomous();
 		Init();
 		Detection();
 		Run();
 	}
 
-	private void SelectAllianceAndPath()
-	{
-		telemetry.setMsTransmissionInterval(50);
-
-		telemetry.addLine("Please select an alliance");
-		telemetry.addLine("Press A for Red Alliance");
-		telemetry.addLine("Press B for Blue Alliance");
-		telemetry.update();
-		while (currentAlliance == null && !isStopRequested()) {
-			if (gamepad1.a || gamepad2.a) currentAlliance = Utilities.Alliance.RED;
-			else if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.BLUE;
-		}
-
-		telemetry.addLine("Please select a path");
-		telemetry.addLine("Press X for Short Path");
-		telemetry.addLine("Press Y for Long Path");
-		telemetry.update();
-		while (currentPath == null && !isStopRequested()) {
-			if (gamepad1.x || gamepad2.x) currentPath = Utilities.PathType.SHORT;
-			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
-		}
-
-		telemetry.addData("Alliance: ", currentAlliance.name());
-		telemetry.addData("Path: ", currentPath.name());
-		telemetry.update();
-	}
-
 	private void Init()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
-		Constants.Init(Globals.GetCurrentRobotType());
+		Constants.Init();
 
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
 
@@ -91,8 +67,6 @@ public class AutoBoss extends LinearOpMode
 		rotatorSystem = new RotatorSystem(hardwareMap.get(Servo.class, "rotator"));
 		clawSystem = new ClawSystem(hardwareMap.get(Servo.class, "claw"));
 		liftSystem = new LiftSystem(hardwareMap.get(DcMotorEx.class, "lift1"), hardwareMap.get(DcMotorEx.class, "lift2"));
-
-		tumblerSystem.setRobotType(Globals.GetCurrentRobotType());
 
 		tumblerSystem.Init();
 		intakeSystem.Init();
@@ -103,9 +77,7 @@ public class AutoBoss extends LinearOpMode
 		// Camera and detection
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-		detectionPipeline = new TeamPropDetectionPipeline();
-		detectionPipeline.setAlliance(currentAlliance);
-		detectionPipeline.setDebug(Globals.IsDebugging());
+		detectionPipeline = new TeamPropDetectionPipeline(currentAlliance, Globals.IsDebugging());
 		camera.setPipeline(detectionPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
 		{
@@ -119,39 +91,23 @@ public class AutoBoss extends LinearOpMode
 			public void onError(int errorCode)
 			{
 				telemetry.addData("Camera Error", errorCode);
+				telemetry.update();
 			}
 		});
 	}
 
-	private void Detection()
-	{
-		while (!isStarted()) {
-			telemetry.addData("Alliance: ", currentAlliance.name());
-			telemetry.addData("Path: ", currentPath.name());
-			telemetry.addData("Case: ", detectionPipeline.getDetectionCase().name());
-			telemetry.update();
-		}
-	}
-
 	private void Run()
 	{
-		switch (currentAlliance) {
-			case RED:
-				switch (currentPath) {
-					case SHORT:
-						RunRedShort();
-						break;
-					case LONG:
+		switch (currentPath) {
+			case SHORT:
+				RunShort();
+				break;
+			case LONG:
+				switch (currentAlliance) {
+					case RED:
 						RunRedLong();
 						break;
-				}
-				break;
-			case BLUE:
-				switch (currentPath) {
-					case SHORT:
-						RunBlueShort();
-						break;
-					case LONG:
+					case BLUE:
 						RunBlueLong();
 						break;
 				}
@@ -159,9 +115,106 @@ public class AutoBoss extends LinearOpMode
 		}
 	}
 
+	private void RunShort()
+	{
+		Pose2d purplePose = new Pose2d(0, 0, 0);
+		Pose2d yellowPose = new Pose2d(0, 0, 0);
+		Pose2d parkPose = new Pose2d(0, 0, 0);
+		double purpleTangent = 0;
+		double yellowTangent = 0;
+
+		Utilities.DetectionCase detectionCase = detectionPipeline.getDetectionCase();
+
+		if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
+			purplePose = new Pose2d(centimetersToInches(60), -centimetersToInches(10), 0);
+			yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
+			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+			purpleTangent = 0;
+			yellowTangent = Math.PI / 2;
+		} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
+			if (currentAlliance == Utilities.Alliance.RED) {
+				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(90), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = Math.PI / 2;
+			} else {
+				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(53), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(50), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = Math.PI;
+				yellowTangent = -Math.PI / 2;
+			}
+		} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
+			if (currentAlliance == Utilities.Alliance.RED) {
+				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(53), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(50), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = Math.PI;
+				yellowTangent = -Math.PI / 2;
+			} else {
+				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(90), -centimetersToInches(96), -Math.PI / 2);
+				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 120 : 20), -centimetersToInches(96), -Math.PI / 2);
+				purpleTangent = 0;
+				yellowTangent = Math.PI / 2;
+			}
+		}
+
+		if (currentAlliance == Utilities.Alliance.BLUE) { // Flip poses and tangents if alliance is blue
+			purplePose = new Pose2d(purplePose.position.x, -purplePose.position.y, purplePose.heading.toDouble());
+			yellowPose = new Pose2d(yellowPose.position.x, -yellowPose.position.y, yellowPose.heading.toDouble());
+			parkPose = new Pose2d(parkPose.position.x, -parkPose.position.y, parkPose.heading.toDouble());
+			purpleTangent = -purpleTangent;
+			yellowTangent = -yellowTangent;
+		}
+
+		Actions.runBlocking( // Run the autonomous
+				RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()), // Close claw
+						RunInParallel(
+								mecanumDrive.actionBuilder(mecanumDrive.pose)
+										.splineToSplineHeading(purplePose, purpleTangent)
+										.build(), // Move to purple
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5), // Move tumbler to spike mark
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75) // Move rotator to busy
+						),
+						WaitForMovementStop(mecanumDrive), // Wait for movement to stop
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.AFTER), // Open claw
+						RunInParallel(
+								mecanumDrive.actionBuilder(purplePose)
+										.setTangent(yellowTangent)
+										.lineToY(yellowPose.position.y / 5d)
+										.splineToSplineHeading(new Pose2d(yellowPose.position.x, yellowPose.position.y - (-centimetersToInches(10)), -Math.PI / 2), yellowTangent)
+										.lineToYSplineHeading(yellowPose.position.y, -Math.PI / 2)
+										.build(), // Move to yellow
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.5), // Move rotator to idle
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.8), // Move tumbler to load
+								intakeSystem.RunIntakeFor(1) // Run intake for 1 second to push yellow
+						),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH), // Close claw
+						RunInParallel(
+								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5), // Move rotator to busy
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8) // Move tumbler to backdrop
+						),
+						WaitForMovementStop(mecanumDrive),
+						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.BOTH), // Open claw
+						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()), // Move tumbler to load
+						WaitFor(0.5), // Wait for 0.5 seconds
+						RunInParallel(
+								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
+								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
+								mecanumDrive.actionBuilder(yellowPose)
+										.setTangent(0)
+										.lineToX(parkPose.position.x)
+										.build() // Move to park
+						)
+				)
+		);
+	}
+
 	private void RunRedShort()
 	{
-		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
 		switch (detectionPipeline.getDetectionCase()) {
 			case LEFT:
 				Actions.runBlocking(
@@ -262,7 +315,7 @@ public class AutoBoss extends LinearOpMode
 						intakeSystem.RunIntakeWithAntennaFor(1.5),
 						WaitFor(1),
 						intakeSystem.RunIntakeWithAntennaFor(1.5),
-						mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), centimetersToInches(177), -Math.PI/2))
+						mecanumDrive.actionBuilder(new Pose2d(centimetersToInches(70), centimetersToInches(177), -Math.PI / 2))
 								.lineToYSplineHeading(-centimetersToInches(96), -Math.PI / 2)
 								.build(),
 						telemetryPacket -> {
@@ -494,10 +547,11 @@ public class AutoBoss extends LinearOpMode
 
 	public void RunRedLong()
 	{
-		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
 		switch (detectionPipeline.getDetectionCase()) {
 			case RIGHT:
 				Actions.runBlocking(RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
+						WaitFor(longDelay),
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
@@ -549,6 +603,8 @@ public class AutoBoss extends LinearOpMode
 			// =========================================================================================================================================
 			case CENTER:
 				Actions.runBlocking(RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
+						WaitFor(longDelay),
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
@@ -597,6 +653,8 @@ public class AutoBoss extends LinearOpMode
 			// =========================================================================================================================================
 			case LEFT:
 				Actions.runBlocking(RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
+						WaitFor(longDelay),
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
@@ -656,10 +714,11 @@ public class AutoBoss extends LinearOpMode
 
 	public void RunBlueLong()
 	{
-		Actions.runBlocking(clawSystem.MoveToPosition(Constants.getClawBusy()));
 		switch (detectionPipeline.getDetectionCase()) {
 			case LEFT:
 				Actions.runBlocking(RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
+						WaitFor(longDelay),
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
@@ -711,6 +770,8 @@ public class AutoBoss extends LinearOpMode
 			// =========================================================================================================================================
 			case CENTER:
 				Actions.runBlocking(RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
+						WaitFor(longDelay),
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
@@ -760,6 +821,8 @@ public class AutoBoss extends LinearOpMode
 			// =========================================================================================================================================
 			case RIGHT:
 				Actions.runBlocking(RunSequentially(
+						clawSystem.MoveToPosition(Constants.getClawBusy()),
+						WaitFor(longDelay),
 						// Place purple
 						RunInParallel(
 								mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
@@ -815,5 +878,61 @@ public class AutoBoss extends LinearOpMode
 				telemetry.update();
 				break;
 		}
+	}
+
+	private void Detection()
+	{
+		while (!isStarted()) {
+			telemetry.addData("[INFO] Alliance", currentAlliance.name());
+			telemetry.addData("[INFO] Path", currentPath.name());
+			telemetry.addData("[INFO] Case", detectionPipeline.getDetectionCase().name());
+			telemetry.update();
+		}
+	}
+
+	private void ConfigureAutonomous()
+	{
+		telemetry.setMsTransmissionInterval(50);
+
+		telemetry.addLine("[CONFIGURE] Please select an alliance");
+		telemetry.addLine("[CONFIGURE] Press A for Red Alliance");
+		telemetry.addLine("[CONFIGURE] Press B for Blue Alliance");
+		telemetry.update();
+		while (currentAlliance == null && !isStopRequested()) {
+			if (gamepad1.a || gamepad2.a) currentAlliance = Utilities.Alliance.RED;
+			else if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.BLUE;
+		}
+
+		telemetry.addLine("[CONFIGURE] Please select a path");
+		telemetry.addLine("[CONFIGURE] Press X for Short Path");
+		telemetry.addLine("[CONFIGURE] Press Y for Long Path");
+		telemetry.update();
+		while (currentPath == null && !isStopRequested()) {
+			if (gamepad1.x || gamepad2.x) currentPath = Utilities.PathType.SHORT;
+			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
+		}
+
+		telemetry.addLine("[CONFIGURE] Please select a parking strategy");
+		telemetry.addLine("[CONFIGURE] Press A for Left Parking");
+		telemetry.addLine("[CONFIGURE] Press B for Right Parking");
+		telemetry.update();
+		while (parkingType == null && !isStopRequested()) {
+			if (gamepad1.a || gamepad2.a) parkingType = Utilities.ParkingPosition.LEFT;
+			else if (gamepad1.b || gamepad2.b) parkingType = Utilities.ParkingPosition.RIGHT;
+		}
+
+		if (currentPath == Utilities.PathType.LONG) {
+			telemetry.addLine("[CONFIGURE] Long path selected. Please select a delay");
+			telemetry.addLine("[CONFIGURE] Press X for 0 second delay");
+			telemetry.addLine("[CONFIGURE] Press Y for 5 second delay");
+			telemetry.update();
+			while (longDelay < 0 && !isStopRequested()) {
+				if (gamepad1.x || gamepad2.x) longDelay = 0;
+				else if (gamepad1.y || gamepad2.y) longDelay = 5;
+			}
+		}
+
+		telemetry.clearAll();
+		telemetry.update();
 	}
 }

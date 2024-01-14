@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TeamPropDetectionPipeline extends OpenCvPipeline
 {
-	private boolean debug = false;
+	private boolean debug;
 
 	private final Mat hsvImage = new Mat();
 	private final Mat redMask = new Mat();
@@ -28,7 +28,18 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 	private final List<Rect> boundingBoxes = new ArrayList<>();
 
 	private Utilities.DetectionCase detectionCase = Utilities.DetectionCase.LEFT;
-	private Utilities.Alliance currentAlliance = null;
+	private Utilities.Alliance currentAlliance;
+
+	public TeamPropDetectionPipeline(Utilities.Alliance alliance, boolean debug) {
+		this.currentAlliance = alliance;
+		this.debug = debug;
+	}
+
+	public TeamPropDetectionPipeline(Utilities.Alliance alliance) { this(alliance, false); }
+
+	public TeamPropDetectionPipeline(boolean debug) { this(null, debug); }
+
+	public TeamPropDetectionPipeline() { this(null, false); }
 
 	public void setAlliance(Utilities.Alliance alliance) { currentAlliance = alliance; }
 
@@ -72,6 +83,8 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline
 			Imgproc.rectangle(input, boundingBox.tl(), boundingBox.br(), new Scalar(0, 255, 0), 1);
 			Imgproc.putText(input, String.format("%.2f", contourArea), boundingBox.tl(), 0, 1, new Scalar(0, 255, 0));
 			boundingBoxes.add(boundingBox);
+
+			if(debug) Imgproc.putText(input, String.format("Size: %.2f", contourArea), boundingBox.tl(), 0, 1, new Scalar(0, 255, 0));
 		}
 
 		if (boundingBoxes.isEmpty())

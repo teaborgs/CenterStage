@@ -25,7 +25,6 @@ public final class ColorBlobDetectionTest extends BaseOpMode
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		detectionPipeline = new ColorBlobDetectionPipeline();
-		//detectionPipeline.setDebug(true); // Comment this out to disable debug mode
 		camera.setPipeline(detectionPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
 		{

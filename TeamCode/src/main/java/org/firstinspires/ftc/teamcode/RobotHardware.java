@@ -26,10 +26,10 @@ public class RobotHardware
 	// Distance Sensor
 	public final Rev2mDistanceSensor distanceSensor;
 
-	public RobotHardware(HardwareMap hardwareMap)
+	public RobotHardware(HardwareMap hardwareMap, boolean noLogic)
 	{
 		// Wheel motors
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0), Globals.GetCurrentRobotType());
+		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
 
 		// Intake Motor
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
@@ -43,21 +43,25 @@ public class RobotHardware
 		liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		liftMotor2.setDirection(DcMotorEx.Direction.REVERSE);
-		liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
-		liftMotor2.setTargetPosition(Constants.getSuspenderIdle());
-		liftMotor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-		liftMotor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		if (!noLogic) {
+			liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+			liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+			liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
+			liftMotor2.setTargetPosition(Constants.getSuspenderIdle());
+			liftMotor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+			liftMotor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		}
 
 		// Tumbler Motor
 		tumblerMotor = hardwareMap.get(DcMotorEx.class, "tumbler");
 		tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
 		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-		tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-		tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+		if (!noLogic) {
+			tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+			tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+			tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		}
 
 		// Servos
 		clawServo = hardwareMap.get(Servo.class, "claw");
@@ -66,13 +70,17 @@ public class RobotHardware
 		planeShooterServo = hardwareMap.get(Servo.class, "shooter");
 		antennaServo = hardwareMap.get(Servo.class, "antenna");
 
-		planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
-		clawServo.setPosition(Constants.getClawIdle());
-		rotatorServo.setPosition(Constants.getRotatorIdle());
-		antennaServo.setPosition(Constants.getAntennaIdle());
-		planeLevelServo.setPosition(Constants.getPlaneShooterIdle());
+		if (!noLogic) {
+			planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
+			clawServo.setPosition(Constants.getClawIdle());
+			rotatorServo.setPosition(Constants.getRotatorIdle());
+			antennaServo.setPosition(Constants.getAntennaIdle());
+			planeLevelServo.setPosition(Constants.getPlaneShooterIdle());
+		}
 
 		// Distance Sensor
 		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
 	}
+
+	public RobotHardware(HardwareMap hardwareMap) { this(hardwareMap, false); }
 }

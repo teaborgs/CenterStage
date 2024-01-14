@@ -83,7 +83,7 @@ public final class ManualDriveTest extends BaseOpMode
 	protected void OnInitialize()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
-		Constants.Init(Globals.GetCurrentRobotType());
+		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
 
 		wheelInput = new InputSystem(gamepad1);

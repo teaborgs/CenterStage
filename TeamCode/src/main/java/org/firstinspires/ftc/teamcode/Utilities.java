@@ -29,6 +29,8 @@ public class Utilities
 
 	public static double centimetersToInches(double centimeters) { return centimeters / 2.54; }
 
+	public static double inchesToCentimeters(double inches) { return inches * 2.54; }
+
 	public static Action WaitForMovementStop(MecanumDrive mecanumDrive)
 	{
 		return telemetryPacket -> {
@@ -150,5 +152,10 @@ public class Utilities
 	public enum PathType
 	{
 		SHORT, LONG
+	}
+
+	public enum ParkingPosition
+	{
+		LEFT, RIGHT
 	}
 }

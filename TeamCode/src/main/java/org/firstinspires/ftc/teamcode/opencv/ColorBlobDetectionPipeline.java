@@ -34,6 +34,10 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 
 	private final List<MatOfPoint> detections = new ArrayList<>(); // TODO: Implement actual detection class with functionality
 
+	public ColorBlobDetectionPipeline(boolean debug) { this.debug = debug; }
+
+	public ColorBlobDetectionPipeline() { this(false); }
+
 	@Override
 	public Mat processFrame(Mat input)
 	{
@@ -45,14 +49,6 @@ public class ColorBlobDetectionPipeline extends OpenCvPipeline
 		for (int i = 0; i < LOWER_BOUNDS.size(); i++)
 			detectAndDrawBlobs(hsv, input, LOWER_BOUNDS.get(i), UPPER_BOUNDS.get(i), i);
 		return input;
-	}
-
-	private void detectionTest(Mat hsv, Mat output, Scalar lower, Scalar upper, int index)
-	{
-		contours.clear();
-		Core.inRange(hsv, lower, upper, mask);
-		Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-		Imgproc.cvtColor(mask, output, 0);
 	}
 
 	@SuppressLint("DefaultLocale")

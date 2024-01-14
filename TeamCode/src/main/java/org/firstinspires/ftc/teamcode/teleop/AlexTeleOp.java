@@ -5,8 +5,10 @@ import static org.firstinspires.ftc.teamcode.Constants.getSuspenderSuspend;
 import static org.firstinspires.ftc.teamcode.Utilities.LiftLevelToValue;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -22,14 +24,17 @@ import org.firstinspires.ftc.teamcode.Utilities;
 
 import java.util.concurrent.TimeUnit;
 
+@Config
 @TeleOp(name = "Alex TeleOp", group = "TeleOp")
 public final class AlexTeleOp extends BaseOpMode
 {
 	private RobotHardware robotHardware;
 	private InputSystem wheelInput, armInput;
 
+	@Config
 	private final static class Bindings
 	{
+		@Config
 		private final static class Wheel
 		{
 			private static final InputSystem.Key TURBO_KEY = new InputSystem.Key("right_bumper");
@@ -44,6 +49,7 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 		}
 
+		@Config
 		private final static class Arm
 		{
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Key("left_bumper"), new InputSystem.Key("right_bumper"));
@@ -67,13 +73,14 @@ public final class AlexTeleOp extends BaseOpMode
 	protected void OnInitialize()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2); // This is to make sure the robot is selected before the init is done
-		Constants.Init(Globals.GetCurrentRobotType());
+		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
 
 		telemetry.setMsTransmissionInterval(50);
+		FlightRecorder.write("Constants", Constants.getParameters());
 	}
 
 	@Override

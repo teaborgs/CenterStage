@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.opencv.core.Scalar;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,99 +9,129 @@ import java.util.List;
 
 public class Constants
 {
-	public static Constants instance = new Constants();
-	private final HashMap<String, Object> robotConstants = new HashMap<>();
+	private static final Constants instance = new Constants();
 
-	public static void Init(Utilities.RobotType robotType)
+	@Config
+	public static class Container
 	{
-		switch (robotType)
-		{
-			case ROBOT_1:
-				instance.robotConstants.clear();
-				instance.robotConstants.put("tumblerLoad", 0);
-				instance.robotConstants.put("tumblerIdle", 400);
-				instance.robotConstants.put("tumblerBackdrop", 800);
-				instance.robotConstants.put("tumblerStackPoses", new int[]{1550, 1510, 1480, 1440, 1400});
-				instance.robotConstants.put("tumblerSpikeMark", 1300);
-				instance.robotConstants.put("liftPickup", -10);
-				instance.robotConstants.put("liftLevel1", 50);
-				instance.robotConstants.put("liftLevel2", 500);
-				instance.robotConstants.put("liftLevel3", 950);
-				instance.robotConstants.put("liftLevel4", 1800);
-				instance.robotConstants.put("suspenderIdle", 0);
-				instance.robotConstants.put("suspenderSuspend", 960);
-				instance.robotConstants.put("suspenderLock", -100);
-				instance.robotConstants.put("clawIdle", 0.45d);
-				instance.robotConstants.put("clawBusy", 1d);
-				instance.robotConstants.put("rotatorIdle", 0d);
-				instance.robotConstants.put("rotatorBusy", 0.9d);
-				instance.robotConstants.put("lockerIdle", 0.5d);
-				instance.robotConstants.put("lockerBusy", 0d);
-				instance.robotConstants.put("planeLevelerIdle", 0.5d);
-				instance.robotConstants.put("planeLevelerBusy", 0.7d);
-				instance.robotConstants.put("planeShooterIdle", 0.5d);
-				instance.robotConstants.put("planeShooterBusy", 0d);
-				instance.robotConstants.put("intakeMaxPower", 0.8d);
-				instance.robotConstants.put("liftNormalPower", 1.0d);
-				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 10.0d);
-				instance.robotConstants.put("antennaIdle", 0.0d);
-				instance.robotConstants.put("antennaGuide", 0.5d);
-				instance.robotConstants.put("antennaGrab", 0.95d);
-				instance.robotConstants.put("antennaIntakeRunTime", 1.0d);
-				break;
+		public int TUMBLER_LOAD = 0;
+		public int TUMBLER_IDLE = 0;
+		public int TUMBLER_BACKDROP = 0;
+		public int[] TUMBLER_STACK_POSES = new int[]{};
+		public int TUMBLER_SPIKE_MARK = 0;
+		public int LIFT_PICKUP = 0;
+		public int LIFT_LEVEL_1 = 0;
+		public int LIFT_LEVEL_2 = 0;
+		public int LIFT_LEVEL_3 = 0;
+		public int LIFT_LEVEL_4 = 0;
+		public int SUSPENDER_IDLE = 0;
+		public int SUSPENDER_SUSPEND = 0;
+		public double CLAW_IDLE = 0;
+		public double CLAW_BUSY = 0;
+		public double ROTATOR_IDLE = 0;
+		public double ROTATOR_BUSY = 0;
+		public double PLANE_LEVELER_IDLE = 0;
+		public double PLANE_LEVELER_BUSY = 0;
+		public double PLANE_SHOOTER_IDLE = 0;
+		public double PLANE_SHOOTER_BUSY = 0;
+		public double INTAKE_MAX_POWER = 0;
+		public double LIFT_NORMAL_POWER = 0;
+		public double LIFT_SUSPEND_POWER = 0;
+		public double BACKDROP_DISTANCE = 0;
+		public double ANTENNA_IDLE = 0;
+		public double ANTENNA_GUIDE = 0;
+		public double ANTENNA_GRAB = 0;
+		public double ANTENNA_INTAKE_RUN_TIME = 0;
 
-			case ROBOT_2:
-				instance.robotConstants.clear();
-				instance.robotConstants.put("tumblerLoad", 0);
-				instance.robotConstants.put("tumblerIdle", 400);
-				instance.robotConstants.put("tumblerBackdrop", 850);
-				instance.robotConstants.put("tumblerStackPoses", new int[]{1495, 1460, 1420, 1395, 1350});
-				instance.robotConstants.put("tumblerSpikeMark", 1300);
-				instance.robotConstants.put("liftPickup", -10);
-				instance.robotConstants.put("liftLevel1", 0);
-				instance.robotConstants.put("liftLevel2", 400);
-				instance.robotConstants.put("liftLevel3", 1050);
-				instance.robotConstants.put("liftLevel4", 1700);
-				instance.robotConstants.put("suspenderIdle", 0);
-				instance.robotConstants.put("suspenderSuspend", 1900);
-				instance.robotConstants.put("suspenderLock", -100);
-				instance.robotConstants.put("clawIdle", 0.45d);
-				instance.robotConstants.put("clawBusy", 1d);
-				instance.robotConstants.put("rotatorIdle", 0d);
-				instance.robotConstants.put("rotatorBusy", 1d);
-				instance.robotConstants.put("lockerIdle", 0d);
-				instance.robotConstants.put("lockerBusy", 0.5d);
-				instance.robotConstants.put("planeLevelerIdle", 0d);
-				instance.robotConstants.put("planeLevelerBusy", 0.5d);
-				instance.robotConstants.put("planeShooterIdle", 0.4d);
-				instance.robotConstants.put("planeShooterBusy", 0.6d);
-				instance.robotConstants.put("intakeMaxPower", 0.8d);
-				instance.robotConstants.put("liftNormalPower", 0.8d);
-				instance.robotConstants.put("liftSuspendPower", 1.0d);
-				instance.robotConstants.put("backdropDistance", 9.0d);
-				instance.robotConstants.put("antennaIdle", 0.0d);
-				instance.robotConstants.put("antennaGuide", 0.5d);
-				instance.robotConstants.put("antennaGrab", 0.95d);
-				instance.robotConstants.put("antennaIntakeRunTime", 1.0d);
-				break;
+		public Container() {
+			switch (Globals.GetCurrentRobotType())
+			{
+				case ROBOT_1:
+					TUMBLER_LOAD = 0;
+					TUMBLER_IDLE = 400;
+					TUMBLER_BACKDROP = 800;
+					TUMBLER_STACK_POSES = new int[]{1550, 1510, 1480, 1440, 1400};
+					TUMBLER_SPIKE_MARK = 1300;
+					LIFT_PICKUP = -10;
+					LIFT_LEVEL_1 = 50;
+					LIFT_LEVEL_2 = 500;
+					LIFT_LEVEL_3 = 950;
+					LIFT_LEVEL_4 = 1800;
+					SUSPENDER_IDLE = 0;
+					SUSPENDER_SUSPEND = 960;
+					CLAW_IDLE = 0.45d;
+					CLAW_BUSY = 1d;
+					ROTATOR_IDLE = 0d;
+					ROTATOR_BUSY = 0.9d;
+					PLANE_LEVELER_IDLE = 0.5d;
+					PLANE_LEVELER_BUSY = 0.7d;
+					PLANE_SHOOTER_IDLE = 0.5d;
+					PLANE_SHOOTER_BUSY = 0d;
+					INTAKE_MAX_POWER = 0.8d;
+					LIFT_NORMAL_POWER = 1.0d;
+					LIFT_SUSPEND_POWER = 1.0d;
+					BACKDROP_DISTANCE = 10.0d;
+					ANTENNA_IDLE = 0.0d;
+					ANTENNA_GUIDE = 0.5d;
+					ANTENNA_GRAB = 0.95d;
+					ANTENNA_INTAKE_RUN_TIME = 1.0d;
+					break;
+				case ROBOT_2:
+					TUMBLER_LOAD = 0;
+					TUMBLER_IDLE = 400;
+					TUMBLER_BACKDROP = 850;
+					TUMBLER_STACK_POSES = new int[]{1495, 1460, 1420, 1395, 1350};
+					TUMBLER_SPIKE_MARK = 1300;
+					LIFT_PICKUP = -10;
+					LIFT_LEVEL_1 = 0;
+					LIFT_LEVEL_2 = 400;
+					LIFT_LEVEL_3 = 1050;
+					LIFT_LEVEL_4 = 1700;
+					SUSPENDER_IDLE = 0;
+					SUSPENDER_SUSPEND = 1900;
+					CLAW_IDLE = 0.45d;
+					CLAW_BUSY = 1d;
+					ROTATOR_IDLE = 0d;
+					ROTATOR_BUSY = 1d;
+					PLANE_LEVELER_IDLE = 0d;
+					PLANE_LEVELER_BUSY = 0.5d;
+					PLANE_SHOOTER_IDLE = 0.4d;
+					PLANE_SHOOTER_BUSY = 0.6d;
+					INTAKE_MAX_POWER = 0.8d;
+					LIFT_NORMAL_POWER = 0.8d;
+					LIFT_SUSPEND_POWER = 1.0d;
+					BACKDROP_DISTANCE = 9.0d;
+					ANTENNA_IDLE = 0.0d;
+					ANTENNA_GUIDE = 0.5d;
+					ANTENNA_GRAB = 0.95d;
+					ANTENNA_INTAKE_RUN_TIME = 1.0d;
+					break;
+			}
 		}
 	}
+
+	private Container parameters = new Container();
+
+	public static void Init() { instance.parameters = new Container(); }
+
+	public static Container getParameters() { return instance.parameters; }
 
 	public static final int TOLERANCE = 10;
 
 	public static class Camera
 	{
-		// UNITS ARE PIXELS
-		// NOTE: This calibration is for the C270 webcam at 1280x720.
-		//       Base calibration was done at 640x480, so the values are doubled for 1280x720.
-		public static final float CAMERA_FX = 822.317f;//* 2;
-		public static final float CAMERA_FY = 822.317f;//* 1.5f;
-		public static final float CAMERA_CX = 319.495f;//* 2;
-		public static final float CAMERA_CY = 242.502f;//* 1.5f;
+		/**
+		 * UNITS ARE PIXELS
+		 * NOTE: This calibration is for the C270 webcam at 1280x720.
+		 * Base calibration was done at 640x480, so the values are doubled for 1280x720.
+		 */
+		public static final float CAMERA_FX = 822.317f;
+		public static final float CAMERA_FY = 822.317f;
+		public static final float CAMERA_CX = 319.495f;
+		public static final float CAMERA_CY = 242.502f;
 
-		public static final int CAMERA_WIDTH = 640; //* 2;
-		public static final int CAMERA_HEIGHT = 480; //* 1.5;
+		public static final int CAMERA_WIDTH = 640;
+		public static final int CAMERA_HEIGHT = 480;
 	}
 
 	public static class Detection
@@ -143,35 +175,32 @@ public class Constants
 		}
 	}
 
-	public static int getTumblerLoad() { return (int) instance.robotConstants.get("tumblerLoad"); }
-	public static int getTumblerIdle() { return (int) instance.robotConstants.get("tumblerIdle"); }
-	public static int getTumblerBackdrop() { return (int) instance.robotConstants.get("tumblerBackdrop"); }
-	public static int[] getTumblerStackPoses() { return (int[]) instance.robotConstants.get("tumblerStackPoses"); }
-	public static int getTumblerSpikeMark() { return (int) instance.robotConstants.get("tumblerSpikeMark"); }
-	public static int getLiftPickup() {	return (int) instance.robotConstants.get("liftPickup"); }
-	public static int getLiftLevel1() {	return (int) instance.robotConstants.get("liftLevel1");	}
-	public static int getLiftLevel2() { return (int) instance.robotConstants.get("liftLevel2");	}
-	public static int getLiftLevel3() { return (int) instance.robotConstants.get("liftLevel3");	}
-	public static int getLiftLevel4() { return (int) instance.robotConstants.get("liftLevel4"); }
-	public static int getSuspenderIdle() { return (int) instance.robotConstants.get("suspenderIdle"); }
-	public static int getSuspenderSuspend() { return (int) instance.robotConstants.get("suspenderSuspend"); }
-	public static int getSuspenderLock() { return (int) instance.robotConstants.get("suspenderLock"); }
-	public static double getClawIdle() { return (double) instance.robotConstants.get("clawIdle"); }
-	public static double getClawBusy() { return (double) instance.robotConstants.get("clawBusy"); }
-	public static double getRotatorIdle() { return (double) instance.robotConstants.get("rotatorIdle"); }
-	public static double getRotatorBusy() { return (double) instance.robotConstants.get("rotatorBusy"); }
-	public static double getLockerIdle() { return (double) instance.robotConstants.get("lockerIdle"); }
-	public static double getLockerBusy() { return (double) instance.robotConstants.get("lockerBusy"); }
-	public static double getPlaneLevelerIdle() { return (double) instance.robotConstants.get("planeLevelerIdle"); }
-	public static double getPlaneLevelerBusy() { return (double) instance.robotConstants.get("planeLevelerBusy"); }
-	public static double getPlaneShooterIdle() { return (double) instance.robotConstants.get("planeShooterIdle"); }
-	public static double getPlaneShooterBusy() { return (double) instance.robotConstants.get("planeShooterBusy"); }
-	public static double getIntakeMaxPower() { return (double) instance.robotConstants.get("intakeMaxPower"); }
-	public static double getLiftNormalPower() {	return (double) instance.robotConstants.get("liftNormalPower"); }
-	public static double getLiftSuspendPower() { return (double) instance.robotConstants.get("liftSuspendPower"); }
-	public static double getBackdropDistance() { return (double) instance.robotConstants.get("backdropDistance"); }
-	public static double getAntennaIdle() { return (double) instance.robotConstants.get("antennaIdle"); }
-	public static double getAntennaGuide() { return (double) instance.robotConstants.get("antennaGuide"); }
-	public static double getAntennaGrab() { return (double) instance.robotConstants.get("antennaGrab"); }
-	public static double getAntennaIntakeRunTime() { return (double) instance.robotConstants.get("antennaIntakeRunTime"); }
+	public static int getTumblerLoad() { return instance.parameters.TUMBLER_LOAD; }
+	public static int getTumblerIdle() { return instance.parameters.TUMBLER_IDLE; }
+	public static int getTumblerBackdrop() { return instance.parameters.TUMBLER_BACKDROP; }
+	public static int[] getTumblerStackPoses() { return instance.parameters.TUMBLER_STACK_POSES; }
+	public static int getTumblerSpikeMark() { return instance.parameters.TUMBLER_SPIKE_MARK; }
+	public static int getLiftPickup() {	return instance.parameters.LIFT_PICKUP;	}
+	public static int getLiftLevel1() {	return instance.parameters.LIFT_LEVEL_1; }
+	public static int getLiftLevel2() { return instance.parameters.LIFT_LEVEL_2; }
+	public static int getLiftLevel3() { return instance.parameters.LIFT_LEVEL_3; }
+	public static int getLiftLevel4() { return instance.parameters.LIFT_LEVEL_4; }
+	public static int getSuspenderIdle() { return instance.parameters.SUSPENDER_IDLE; }
+	public static int getSuspenderSuspend() { return instance.parameters.SUSPENDER_SUSPEND; }
+	public static double getClawIdle() { return instance.parameters.CLAW_IDLE; }
+	public static double getClawBusy() { return instance.parameters.CLAW_BUSY; }
+	public static double getRotatorIdle() { return instance.parameters.ROTATOR_IDLE; }
+	public static double getRotatorBusy() { return instance.parameters.ROTATOR_BUSY; }
+	public static double getPlaneLevelerIdle() { return instance.parameters.PLANE_LEVELER_IDLE; }
+	public static double getPlaneLevelerBusy() { return instance.parameters.PLANE_LEVELER_BUSY; }
+	public static double getPlaneShooterIdle() { return instance.parameters.PLANE_SHOOTER_IDLE; }
+	public static double getPlaneShooterBusy() { return instance.parameters.PLANE_SHOOTER_BUSY; }
+	public static double getIntakeMaxPower() { return instance.parameters.INTAKE_MAX_POWER; }
+	public static double getLiftNormalPower() {	return instance.parameters.LIFT_NORMAL_POWER; }
+	public static double getLiftSuspendPower() { return instance.parameters.LIFT_SUSPEND_POWER; }
+	public static double getBackdropDistance() { return instance.parameters.BACKDROP_DISTANCE; }
+	public static double getAntennaIdle() { return instance.parameters.ANTENNA_IDLE; }
+	public static double getAntennaGuide() { return instance.parameters.ANTENNA_GUIDE; }
+	public static double getAntennaGrab() { return instance.parameters.ANTENNA_GRAB; }
+	public static double getAntennaIntakeRunTime() { return instance.parameters.ANTENNA_INTAKE_RUN_TIME; }
 }

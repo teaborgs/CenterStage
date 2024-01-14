@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,10 +33,7 @@ public final class RotatorSystem extends SystemEx
 	{
 		return new SequentialAction(
 				new SleepAction(delayDirection == Utilities.DelayDirection.BEFORE ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0),
-				telemetryPacket -> {
-					servo.setPosition(position);
-					return false;
-				},
+				new InstantAction(() -> servo.setPosition(position)),
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
 	}
