@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Globals;
@@ -212,7 +213,6 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Telemetry()
 	{
-		telemetry.addData("Robot pos: ", robotHardware.mecanumDrive.updatePoseEstimate().component1());
 
 		telemetry.addData("Intake Power: ", robotHardware.intakeMotor.getPower());
 
@@ -226,6 +226,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 		telemetry.addData("Tumbler Power: ", robotHardware.tumblerMotor.getPower());
 		telemetry.addData("Tumbler Pos: ", robotHardware.tumblerMotor.getCurrentPosition());
+		telemetry.addData("Tumbler Current: ", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
 
 		telemetry.addData("Rotator Pos: ", robotHardware.rotatorServo.getPosition());
 		telemetry.addData("Claw Pos: ", robotHardware.clawServo.getPosition());
