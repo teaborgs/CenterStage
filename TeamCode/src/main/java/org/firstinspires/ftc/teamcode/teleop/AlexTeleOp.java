@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -207,6 +208,27 @@ public final class AlexTeleOp extends BaseOpMode
 			robotHardware.tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 			robotHardware.tumblerMotor.setPower(armInput.getValue(Bindings.Arm.RESET_AXIS));
 		}
+
+
+/*		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
+		if (!inResetMode) return;
+
+		robotHardware.tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		robotHardware.tumblerMotor.setPower(-0.3);
+		robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
+		robotHardware.clawServo.setPosition(Constants.getClawIdle());
+
+		if (robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS) > Constants.getTumblerMaxCurrent())
+		{
+			robotHardware.tumblerMotor.setPower(0);
+			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+			robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+			robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+			inResetMode = false;
+		}//*/
 	}
 
 	private Utilities.State armState = Utilities.State.IDLE;

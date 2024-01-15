@@ -134,6 +134,7 @@ public final class ManualDriveTest extends BaseOpMode
 	}
 
 	int stackTaps = 0;
+	double tumblerMaxCurrent = 0;
 	private void Tumbler()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_BACKDROP_KEY))
@@ -166,6 +167,8 @@ public final class ManualDriveTest extends BaseOpMode
 		else
 			robotHardware.tumblerMotor.setPower(0.05);
 		robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+		tumblerMaxCurrent = Math.max(tumblerMaxCurrent, robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
 	}
 
 	private Utilities.State clawState = Utilities.State.BUSY;
@@ -227,6 +230,7 @@ public final class ManualDriveTest extends BaseOpMode
 		telemetry.addData("Tumbler Power: ", robotHardware.tumblerMotor.getPower());
 		telemetry.addData("Tumbler Pos: ", robotHardware.tumblerMotor.getCurrentPosition());
 		telemetry.addData("Tumbler Current: ", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Tumbler Max Current: ", tumblerMaxCurrent);
 
 		telemetry.addData("Rotator Pos: ", robotHardware.rotatorServo.getPosition());
 		telemetry.addData("Claw Pos: ", robotHardware.clawServo.getPosition());

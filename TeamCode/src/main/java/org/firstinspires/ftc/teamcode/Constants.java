@@ -42,6 +42,7 @@ public class Constants
 		public double ANTENNA_GUIDE = 0;
 		public double ANTENNA_GRAB = 0;
 		public double ANTENNA_INTAKE_RUN_TIME = 0;
+		public double TUMBLER_MAX_CURRENT = 0;
 
 		public Container() {
 			switch (Globals.GetCurrentRobotType())
@@ -75,6 +76,7 @@ public class Constants
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
 					ANTENNA_INTAKE_RUN_TIME = 1.0d;
+					TUMBLER_MAX_CURRENT = 0.0d;
 					break;
 				case ROBOT_2:
 					TUMBLER_LOAD = 0;
@@ -105,6 +107,7 @@ public class Constants
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
 					ANTENNA_INTAKE_RUN_TIME = 1.0d;
+					TUMBLER_MAX_CURRENT = 0.0d;
 					break;
 			}
 		}
@@ -203,4 +206,5 @@ public class Constants
 	public static double getAntennaGuide() { return instance.parameters.ANTENNA_GUIDE; }
 	public static double getAntennaGrab() { return instance.parameters.ANTENNA_GRAB; }
 	public static double getAntennaIntakeRunTime() { return instance.parameters.ANTENNA_INTAKE_RUN_TIME; }
+	public static double getTumblerMaxCurrent() { return instance.parameters.TUMBLER_MAX_CURRENT; }
 }
