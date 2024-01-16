@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.subsystems.impl.IntakeSystem;
 import org.firstinspires.ftc.teamcode.subsystems.impl.LiftSystem;
 import org.firstinspires.ftc.teamcode.subsystems.impl.RotatorSystem;
 import org.firstinspires.ftc.teamcode.subsystems.impl.TumblerSystem;
+import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -151,7 +152,7 @@ public class AutoBoss extends LinearOpMode
 				purpleTangent = 0;
 				yellowTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(63), -Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(75), centimetersToInches(63), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(108), Math.PI / 2);
 				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
 				purpleTangent = 0;
@@ -210,91 +211,70 @@ public class AutoBoss extends LinearOpMode
 	public void RunLong()
 	{
 		Pose2d purplePose = new Pose2d(0, 0, 0);
-		Pose2d stackPose = new Pose2d(0, 0, 0);
-		Pose2d yellowPose = new Pose2d(0, 0, 0);
-		Pose2d parkPose = new Pose2d(0, 0, 0);
+		Pose2d intermediaryPose = new Pose2d(centimetersToInches(130), centimetersToInches(5), -Math.PI / 2);
 		double purpleTangent = 0;
-		double stackTangent = 0;
-		double yellowTangent = 0;
-		double offset1 = -centimetersToInches(25);
-		double offset2 = -centimetersToInches(10);
 
 		Utilities.DetectionCase detectionCase = detectionPipeline.getDetectionCase();
 
 		if (currentAlliance == Utilities.Alliance.RED) {
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
-				purplePose = new Pose2d(centimetersToInches(60), centimetersToInches(10), 0);
-				stackPose = new Pose2d(centimetersToInches(67), centimetersToInches(52), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(97), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(97), -Math.PI / 2);
-				purpleTangent = 0;
-				stackTangent = Math.PI / 2;
-				yellowTangent = Math.PI / 2;
+				purplePose = new Pose2d(centimetersToInches(127), 0, -Math.PI);
+				purpleTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(110), centimetersToInches(27), -Math.PI);
-				stackPose = new Pose2d(centimetersToInches(140), centimetersToInches(42), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
-				purpleTangent = 0;
-				stackTangent = -Math.PI / 2;
-				yellowTangent = Math.PI / 2;
+				purplePose = new Pose2d(centimetersToInches(117), centimetersToInches(15), -Math.PI);
+				purpleTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(10), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(52), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
-				purpleTangent = -Math.PI;
-				stackTangent = -Math.PI / 2;
-				yellowTangent = Math.PI / 2;
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(5), -Math.PI / 2);
+				purpleTangent = -Math.PI / 2;
 			}
 		} else {
-			offset1 *= -1;
-			offset2 *= -1;
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(60), centimetersToInches(10), 0);
-				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(108), Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
 				purpleTangent = 0;
-				yellowTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(63), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(108), Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(110), centimetersToInches(10), -Math.PI / 2);
 				purpleTangent = 0;
-				yellowTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(8), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(90), centimetersToInches(108), Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(110), centimetersToInches(10), -Math.PI / 2);
 				purpleTangent = Math.PI;
-				yellowTangent = -Math.PI / 2;
 			}
 		}
 
 		Actions.runBlocking( // Run the autonomous
 				RunSequentially(
 						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER), // Close claw
+						mecanumDrive.actionBuilder(mecanumDrive.pose)
+								.setTangent(purpleTangent)
+								.lineToY(purplePose.position.y)
+								.build()
+						)
+		);
+		Actions.runBlocking( // Run the autonomous
+				RunSequentially(
 						RunInParallel(
 								mecanumDrive.actionBuilder(mecanumDrive.pose)
-										.splineToLinearHeading(purplePose, purpleTangent)
+										.lineToXSplineHeading(purplePose.position.x, purplePose.heading.toDouble())
 										.build(), // Move to purple
 								tumblerSystem.MoveToPosition(Constants.getTumblerSpikeMark()), // Move tumbler to spike mark
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.25) // Move rotator to busy
 						),
-						WaitForMovementStop(mecanumDrive), // Wait for movement to stop
+						WaitForMovementStop(mecanumDrive),
 						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.AFTER), // Open claw
 						RunInParallel(
-								mecanumDrive.actionBuilder(purplePose)
-										.splineToLinearHeading(stackPose, stackTangent)
-										.build(), // Move to yellow
-								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25), // Move rotator to idle
-								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.25), // Move tumbler to load
-								intakeSystem.RunIntakeFor(1) // Run intake for 1 second to push yellow
-						),
-						WaitFor(4),
-						mecanumDrive.actionBuilder(stackPose)
-								.lineToYLinearHeading(-centimetersToInches(150), -Math.PI / 2)
+								rotatorSystem.MoveToPosition(Constants.getRotatorIdle()), // Move rotator to busy
+								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()) // Move tumbler to backdrop
+						)
+				)
+		);
+		Actions.runBlocking( // Run the autonomous
+				RunSequentially(
+						mecanumDrive.actionBuilder(mecanumDrive.pose)
+								.splineToLinearHeading(intermediaryPose, Math.PI/2)
 								.build()
+//						WaitFor(4),
+//						mecanumDrive.actionBuilder(stackPose)
+//								.lineToYLinearHeading(-centimetersToInches(150), -Math.PI / 2)
+//								.build()
 //						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.1, Utilities.DelayDirection.BOTH), // Close claw
 //						RunInParallel(
 //								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5), // Move rotator to busy

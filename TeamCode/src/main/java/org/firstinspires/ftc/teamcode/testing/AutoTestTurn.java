@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Utilities;
 
 @Autonomous(name = "Auto Test Turn", group = "Testing")
 public class AutoTestTurn extends LinearOpMode
@@ -29,8 +30,17 @@ public class AutoTestTurn extends LinearOpMode
 
 	private void Run()
 	{
-		Actions.runBlocking(mecanumDrive.actionBuilder(new Pose2d(0,0, 0))
-				.turn(Math.PI / 2)
-				.build());
+		Actions.runBlocking(
+				Utilities.RunInParallel(
+						mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
+								.turn(Math.PI / 2)
+								.build(),
+						telemetryPacket -> {
+							mecanumDrive.updatePoseEstimate();
+							telemetry.update();
+							return true;
+						}
+				)
+		);
 	}
 }

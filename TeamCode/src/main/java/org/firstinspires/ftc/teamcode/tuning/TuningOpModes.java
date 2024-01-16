@@ -81,10 +81,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                     DriveType.MECANUM,
-                        md.params.inPerTick,
-                        md.params.maxWheelVel,
-                        md.params.minProfileAccel,
-                        md.params.maxProfileAccel,
+                        md.PARAMS.inPerTick,
+                        md.PARAMS.maxWheelVel,
+                        md.PARAMS.minProfileAccel,
+                        md.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         Arrays.asList(
                                 md.leftFront,
@@ -100,9 +100,9 @@ public final class TuningOpModes {
                         perpEncs,
                         md.imu,
                         md.voltageSensor,
-                        () -> new MotorFeedforward(md.params.kS,
-                                md.params.kV / md.params.inPerTick,
-                                md.params.kA / md.params.inPerTick)
+                        () -> new MotorFeedforward(md.PARAMS.kS,
+                                md.PARAMS.kV / md.PARAMS.inPerTick,
+                                md.PARAMS.kA / md.PARAMS.inPerTick)
                 );
             };
         } else if (DRIVE_CLASS.equals(TankDrive.class)) {
