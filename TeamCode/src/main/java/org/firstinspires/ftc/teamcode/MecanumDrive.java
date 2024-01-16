@@ -78,7 +78,7 @@ public final class MecanumDrive
 	public static class Params
 	{
 		public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-				RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+				RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
 		public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
 				RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
@@ -297,7 +297,7 @@ public final class MecanumDrive
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-		localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+		localizer = new TwoDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick);
 		FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 	}
 

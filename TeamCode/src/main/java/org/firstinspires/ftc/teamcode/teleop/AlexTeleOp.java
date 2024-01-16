@@ -62,8 +62,6 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
 			private static final InputSystem.Key LEVEL_4_KEY = new InputSystem.Key("dpad_right");
 			private static final InputSystem.Key RESET_MODE_KEY = new InputSystem.Key("y");
-			private static final InputSystem.Axis RESET_AXIS = new InputSystem.Axis("left_stick_y");
-			private static final InputSystem.Key RESET_CONFIRM = new InputSystem.Key("b");
 			private static final InputSystem.Key RESET_STACK = new InputSystem.Key("start");
 			private static final InputSystem.Key TOGGLE_PICKUP_KEY = new InputSystem.Key("back");
 		}
@@ -202,22 +200,6 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void ManualReset()
 	{
-	/*	if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
-		if (!inResetMode) return;
-		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_CONFIRM)) {
-			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-			robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-			robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
-			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-			inResetMode = false;
-		} else {
-			robotHardware.tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-			robotHardware.tumblerMotor.setPower(armInput.getValue(Bindings.Arm.RESET_AXIS));
-		}//*/
-
-
 		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
 		if (!inResetMode) return;
 
@@ -236,7 +218,7 @@ public final class AlexTeleOp extends BaseOpMode
 			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 			inResetMode = false;
-		}//*/
+		}
 	}
 
 	private Utilities.State armState = Utilities.State.IDLE;
@@ -385,7 +367,6 @@ public final class AlexTeleOp extends BaseOpMode
 		// Warn the user when in manual override mode
 		if (inResetMode) {
 			telemetry.clearAll();
-			telemetry.addData("c", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
 			telemetry.addLine("[WARN] Robot is in manual override mode. To exit press Y, to save changes press B");
 			telemetry.update();
 			return;

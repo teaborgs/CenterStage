@@ -44,6 +44,12 @@ public class Utilities
 		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4();
 	}
 
+	public static double Clamp(double value, double lower, double higher)
+	{
+		return value <= lower ? lower : value >= higher ? higher : value;
+	}
+
+
 	public static Action WaitFor(double delay) { return new SleepAction(delay); }
 
 	public static Action RunInParallel(Action... actions) { return new ParallelAction(actions); }

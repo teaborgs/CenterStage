@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -41,9 +42,9 @@ public final class RazvanTeleOp extends BaseOpMode
 			private static final InputSystem.Axis DRIVE_AXIS_Y = new InputSystem.Axis("left_stick_y");
 			private static final InputSystem.Axis ROTATE_AXIS_L = new InputSystem.Axis("left_trigger");
 			private static final InputSystem.Axis ROTATE_AXIS_R = new InputSystem.Axis("right_trigger");
-			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("a");
+			private static final InputSystem.Key INTAKE_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
-			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("x");
+			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 		}
 
@@ -59,8 +60,6 @@ public final class RazvanTeleOp extends BaseOpMode
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
 			private static final InputSystem.Key LEVEL_4_KEY = new InputSystem.Key("dpad_right");
 			private static final InputSystem.Key RESET_MODE_KEY = new InputSystem.Key("y");
-			private static final InputSystem.Axis RESET_AXIS = new InputSystem.Axis("left_stick_y");
-			private static final InputSystem.Key RESET_CONFIRM = new InputSystem.Key("b");
 			private static final InputSystem.Key RESET_STACK = new InputSystem.Key("start");
 			private static final InputSystem.Key TOGGLE_PICKUP_KEY = new InputSystem.Key("back");
 		}
@@ -104,8 +103,8 @@ public final class RazvanTeleOp extends BaseOpMode
 		boolean suppress = wheelInput.isPressed(Bindings.Wheel.SUPPRESS_KEY);
 		double angle = (wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_R) - wheelInput.getValue(Bindings.Wheel.ROTATE_AXIS_L)) * (turbo ? 0.1 : suppress ? 0.03 : 0.08);
 		Vector2d wheelVel = new Vector2d(
-				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y),
-				wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X)
+				Utilities.Clamp(wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_Y), -0.92, 0.92),
+				Utilities.Clamp(wheelInput.getValue(Bindings.Wheel.DRIVE_AXIS_X), -0.92, 0.92)
 		).times(turbo ? 1.0 : suppress ? 0.3 : 0.8);
 		robotHardware.mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel.times(-1), -angle));
 	}
@@ -195,7 +194,15 @@ public final class RazvanTeleOp extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
 		if (!inResetMode) return;
-		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_CONFIRM)) {
+
+		robotHardware.tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		robotHardware.tumblerMotor.setPower(-0.5);
+		robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
+		robotHardware.clawServo.setPosition(Constants.getClawIdle());
+
+		if (robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS) > Constants.getTumblerMaxCurrent())
+		{
+			robotHardware.tumblerMotor.setPower(0);
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 			robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 			robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
@@ -203,9 +210,6 @@ public final class RazvanTeleOp extends BaseOpMode
 			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 			inResetMode = false;
-		} else {
-			robotHardware.tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-			robotHardware.tumblerMotor.setPower(armInput.getValue(Bindings.Arm.RESET_AXIS));
 		}
 	}
 

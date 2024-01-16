@@ -50,7 +50,7 @@ public class Constants
 				case ROBOT_1:
 					TUMBLER_LOAD = 0;
 					TUMBLER_IDLE = 400;
-					TUMBLER_BACKDROP = 800;
+					TUMBLER_BACKDROP = 900;
 					TUMBLER_STACK_POSES = new int[]{1550, 1510, 1480, 1440, 1400};
 					TUMBLER_SPIKE_MARK = 1300;
 					LIFT_PICKUP = -10;
@@ -65,7 +65,7 @@ public class Constants
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 0.9d;
 					PLANE_LEVELER_IDLE = 0.5d;
-					PLANE_LEVELER_BUSY = 0.7d;
+					PLANE_LEVELER_BUSY = 0.75d;
 					PLANE_SHOOTER_IDLE = 0.5d;
 					PLANE_SHOOTER_BUSY = 0d;
 					INTAKE_MAX_POWER = 0.8d;
