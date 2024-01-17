@@ -50,14 +50,14 @@ public class Constants
 				case ROBOT_1:
 					TUMBLER_LOAD = 0;
 					TUMBLER_IDLE = 400;
-					TUMBLER_BACKDROP = 900;
+					TUMBLER_BACKDROP = 925;
 					TUMBLER_STACK_POSES = new int[]{1550, 1510, 1480, 1440, 1400};
 					TUMBLER_SPIKE_MARK = 1300;
 					LIFT_PICKUP = -10;
 					LIFT_LEVEL_1 = 50;
-					LIFT_LEVEL_2 = 500;
-					LIFT_LEVEL_3 = 950;
-					LIFT_LEVEL_4 = 1800;
+					LIFT_LEVEL_2 = 250;
+					LIFT_LEVEL_3 = 500;
+					LIFT_LEVEL_4 = 1000;
 					SUSPENDER_IDLE = 0;
 					SUSPENDER_SUSPEND = 960;
 					CLAW_IDLE = 0.45d;
@@ -76,7 +76,7 @@ public class Constants
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
 					ANTENNA_INTAKE_RUN_TIME = 1.0d;
-					TUMBLER_MAX_CURRENT = 4000.0d;
+					TUMBLER_MAX_CURRENT = 3500.0d;
 					break;
 				case ROBOT_2:
 					TUMBLER_LOAD = 0;
@@ -107,7 +107,7 @@ public class Constants
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
 					ANTENNA_INTAKE_RUN_TIME = 1.0d;
-					TUMBLER_MAX_CURRENT = 4000.0d;
+					TUMBLER_MAX_CURRENT = 3500.0d;
 					break;
 			}
 		}
