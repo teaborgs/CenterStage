@@ -115,23 +115,23 @@ public final class MecanumDrive
 		{
 			if (Objects.requireNonNull(robotType) == Utilities.RobotType.ROBOT_1) {
 				inPerTick = 5.298539099773227e-4; // 78.74 / 149535 148063 148225 = 78.74 / 148607
-				lateralInPerTick = 0.0003503427342855236; // 0.0003485825272596426 0.00034130790197440175
-				trackWidthTicks = 24715.54746866592; // 24432.28339319 24335.082134488
+				lateralInPerTick = 0.0003400735978228613; // 0.0003485825272596426 0.00034130790197440175
+				trackWidthTicks = 24618.31834732674; // 24432.28339319 24335.082134488
 				trackWidth = 13.6;
-				kS = 1.4467983959466464; // 1.340230865032337
-				kV = 0.00007428487949150765; // 0.00007465072936281095
+				kS = 1.5383391986915087; // 1.340230865032337
+				kV = 0.00007360100151162637; // 0.00007465072936281095
 				kA = 0.00001;
 				maxWheelVel = 50d;
 				minProfileAccel = -30d;
 				maxProfileAccel = 50d;
 				maxAngVel = Math.PI;
 				maxAngAccel = Math.PI;
-				axialGain = 3d;
-				lateralGain = 3d;
-				headingGain = 3d;
-				axialVelGain = 1d;
-				lateralVelGain = 1d;
-				headingVelGain = 1d;
+				axialGain = 6d;
+				lateralGain = 0d;
+				headingGain = 12d;
+				axialVelGain = 0.25d;
+				lateralVelGain = 0.25d;
+				headingVelGain = 0.25d;
 			} else if (robotType == Utilities.RobotType.ROBOT_2) {
 				inPerTick = 0.0029438815568101; // 26786, 26758, 26697
 				lateralInPerTick = -0.0018229134651507612; // DUBIOUS!!!1111!!!11!11!!1
@@ -296,8 +296,7 @@ public final class MecanumDrive
 		imu.initialize(parameters);
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-		localizer = new TwoDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick);
+		localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
 		FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 	}
 
@@ -361,7 +360,7 @@ public final class MecanumDrive
 			boolean trajOver = t >= timeTrajectory.duration;
 			boolean isPositionCorrect = error.position.norm() < 0.05;
 			boolean isHeadingCorrect = Math.toDegrees(Math.abs(error.heading.toDouble())) < 0.05;
-			boolean fallback = t - 0.5 >= timeTrajectory.duration;
+			boolean fallback = t - 0.25 >= timeTrajectory.duration;
 			if ((trajOver && isPositionCorrect && isHeadingCorrect) || fallback) {
 				leftFront.setPower(0);
 				leftBack.setPower(0);

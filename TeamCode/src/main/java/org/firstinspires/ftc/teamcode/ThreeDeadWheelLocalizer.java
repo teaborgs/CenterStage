@@ -19,9 +19,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer
 {
 	public static class Params
 	{
-		public double par0YTicks = 11964.77757507104; // y position of the first parallel encoder (in tick units) -13283.75636674982, -13288.16270653020
-		public double par1YTicks = -12107.400189153446; // y position of the second parallel encoder (in tick units)
-		public double perpXTicks = 10524.262349552173; // x position of the perpendicular encoder (in tick units) -7792.542400326973, -7763.688675042687
+		public double par0YTicks = 11782.52646894024; // y position of the first parallel encoder (in tick units) -13283.75636674982, -13288.16270653020
+		public double par1YTicks = -12152.827017041443; // y position of the second parallel encoder (in tick units)
+		public double perpXTicks = 11428.452535942375; // x position of the perpendicular encoder (in tick units) -7792.542400326973, -7763.688675042687
 	}
 
 	public static Params PARAMS = new Params();
@@ -35,9 +35,8 @@ public final class ThreeDeadWheelLocalizer implements Localizer
 	public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick)
 	{
 		par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "rightBack")));
-		par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "intake")));
-		perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftBack")));
-		perp.setDirection(DcMotorSimple.Direction.REVERSE);
+		par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftBack")));
+		perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "intake")));
 
 		lastPar0Pos = par0.getPositionAndVelocity().position;
 		lastPar1Pos = par1.getPositionAndVelocity().position;
