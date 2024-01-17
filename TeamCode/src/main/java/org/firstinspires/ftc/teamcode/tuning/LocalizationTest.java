@@ -31,7 +31,7 @@ public class LocalizationTest extends LinearOpMode {
 
                 telemetry.addData("x", drive.pose.position.x);
                 telemetry.addData("y", drive.pose.position.y);
-                telemetry.addData("heading", drive.pose.heading);
+                telemetry.addData("heading", drive.pose.heading.toDouble());
                 telemetry.update();
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
