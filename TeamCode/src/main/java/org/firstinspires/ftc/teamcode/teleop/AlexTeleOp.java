@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.Constants.getSuspenderSuspend;
-import static org.firstinspires.ftc.teamcode.Utilities.LiftLevelToValue;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -415,5 +414,10 @@ public final class AlexTeleOp extends BaseOpMode
 		}
 
 		telemetry.update();
+	}
+
+	public static int LiftLevelToValue(int liftLevel)
+	{
+		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? (Constants.getLiftLevel3() + 125) : Constants.getLiftLevel4();
 	}
 }

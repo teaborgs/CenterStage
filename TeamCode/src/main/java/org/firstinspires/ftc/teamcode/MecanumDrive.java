@@ -114,12 +114,12 @@ public final class MecanumDrive
 		public Params(Utilities.RobotType robotType)
 		{
 			if (Objects.requireNonNull(robotType) == Utilities.RobotType.ROBOT_1) {
-				inPerTick = 5.298539099773227e-4; // 78.74 / 149535 148063 148225 = 78.74 / 148607
-				lateralInPerTick = 0.0003400735978228613; // 0.0003485825272596426 0.00034130790197440175
-				trackWidthTicks = 24618.31834732674; // 24432.28339319 24335.082134488
-				trackWidth = 13.6;
-				kS = 1.5383391986915087; // 1.340230865032337
-				kV = 0.00007360100151162637; // 0.00007465072936281095
+				inPerTick = 5.2860537869735093113495079149827e-4; // 78.74 / 149535 148063 148225 = 78.74 / 148958
+				lateralInPerTick = 0.0003586448651161987; // 0.0003485825272596426 0.00034130790197440175
+				trackWidthTicks = 24123.839172942204; // 24432.28339319 24335.082134488
+				trackWidth = 13.189;
+				kS = 1.4530708171265863; // 1.340230865032337
+				kV = 0.00007574847762990085; // 0.00007465072936281095
 				kA = 0.00001;
 				maxWheelVel = 50d;
 				minProfileAccel = -30d;
@@ -252,7 +252,7 @@ public final class MecanumDrive
 		this.pose = pose;
 		PARAMS = new Params(robotType);
 
-		this.kinematics = new MecanumKinematics(PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);
+		this.kinematics = new MecanumKinematics(PARAMS.trackWidth, PARAMS.inPerTick / PARAMS.lateralInPerTick);
 		this.defaultTurnConstraints = new TurnConstraints(PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
 		this.defaultVelConstraint = new MinVelConstraint(Arrays.asList(
 				this.kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
