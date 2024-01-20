@@ -76,7 +76,7 @@ public class Constants
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
 					ANTENNA_INTAKE_RUN_TIME = 1.0d;
-					TUMBLER_MAX_CURRENT = 3500.0d;
+					TUMBLER_MAX_CURRENT = 2500.0d;
 					break;
 				case ROBOT_2:
 					TUMBLER_LOAD = 0;

@@ -76,6 +76,8 @@ public class AutoBoss extends LinearOpMode
 		clawSystem.Init();
 		liftSystem.Init();
 
+
+
 		// Camera and detection
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -123,44 +125,40 @@ public class AutoBoss extends LinearOpMode
 		Utilities.DetectionCase detectionCase = detectionPipeline.getDetectionCase();
 
 		if (currentAlliance == Utilities.Alliance.RED) {
+			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 10), -centimetersToInches(75), -Math.PI / 2);
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(60), -centimetersToInches(10), 0);
 				yellowPose = new Pose2d(centimetersToInches(65), -centimetersToInches(97), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(97), -Math.PI / 2);
 				purpleTangent = 0;
 				yellowTangent = Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(96), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
 				purpleTangent = 0;
 				yellowTangent = Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(55), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(98), -Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), -centimetersToInches(96), -Math.PI / 2);
 				purpleTangent = -Math.PI;
 				yellowTangent = Math.PI / 2;
 			}
 		} else {
 			offset1 *= -1;
 			offset2 *= -1;
+			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(85), Math.PI / 2);
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(60), centimetersToInches(10), 0);
 				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(108), Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
 				purpleTangent = 0;
 				yellowTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(75), centimetersToInches(63), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(108), Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(80), centimetersToInches(63), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(50), centimetersToInches(108), Math.PI / 2);
 				purpleTangent = 0;
 				yellowTangent = -Math.PI / 2;
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(8), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(90), centimetersToInches(108), Math.PI / 2);
-				parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.LEFT ? 130 : 20), centimetersToInches(108), Math.PI / 2);
 				purpleTangent = Math.PI;
 				yellowTangent = -Math.PI / 2;
 			}
@@ -205,7 +203,7 @@ public class AutoBoss extends LinearOpMode
 										.setTangent(0)
 										.lineToX(parkPose.position.x)
 										.setTangent(Math.PI / 2)
-										.lineToY(parkPose.position.y + 5)
+										.lineToY(parkPose.position.y)
 										.build() // Move to park
 						)
 				)

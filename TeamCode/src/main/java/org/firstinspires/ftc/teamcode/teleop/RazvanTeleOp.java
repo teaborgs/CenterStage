@@ -209,6 +209,23 @@ public final class RazvanTeleOp extends BaseOpMode
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+			Thread t = new Thread()
+			{
+				@Override
+				public void run()
+				{
+					while(robotHardware.tumblerMotor.getCurrentPosition() <= 90) {
+						// hehe empty while go brrr
+					};
+					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+					robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+					robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+				}
+			};
+			t.start();
 			inResetMode = false;
 		}
 	}
@@ -381,6 +398,7 @@ public final class RazvanTeleOp extends BaseOpMode
 
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();
+			telemetry.addData("[DEBUG] Tumbler Current", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
 			telemetry.addData("[DEBUG] Antenna Pos", robotHardware.antennaServo.getPosition());
 			telemetry.addData("[DEBUG] Last Antenna press", antennaPress.seconds());
 			telemetry.addData("[DEBUG] Distance Sensor: ", robotHardware.distanceSensor.getDistance(DistanceUnit.CM));

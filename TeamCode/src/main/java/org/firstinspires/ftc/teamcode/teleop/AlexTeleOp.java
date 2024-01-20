@@ -216,6 +216,23 @@ public final class AlexTeleOp extends BaseOpMode
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+			Thread t = new Thread()
+			{
+				@Override
+				public void run()
+				{
+					while(robotHardware.tumblerMotor.getCurrentPosition() <= 90) {
+						// hehe empty while go brrr
+					};
+					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+					robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+					robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
+					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+				}
+			};
+			t.start();
 			inResetMode = false;
 		}
 	}
