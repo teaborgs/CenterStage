@@ -2,15 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.Scalar;
 
 public class Utilities
@@ -36,6 +40,25 @@ public class Utilities
 		return telemetryPacket -> {
 			while (!mecanumDrive.updatePoseEstimate().linearVel.equals(new Vector2d(0, 0)));
 			return false;
+		};
+	}
+
+	public static Action ApproachWithDistSensor(MecanumDrive mecanumDrive, Rev2mDistanceSensor distanceSensor, double distance)
+	{
+		return telemetryPacket -> {
+			while (true)
+			{
+				double offset = distanceSensor.getDistance(DistanceUnit.CM) - distance;
+				if (offset < 2)
+				{
+					mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+					return false;
+				}
+				mecanumDrive.setDrivePowers(
+						new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -30, 30) / 100,
+														0),
+											0));
+			}
 		};
 	}
 

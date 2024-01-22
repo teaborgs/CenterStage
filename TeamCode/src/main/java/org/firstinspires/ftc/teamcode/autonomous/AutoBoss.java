@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.Utilities.ApproachWithDistSensor;
 import static org.firstinspires.ftc.teamcode.Utilities.RunInParallel;
 import static org.firstinspires.ftc.teamcode.Utilities.RunSequentially;
 import static org.firstinspires.ftc.teamcode.Utilities.WaitFor;
@@ -9,12 +10,14 @@ import static org.firstinspires.ftc.teamcode.Utilities.centimetersToInches;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -25,7 +28,6 @@ import org.firstinspires.ftc.teamcode.subsystems.impl.IntakeSystem;
 import org.firstinspires.ftc.teamcode.subsystems.impl.LiftSystem;
 import org.firstinspires.ftc.teamcode.subsystems.impl.RotatorSystem;
 import org.firstinspires.ftc.teamcode.subsystems.impl.TumblerSystem;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -42,6 +44,9 @@ public class AutoBoss extends LinearOpMode
 
 	private OpenCvCamera camera;
 	private TeamPropDetectionPipeline detectionPipeline;
+
+	private Rev2mDistanceSensor distanceSensor;
+	private boolean distanceSensorFault = false;
 
 	private Utilities.Alliance currentAlliance = null;
 	private Utilities.PathType currentPath = null;
@@ -62,6 +67,7 @@ public class AutoBoss extends LinearOpMode
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
 		Constants.Init();
 
+		// Systems
 		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
 
 		tumblerSystem = new TumblerSystem(hardwareMap.get(DcMotorEx.class, "tumbler"));
@@ -76,7 +82,16 @@ public class AutoBoss extends LinearOpMode
 		clawSystem.Init();
 		liftSystem.Init();
 
-
+		// Sensors
+		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
+		distanceSensor.getDistance(DistanceUnit.CM); // test reading
+		distanceSensorFault = distanceSensor.didTimeoutOccur();
+		if (distanceSensorFault)
+		{
+			telemetry.clear();
+			telemetry.addLine("Distance sensor fault!");
+			telemetry.update();
+		}
 
 		// Camera and detection
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -100,9 +115,69 @@ public class AutoBoss extends LinearOpMode
 		});
 	}
 
+	private void ConfigureAutonomous()
+	{
+		telemetry.setMsTransmissionInterval(50);
+
+		telemetry.addLine("[CONFIGURE] Please select an alliance");
+		telemetry.addLine("[CONFIGURE] Press A for Red Alliance");
+		telemetry.addLine("[CONFIGURE] Press B for Blue Alliance");
+		telemetry.update();
+		while (currentAlliance == null && !isStopRequested()) {
+			if (gamepad1.a || gamepad2.a) currentAlliance = Utilities.Alliance.RED;
+			else if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.BLUE;
+		}
+
+		telemetry.addLine("[CONFIGURE] Please select a path");
+		telemetry.addLine("[CONFIGURE] Press X for Short Path");
+		telemetry.addLine("[CONFIGURE] Press Y for Long Path");
+		telemetry.update();
+		while (currentPath == null && !isStopRequested()) {
+			if (gamepad1.x || gamepad2.x) currentPath = Utilities.PathType.SHORT;
+			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
+		}
+
+		telemetry.addLine("[CONFIGURE] Please select a parking strategy");
+		telemetry.addLine("[CONFIGURE] Press A for Left Parking");
+		telemetry.addLine("[CONFIGURE] Press B for Right Parking");
+		telemetry.update();
+		while (parkingType == null && !isStopRequested()) {
+			if (gamepad1.a || gamepad2.a) parkingType = Utilities.ParkingPosition.LEFT;
+			else if (gamepad1.b || gamepad2.b) parkingType = Utilities.ParkingPosition.RIGHT;
+		}
+
+		if (currentPath == Utilities.PathType.LONG) {
+			telemetry.addLine("[CONFIGURE] Long path selected. Please select a delay");
+			telemetry.addLine("[CONFIGURE] Press X for 0 second delay");
+			telemetry.addLine("[CONFIGURE] Press Y for 5 second delay");
+			telemetry.update();
+			while (longDelay < 0 && !isStopRequested()) {
+				if (gamepad1.x || gamepad2.x) longDelay = 0;
+				else if (gamepad1.y || gamepad2.y) longDelay = 5;
+			}
+		}
+
+		telemetry.clearAll();
+		telemetry.update();
+	}
+
+	private void Detection()
+	{
+		while (!isStarted())
+		{
+			if (distanceSensorFault) telemetry.addLine("Distance sensor fault!");
+			telemetry.addData("[INFO] Alliance", currentAlliance.name());
+			telemetry.addData("[INFO] Path", currentPath.name());
+			telemetry.addData("[INFO] Parking", parkingType.name());
+			telemetry.addData("[INFO] Case", detectionPipeline.getDetectionCase().name());
+			telemetry.update();
+		}
+	}
+
 	private void Run()
 	{
-		switch (currentPath) {
+		switch (currentPath)
+		{
 			case SHORT:
 				RunShort();
 				break;
@@ -121,6 +196,7 @@ public class AutoBoss extends LinearOpMode
 		double yellowTangent = 0;
 		double offset1 = -centimetersToInches(25);
 		double offset2 = -centimetersToInches(10);
+		Action yellowApproach = null;
 
 		Utilities.DetectionCase detectionCase = detectionPipeline.getDetectionCase();
 
@@ -164,6 +240,15 @@ public class AutoBoss extends LinearOpMode
 			}
 		}
 
+		if (!distanceSensorFault)
+			yellowApproach = ApproachWithDistSensor(mecanumDrive, distanceSensor, Constants.getBackdropDistance());
+		else
+			yellowApproach = mecanumDrive.actionBuilder(new Pose2d(yellowPose.position.x, yellowPose.position.y - offset2, yellowPose.heading.real))
+					.setTangent(yellowTangent)
+					.lineToYLinearHeading(yellowPose.position.y, yellowPose.heading.toDouble())
+					.build();
+
+		// TODO: precompute all actions
 		Actions.runBlocking( // Run the autonomous
 				RunSequentially(
 						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER), // Close claw
@@ -177,12 +262,15 @@ public class AutoBoss extends LinearOpMode
 						WaitForMovementStop(mecanumDrive), // Wait for movement to stop
 						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2d, Utilities.DelayDirection.AFTER), // Open claw
 						RunInParallel(
-								mecanumDrive.actionBuilder(purplePose)
-										.setTangent(yellowTangent)
-										.lineToY(yellowPose.position.y - offset1)
-										.splineToLinearHeading(new Pose2d(yellowPose.position.x, yellowPose.position.y - offset2, yellowPose.heading.toDouble()), yellowTangent)
-										.lineToYLinearHeading(yellowPose.position.y, yellowPose.heading.toDouble())
-										.build(), // Move to yellow
+								RunSequentially(
+										mecanumDrive.actionBuilder(purplePose)
+												.setTangent(yellowTangent)
+												.lineToY(yellowPose.position.y - offset1)
+												.splineToLinearHeading(new Pose2d(yellowPose.position.x, yellowPose.position.y - offset2, yellowPose.heading.toDouble()), yellowTangent)
+												.build(), // Get into position for yellow approach
+										yellowApproach // approach backdrop
+								),
+
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25), // Move rotator to idle
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.25), // Move tumbler to load
 								intakeSystem.RunIntakeFor(1) // Run intake for 1 second to push yellow
@@ -964,62 +1052,5 @@ public class AutoBoss extends LinearOpMode
 				telemetry.update();
 				break;
 		}
-	}
-
-	private void Detection()
-	{
-		while (!isStarted()) {
-			telemetry.addData("[INFO] Alliance", currentAlliance.name());
-			telemetry.addData("[INFO] Path", currentPath.name());
-			telemetry.addData("[INFO] Case", detectionPipeline.getDetectionCase().name());
-			telemetry.addData("[INFO] Parking", parkingType.name());
-			telemetry.update();
-		}
-	}
-
-	private void ConfigureAutonomous()
-	{
-		telemetry.setMsTransmissionInterval(50);
-
-		telemetry.addLine("[CONFIGURE] Please select an alliance");
-		telemetry.addLine("[CONFIGURE] Press A for Red Alliance");
-		telemetry.addLine("[CONFIGURE] Press B for Blue Alliance");
-		telemetry.update();
-		while (currentAlliance == null && !isStopRequested()) {
-			if (gamepad1.a || gamepad2.a) currentAlliance = Utilities.Alliance.RED;
-			else if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.BLUE;
-		}
-
-		telemetry.addLine("[CONFIGURE] Please select a path");
-		telemetry.addLine("[CONFIGURE] Press X for Short Path");
-		telemetry.addLine("[CONFIGURE] Press Y for Long Path");
-		telemetry.update();
-		while (currentPath == null && !isStopRequested()) {
-			if (gamepad1.x || gamepad2.x) currentPath = Utilities.PathType.SHORT;
-			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
-		}
-
-		telemetry.addLine("[CONFIGURE] Please select a parking strategy");
-		telemetry.addLine("[CONFIGURE] Press A for Left Parking");
-		telemetry.addLine("[CONFIGURE] Press B for Right Parking");
-		telemetry.update();
-		while (parkingType == null && !isStopRequested()) {
-			if (gamepad1.a || gamepad2.a) parkingType = Utilities.ParkingPosition.LEFT;
-			else if (gamepad1.b || gamepad2.b) parkingType = Utilities.ParkingPosition.RIGHT;
-		}
-
-		if (currentPath == Utilities.PathType.LONG) {
-			telemetry.addLine("[CONFIGURE] Long path selected. Please select a delay");
-			telemetry.addLine("[CONFIGURE] Press X for 0 second delay");
-			telemetry.addLine("[CONFIGURE] Press Y for 5 second delay");
-			telemetry.update();
-			while (longDelay < 0 && !isStopRequested()) {
-				if (gamepad1.x || gamepad2.x) longDelay = 0;
-				else if (gamepad1.y || gamepad2.y) longDelay = 5;
-			}
-		}
-
-		telemetry.clearAll();
-		telemetry.update();
 	}
 }

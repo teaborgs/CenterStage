@@ -14,7 +14,18 @@ public class DistanceSensor extends LinearOpMode
 	@Override
 	public void runOpMode() throws InterruptedException
 	{
+		telemetry.setMsTransmissionInterval(100);
+
 		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
+
+		distanceSensor.getDistance(DistanceUnit.CM);
+		if (distanceSensor.didTimeoutOccur())
+		{
+			telemetry.clear();
+			telemetry.addLine("Distance sensor fault!");
+			telemetry.update();
+			while (!isStopRequested());
+		}
 
 		waitForStart();
 
