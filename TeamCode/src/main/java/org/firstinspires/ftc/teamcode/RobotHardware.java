@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,7 +28,7 @@ public class RobotHardware
 	public RobotHardware(HardwareMap hardwareMap, boolean noLogic)
 	{
 		// Wheel motors
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
+		mecanumDrive = new MecanumDrive(hardwareMap);
 
 		// Intake Motor
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");

@@ -25,8 +25,10 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
-import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
-import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.localizer.impl.MecanumDriveLocalizer;
+import org.firstinspires.ftc.teamcode.localizer.impl.TankDriveLocalizer;
+import org.firstinspires.ftc.teamcode.localizer.impl.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.localizer.impl.TwoDeadWheelLocalizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,12 +58,12 @@ public final class TuningOpModes {
         if (DRIVE_CLASS.equals(MecanumDrive.class)) {
             dvf = hardwareMap -> {
                 Globals.ValidateConfig(hardwareMap, null);
-                MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
+                MecanumDrive md = new MecanumDrive(hardwareMap);
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
-                    MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
+                if (md.localizer instanceof MecanumDriveLocalizer) {
+                    MecanumDriveLocalizer dl = (MecanumDriveLocalizer) md.localizer;
                     leftEncs.add(dl.leftFront);
                     leftEncs.add(dl.leftRear);
                     rightEncs.add(dl.rightFront);
@@ -111,8 +113,8 @@ public final class TuningOpModes {
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (td.localizer instanceof TankDrive.DriveLocalizer) {
-                    TankDrive.DriveLocalizer dl = (TankDrive.DriveLocalizer) td.localizer;
+                if (td.localizer instanceof TankDriveLocalizer) {
+                    TankDriveLocalizer dl = (TankDriveLocalizer) td.localizer;
                     leftEncs.addAll(dl.leftEncs);
                     rightEncs.addAll(dl.rightEncs);
                 } else if (td.localizer instanceof ThreeDeadWheelLocalizer) {

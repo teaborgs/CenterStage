@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.localizer.impl;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
@@ -16,9 +16,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.localizer.Localizer;
 
 @Config
-public final class ThreeDeadWheelGyroLocalizer implements Localizer
+public final class ThreeDeadWheelLocalizer implements Localizer
 {
 	public static class Params
 	{
@@ -38,21 +39,26 @@ public final class ThreeDeadWheelGyroLocalizer implements Localizer
 	private Rotation2d lastHeading;
 	private double lastRawHeadingVel, headingVelOffset;
 
-	public ThreeDeadWheelGyroLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick)
+	public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick)
 	{
 		par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "rightBack")));
 		par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftBack")));
 		perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "intake")));
-
 		this.imu = imu;
 
 		lastPar0Pos = par0.getPositionAndVelocity().position;
 		lastPar1Pos = par1.getPositionAndVelocity().position;
 		lastPerpPos = perp.getPositionAndVelocity().position;
+		if(imu!=null) lastHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
 		this.inPerTick = inPerTick;
 
 		FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
+	}
+
+	public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick)
+	{
+		this(hardwareMap, null, inPerTick);
 	}
 
 	// see https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/617
@@ -71,14 +77,26 @@ public final class ThreeDeadWheelGyroLocalizer implements Localizer
 		PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
 		PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
 		PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-		Rotation2d heading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+		Rotation2d headingRot = null;
 
 		int par0PosDelta = par0PosVel.position - lastPar0Pos;
 		int par1PosDelta = par1PosVel.position - lastPar1Pos;
 		int perpPosDelta = perpPosVel.position - lastPerpPos;
-		double headingDelta = heading.minus(lastHeading);
 
-		double headingVel = getHeadingVelocity();
+		DualNum<Time> heading = new DualNum<>(new double[]{
+				(par0PosDelta - par1PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
+				(par0PosVel.velocity - par1PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
+		});
+
+		if(imu!=null) {
+			headingRot = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+			double headingDelta = headingRot.minus(lastHeading);
+			double headingVel = getHeadingVelocity();
+			heading = new DualNum<>(new double[]{
+					headingDelta,
+					headingVel,
+			});
+		}
 
 		Twist2dDual<Time> twist = new Twist2dDual<>(
 				new Vector2dDual<>(
@@ -91,16 +109,13 @@ public final class ThreeDeadWheelGyroLocalizer implements Localizer
 								(PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
 						}).times(inPerTick)
 				),
-				new DualNum<>(new double[]{
-						headingDelta,
-						headingVel,
-				})
+				heading
 		);
 
 		lastPar0Pos = par0PosVel.position;
 		lastPar1Pos = par1PosVel.position;
 		lastPerpPos = perpPosVel.position;
-		lastHeading = heading;
+		if(imu!=null) lastHeading = headingRot;
 
 		return twist;
 	}

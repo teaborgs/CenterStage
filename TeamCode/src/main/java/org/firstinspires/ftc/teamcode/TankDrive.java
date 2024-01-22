@@ -29,12 +29,8 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
-import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
-import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
-import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
-import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -43,9 +39,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.localizer.Localizer;
+import org.firstinspires.ftc.teamcode.localizer.impl.TankDriveLocalizer;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -108,76 +105,6 @@ public final class TankDrive
 
 	private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
-	public class DriveLocalizer implements Localizer
-	{
-		public final List<Encoder> leftEncs, rightEncs;
-
-		private double lastLeftPos, lastRightPos;
-
-		public DriveLocalizer()
-		{
-			{
-				List<Encoder> leftEncs = new ArrayList<>();
-				for (DcMotorEx m : leftMotors) {
-					Encoder e = new OverflowEncoder(new RawEncoder(m));
-					leftEncs.add(e);
-					lastLeftPos += e.getPositionAndVelocity().position;
-				}
-				lastLeftPos /= leftEncs.size();
-				this.leftEncs = Collections.unmodifiableList(leftEncs);
-			}
-
-			{
-				List<Encoder> rightEncs = new ArrayList<>();
-				for (DcMotorEx m : rightMotors) {
-					Encoder e = new OverflowEncoder(new RawEncoder(m));
-					rightEncs.add(e);
-					lastRightPos += e.getPositionAndVelocity().position;
-				}
-				lastRightPos /= rightEncs.size();
-				this.rightEncs = Collections.unmodifiableList(rightEncs);
-			}
-		}
-
-		@Override
-		public Twist2dDual<Time> update()
-		{
-			double meanLeftPos = 0.0, meanLeftVel = 0.0;
-			for (Encoder e : leftEncs) {
-				PositionVelocityPair p = e.getPositionAndVelocity();
-				meanLeftPos += p.position;
-				meanLeftVel += p.velocity;
-			}
-			meanLeftPos /= leftEncs.size();
-			meanLeftVel /= leftEncs.size();
-
-			double meanRightPos = 0.0, meanRightVel = 0.0;
-			for (Encoder e : rightEncs) {
-				PositionVelocityPair p = e.getPositionAndVelocity();
-				meanRightPos += p.position;
-				meanRightVel += p.velocity;
-			}
-			meanRightPos /= rightEncs.size();
-			meanRightVel /= rightEncs.size();
-
-			TankKinematics.WheelIncrements<Time> twist = new TankKinematics.WheelIncrements<>(
-					new DualNum<Time>(new double[]{
-							meanLeftPos - lastLeftPos,
-							meanLeftVel
-					}).times(PARAMS.inPerTick),
-					new DualNum<Time>(new double[]{
-							meanRightPos - lastRightPos,
-							meanRightVel,
-					}).times(PARAMS.inPerTick)
-			);
-
-			lastLeftPos = meanLeftPos;
-			lastRightPos = meanRightPos;
-
-			return kinematics.forward(twist);
-		}
-	}
-
 	public TankDrive(HardwareMap hardwareMap, Pose2d pose)
 	{
 		this.pose = pose;
@@ -188,15 +115,11 @@ public final class TankDrive
 			module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 		}
 
-		leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "left"));
-		rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "right"));
+		leftMotors = Collections.singletonList(hardwareMap.get(DcMotorEx.class, "left"));
+		rightMotors = Collections.singletonList(hardwareMap.get(DcMotorEx.class, "right"));
 
-		for (DcMotorEx m : leftMotors) {
-			m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		}
-		for (DcMotorEx m : rightMotors) {
-			m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		}
+		for (DcMotorEx m : leftMotors) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		for (DcMotorEx m : rightMotors) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		imu = hardwareMap.get(IMU.class, "imu");
 		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -206,7 +129,7 @@ public final class TankDrive
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-		localizer = new TankDrive.DriveLocalizer();
+		localizer = new TankDriveLocalizer(this, PARAMS.inPerTick);
 
 		FlightRecorder.write("TANK_PARAMS", PARAMS);
 	}

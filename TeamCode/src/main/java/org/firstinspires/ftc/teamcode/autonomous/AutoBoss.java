@@ -68,7 +68,7 @@ public class AutoBoss extends LinearOpMode
 		Constants.Init();
 
 		// Systems
-		mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
+		mecanumDrive = new MecanumDrive(hardwareMap);
 
 		tumblerSystem = new TumblerSystem(hardwareMap.get(DcMotorEx.class, "tumbler"));
 		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "intake"), hardwareMap.get(Servo.class, "antenna"));

@@ -8,12 +8,8 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.checkerframework.checker.index.qual.LTEqLengthOf;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.Scalar;
 
@@ -69,9 +65,8 @@ public class Utilities
 
 	public static double Clamp(double value, double lower, double higher)
 	{
-		return value <= lower ? lower : value >= higher ? higher : value;
+		return value <= lower ? lower : Math.min(value, higher);
 	}
-
 
 	public static Action WaitFor(double delay) { return new SleepAction(delay); }
 
@@ -125,7 +120,10 @@ public class Utilities
 
 	public static void CutPower(DcMotorEx... devices)
 	{
-		for (DcMotorEx device : devices) device.setMotorDisable();
+		for (DcMotorEx device : devices) {
+			device.setPower(0);
+			device.setMotorDisable();
+		}
 	}
 
 	public static void RestorePower(DcMotorEx... devices)

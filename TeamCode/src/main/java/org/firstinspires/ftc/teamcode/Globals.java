@@ -63,4 +63,18 @@ public class Globals
 		}
 		return robotType;
 	}
+
+	public static Utilities.RobotType internal_GetRobotType(HardwareMap hardwareMap) {
+		try {
+			if (hardwareMap.get("robot1") != null) Globals.robotType = Utilities.RobotType.ROBOT_1;
+		} catch (Exception e) {
+			try {
+				if (hardwareMap.get("robot2") != null) Globals.robotType = Utilities.RobotType.ROBOT_2;
+			} catch (Exception e2) {
+				Globals.robotType = null;
+			}
+		}
+		if(Globals.robotType == null) throw new Error("Robot could not be fetched from config!");
+		return Globals.robotType;
+	}
 }

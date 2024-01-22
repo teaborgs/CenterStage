@@ -4,14 +4,11 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Scalar;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 @Config
 public class Constants
 {
-	private static final Constants instance = new Constants();
-
 	public static class Container
 	{
 		public int TUMBLER_LOAD = 0;
@@ -113,11 +110,11 @@ public class Constants
 		}
 	}
 
-	private Container parameters = new Container();
+	private static Container parameters = new Container();
 
-	public static void Init() { instance.parameters = new Container(); }
+	public static void Init() { parameters = new Container(); }
 
-	public static Container getParameters() { return instance.parameters; }
+	public static Container getParameters() { return parameters; }
 
 	public static final int TOLERANCE = 10;
 
@@ -178,33 +175,33 @@ public class Constants
 		}
 	}
 
-	public static int getTumblerLoad() { return instance.parameters.TUMBLER_LOAD; }
-	public static int getTumblerIdle() { return instance.parameters.TUMBLER_IDLE; }
-	public static int getTumblerBackdrop() { return instance.parameters.TUMBLER_BACKDROP; }
-	public static int[] getTumblerStackPoses() { return instance.parameters.TUMBLER_STACK_POSES; }
-	public static int getTumblerSpikeMark() { return instance.parameters.TUMBLER_SPIKE_MARK; }
-	public static int getLiftPickup() {	return instance.parameters.LIFT_PICKUP;	}
-	public static int getLiftLevel1() {	return instance.parameters.LIFT_LEVEL_1; }
-	public static int getLiftLevel2() { return instance.parameters.LIFT_LEVEL_2; }
-	public static int getLiftLevel3() { return instance.parameters.LIFT_LEVEL_3; }
-	public static int getLiftLevel4() { return instance.parameters.LIFT_LEVEL_4; }
-	public static int getSuspenderIdle() { return instance.parameters.SUSPENDER_IDLE; }
-	public static int getSuspenderSuspend() { return instance.parameters.SUSPENDER_SUSPEND; }
-	public static double getClawIdle() { return instance.parameters.CLAW_IDLE; }
-	public static double getClawBusy() { return instance.parameters.CLAW_BUSY; }
-	public static double getRotatorIdle() { return instance.parameters.ROTATOR_IDLE; }
-	public static double getRotatorBusy() { return instance.parameters.ROTATOR_BUSY; }
-	public static double getPlaneLevelerIdle() { return instance.parameters.PLANE_LEVELER_IDLE; }
-	public static double getPlaneLevelerBusy() { return instance.parameters.PLANE_LEVELER_BUSY; }
-	public static double getPlaneShooterIdle() { return instance.parameters.PLANE_SHOOTER_IDLE; }
-	public static double getPlaneShooterBusy() { return instance.parameters.PLANE_SHOOTER_BUSY; }
-	public static double getIntakeMaxPower() { return instance.parameters.INTAKE_MAX_POWER; }
-	public static double getLiftNormalPower() {	return instance.parameters.LIFT_NORMAL_POWER; }
-	public static double getLiftSuspendPower() { return instance.parameters.LIFT_SUSPEND_POWER; }
-	public static double getBackdropDistance() { return instance.parameters.BACKDROP_DISTANCE; }
-	public static double getAntennaIdle() { return instance.parameters.ANTENNA_IDLE; }
-	public static double getAntennaGuide() { return instance.parameters.ANTENNA_GUIDE; }
-	public static double getAntennaGrab() { return instance.parameters.ANTENNA_GRAB; }
-	public static double getAntennaIntakeRunTime() { return instance.parameters.ANTENNA_INTAKE_RUN_TIME; }
-	public static double getTumblerMaxCurrent() { return instance.parameters.TUMBLER_MAX_CURRENT; }
+	public static int getTumblerLoad() { return parameters.TUMBLER_LOAD; }
+	public static int getTumblerIdle() { return parameters.TUMBLER_IDLE; }
+	public static int getTumblerBackdrop() { return parameters.TUMBLER_BACKDROP; }
+	public static int[] getTumblerStackPoses() { return parameters.TUMBLER_STACK_POSES; }
+	public static int getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
+	public static int getLiftPickup() {	return parameters.LIFT_PICKUP;	}
+	public static int getLiftLevel1() {	return parameters.LIFT_LEVEL_1; }
+	public static int getLiftLevel2() { return parameters.LIFT_LEVEL_2; }
+	public static int getLiftLevel3() { return parameters.LIFT_LEVEL_3; }
+	public static int getLiftLevel4() { return parameters.LIFT_LEVEL_4; }
+	public static int getSuspenderIdle() { return parameters.SUSPENDER_IDLE; }
+	public static int getSuspenderSuspend() { return parameters.SUSPENDER_SUSPEND; }
+	public static double getClawIdle() { return parameters.CLAW_IDLE; }
+	public static double getClawBusy() { return parameters.CLAW_BUSY; }
+	public static double getRotatorIdle() { return parameters.ROTATOR_IDLE; }
+	public static double getRotatorBusy() { return parameters.ROTATOR_BUSY; }
+	public static double getPlaneLevelerIdle() { return parameters.PLANE_LEVELER_IDLE; }
+	public static double getPlaneLevelerBusy() { return parameters.PLANE_LEVELER_BUSY; }
+	public static double getPlaneShooterIdle() { return parameters.PLANE_SHOOTER_IDLE; }
+	public static double getPlaneShooterBusy() { return parameters.PLANE_SHOOTER_BUSY; }
+	public static double getIntakeMaxPower() { return parameters.INTAKE_MAX_POWER; }
+	public static double getLiftNormalPower() {	return parameters.LIFT_NORMAL_POWER; }
+	public static double getLiftSuspendPower() { return parameters.LIFT_SUSPEND_POWER; }
+	public static double getBackdropDistance() { return parameters.BACKDROP_DISTANCE; }
+	public static double getAntennaIdle() { return parameters.ANTENNA_IDLE; }
+	public static double getAntennaGuide() { return parameters.ANTENNA_GUIDE; }
+	public static double getAntennaGrab() { return parameters.ANTENNA_GRAB; }
+	public static double getAntennaIntakeRunTime() { return parameters.ANTENNA_INTAKE_RUN_TIME; }
+	public static double getTumblerMaxCurrent() { return parameters.TUMBLER_MAX_CURRENT; }
 }

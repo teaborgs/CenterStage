@@ -14,7 +14,7 @@ public class LocalizationTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
-            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), Globals.GetCurrentRobotType());
+            MecanumDrive drive = new MecanumDrive(hardwareMap);
 
             waitForStart();
 
