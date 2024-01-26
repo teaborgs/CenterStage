@@ -2,8 +2,15 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
+import com.acmerobotics.dashboard.DashboardCore;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Actions;
+import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Time;
+import com.acmerobotics.roadrunner.TuningFiles;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -216,11 +224,13 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Telemetry()
 	{
+		Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+		telemetry.addData("Front Left: ", new DualNum<Time>(new double[]{Actions.now(), robotHardware.mecanumDrive.leftFront.getCurrent(CurrentUnit.MILLIAMPS)}).get(1));
+		telemetry.addData("Front Right: ", robotHardware.mecanumDrive.rightFront.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Back Left: ", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Back Right: ", robotHardware.mecanumDrive.rightBack.getCurrent(CurrentUnit.MILLIAMPS));
 
 		telemetry.addData("Intake Power: ", robotHardware.intakeMotor.getPower());
-
-		telemetry.addData("leveled", planeLeveled);
-		telemetry.addData("launched", planeLaunched);
 
 		telemetry.addData("Lift 1 Power: ", robotHardware.liftMotor1.getPower());
 		telemetry.addData("Lift 1 Pos: ", robotHardware.liftMotor1.getCurrentPosition());

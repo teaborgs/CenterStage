@@ -112,18 +112,18 @@ public final class MecanumDrive
 		{
 			if (Objects.requireNonNull(robotType) == Utilities.RobotType.ROBOT_1) {
 				inPerTick = 5.2860537869735093113495079149827e-4; // 78.74 / 149535 148063 148225 = 78.74 / 148958
-				lateralInPerTick = 0.0003586448651161987; // 0.0003485825272596426 0.00034130790197440175
-				trackWidthTicks = 24123.839172942204; // 24432.28339319 24335.082134488
+				lateralInPerTick = 0.0003726236031573551; // 0.0003485825272596426 0.00034130790197440175
+				trackWidthTicks = 25563.724430353366; // 24432.28339319 24335.082134488
 				trackWidth = 13.189;
-				kS = 1.4530708171265863; // 1.340230865032337
-				kV = 0.00007574847762990085; // 0.00007465072936281095
+				kS = 1.1133924997425; // 1.340230865032337
+				kV =  0.00010747742980839806; // 0.00007465072936281095
 				kA = 0.00001;
 				maxWheelVel = 50d;
 				minProfileAccel = -30d;
 				maxProfileAccel = 50d;
 				axialGain = 6d;
-				lateralGain = 0d;
-				headingGain = 12d;
+				lateralGain = 1d;
+				headingGain = 6d;
 				axialVelGain = 0.25d;
 				lateralVelGain = 0.25d;
 				headingVelGain = 0.25d;
@@ -220,7 +220,7 @@ public final class MecanumDrive
 		imu.initialize(parameters);
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
-		localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+		localizer = new ThreeDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick);
 		FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 	}
 

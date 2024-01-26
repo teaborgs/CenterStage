@@ -497,7 +497,7 @@ public class AutoBoss extends LinearOpMode
 							// Place purple
 							RunInParallel(
 									mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-											.splineToLinearHeading(new Pose2d(centimetersToInches(69), -centimetersToInches(5), Math.PI / 2), 0)
+											.splineToLinearHeading(new Pose2d(centimetersToInches(69), -centimetersToInches(), Math.PI / 2), 0)
 											.build(),
 									tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 									rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
