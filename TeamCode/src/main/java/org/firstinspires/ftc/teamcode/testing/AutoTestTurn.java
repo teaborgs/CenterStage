@@ -33,7 +33,7 @@ public class AutoTestTurn extends LinearOpMode
 		Actions.runBlocking(
 				Utilities.RunInParallel(
 						mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
-								.turn(Math.PI / 2)
+								.turn(Math.PI * 10) // 5 full rotations
 								.build(),
 						telemetryPacket -> {
 							mecanumDrive.updatePoseEstimate();
