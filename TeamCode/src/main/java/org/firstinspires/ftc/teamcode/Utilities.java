@@ -183,6 +183,6 @@ public class Utilities
 
 	public enum ParkingPosition
 	{
-		LEFT, RIGHT
+		CENTER, WALL
 	}
 }

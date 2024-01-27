@@ -78,7 +78,6 @@ public final class ManualDriveTest extends BaseOpMode
 		{
 			private static final InputSystem.Key CLAW_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key ROTATOR_KEY = new InputSystem.Key("b");
-			private static final InputSystem.Key LOCKER_KEY = new InputSystem.Key("y");
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Axis("left_trigger"), new InputSystem.Axis("right_trigger"));
 			private static final InputSystem.Key TUMBLER_LOAD_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key TUMBLER_BACKDROP_KEY = new InputSystem.Key("dpad_up");
@@ -224,30 +223,27 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Telemetry()
 	{
-		Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-		telemetry.addData("Front Left: ", new DualNum<Time>(new double[]{Actions.now(), robotHardware.mecanumDrive.leftFront.getCurrent(CurrentUnit.MILLIAMPS)}).get(1));
-		telemetry.addData("Front Right: ", robotHardware.mecanumDrive.rightFront.getCurrent(CurrentUnit.MILLIAMPS));
-		telemetry.addData("Back Left: ", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));
-		telemetry.addData("Back Right: ", robotHardware.mecanumDrive.rightBack.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Front Left", robotHardware.mecanumDrive.leftFront.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Front Right", robotHardware.mecanumDrive.rightFront.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Back Left", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Back Right", robotHardware.mecanumDrive.rightBack.getCurrent(CurrentUnit.MILLIAMPS));
 
-		telemetry.addData("Lateral Gain: ", MecanumDrive.PARAMS.lateralGain);
+		telemetry.addData("Intake Power", robotHardware.intakeMotor.getPower());
 
-		telemetry.addData("Intake Power: ", robotHardware.intakeMotor.getPower());
+		telemetry.addData("Lift 1 Power", robotHardware.liftMotor1.getPower());
+		telemetry.addData("Lift 1 Pos", robotHardware.liftMotor1.getCurrentPosition());
+		telemetry.addData("Lift 2 Power", robotHardware.liftMotor2.getPower());
+		telemetry.addData("Lift 2 Pos", robotHardware.liftMotor2.getCurrentPosition());
 
-		telemetry.addData("Lift 1 Power: ", robotHardware.liftMotor1.getPower());
-		telemetry.addData("Lift 1 Pos: ", robotHardware.liftMotor1.getCurrentPosition());
-		telemetry.addData("Lift 2 Power: ", robotHardware.liftMotor2.getPower());
-		telemetry.addData("Lift 2 Pos: ", robotHardware.liftMotor2.getCurrentPosition());
+		telemetry.addData("Tumbler Power", robotHardware.tumblerMotor.getPower());
+		telemetry.addData("Tumbler Pos", robotHardware.tumblerMotor.getCurrentPosition());
+		telemetry.addData("Tumbler Current", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Tumbler Max Current", tumblerMaxCurrent);
 
-		telemetry.addData("Tumbler Power: ", robotHardware.tumblerMotor.getPower());
-		telemetry.addData("Tumbler Pos: ", robotHardware.tumblerMotor.getCurrentPosition());
-		telemetry.addData("Tumbler Current: ", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
-		telemetry.addData("Tumbler Max Current: ", tumblerMaxCurrent);
-
-		telemetry.addData("Rotator Pos: ", robotHardware.rotatorServo.getPosition());
-		telemetry.addData("Claw Pos: ", robotHardware.clawServo.getPosition());
-		telemetry.addData("PlaneLevel Pos: ", robotHardware.planeLevelServo.getPosition());
-		telemetry.addData("PlaneRelease Pos: ", robotHardware.planeShooterServo.getPosition());
+		telemetry.addData("Rotator Pos", robotHardware.rotatorServo.getPosition());
+		telemetry.addData("Claw Pos", robotHardware.clawServo.getPosition());
+		telemetry.addData("PlaneLevel Pos", robotHardware.planeLevelServo.getPosition());
+		telemetry.addData("PlaneRelease Pos", robotHardware.planeShooterServo.getPosition());
 
 		telemetry.update();
 	}

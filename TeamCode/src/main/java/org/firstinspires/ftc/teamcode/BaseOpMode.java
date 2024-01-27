@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public abstract class BaseOpMode extends LinearOpMode
 {
 	@Override
-	public void runOpMode() throws InterruptedException
+	public void runOpMode()
 	{
+		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 		telemetry.addLine("[STATUS] Initializing...");
 		telemetry.update();
 
@@ -14,7 +17,8 @@ public abstract class BaseOpMode extends LinearOpMode
 		OnInitialize();
 
 		// Wait for the start button to be pressed
-		waitForStart();
+		while (!isStarted() && !isStopRequested())
+			WhileWaitingForStart();
 
 		// Run the robot
 		while (!isStopRequested())
@@ -30,6 +34,10 @@ public abstract class BaseOpMode extends LinearOpMode
 	protected abstract void OnInitialize();
 
 	protected abstract void OnRun();
+
+	protected void WhileWaitingForStart() {
+		// Override this method to add custom behavior while waiting for start
+	}
 
 	protected void OnStop() {
 		// Override this method to add custom stop behavior
