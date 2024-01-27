@@ -25,7 +25,6 @@ import org.firstinspires.ftc.teamcode.Utilities;
 
 import java.util.concurrent.TimeUnit;
 
-@Config
 @TeleOp(name = "Razvan TeleOp", group = "TeleOp")
 public final class RazvanTeleOp extends BaseOpMode
 {

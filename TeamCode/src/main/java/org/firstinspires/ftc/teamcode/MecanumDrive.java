@@ -108,8 +108,12 @@ public final class MecanumDrive
 		public double lateralVelGain = 0.0;
 		public double headingVelGain = 0.0; // shared with turn
 
-		public Params(Utilities.RobotType robotType)
+		private boolean hasBeenInitialized = false;
+
+		public void Init(Utilities.RobotType robotType)
 		{
+			if(hasBeenInitialized) return;
+			hasBeenInitialized = true;
 			if (Objects.requireNonNull(robotType) == Utilities.RobotType.ROBOT_1) {
 				inPerTick = 5.2860537869735093113495079149827e-4; // 78.74 / 149535 148063 148225 = 78.74 / 148958
 				lateralInPerTick = 0.0003726236031573551; // 0.0003485825272596426 0.00034130790197440175
@@ -117,12 +121,12 @@ public final class MecanumDrive
 				trackWidth = 13.189;
 				kS = 1.1133924997425; // 1.340230865032337
 				kV =  0.00010747742980839806; // 0.00007465072936281095
-				kA = 0.00001;
-				maxWheelVel = 50d;
+				kA = 0.0000135;
+				maxWheelVel = 70d;
 				minProfileAccel = -30d;
-				maxProfileAccel = 50d;
+				maxProfileAccel = 70d;
 				axialGain = 6d;
-				lateralGain = 1d;
+				lateralGain = 10d;
 				headingGain = 6d;
 				axialVelGain = 0.25d;
 				lateralVelGain = 0.25d;
@@ -148,7 +152,7 @@ public final class MecanumDrive
 		}
 	}
 
-	public static Params PARAMS = new Params(Utilities.RobotType.ROBOT_1);
+	public static Params PARAMS = new Params();
 
 	public final MecanumKinematics kinematics;
 	public final TurnConstraints defaultTurnConstraints;
@@ -173,7 +177,7 @@ public final class MecanumDrive
 
 	public MecanumDrive(HardwareMap hardwareMap, Pose2d pose)
 	{
-		PARAMS = new Params(Globals.internal_GetRobotType(hardwareMap));
+		PARAMS.Init(Globals.internal_GetRobotType(hardwareMap));
 		this.pose = pose;
 
 		this.kinematics = new MecanumKinematics(PARAMS.trackWidth, PARAMS.inPerTick / PARAMS.lateralInPerTick);
@@ -218,6 +222,7 @@ public final class MecanumDrive
 				PARAMS.logoFacingDirection,
 				PARAMS.usbFacingDirection));
 		imu.initialize(parameters);
+		imu.resetYaw();
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 		localizer = new ThreeDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick);

@@ -52,7 +52,7 @@ public final class IntakeSystem extends SystemEx
 	{
 		return new SequentialAction(
 				new InstantAction(() -> {
-					servo.setPosition(Constants.getAntennaIdle());
+					servo.setPosition(Constants.getAntennaGrab());
 					motor.setPower(Constants.getIntakeMaxPower());
 				}),
 				new SleepAction(time),

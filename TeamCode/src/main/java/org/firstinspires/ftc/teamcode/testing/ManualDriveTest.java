@@ -230,6 +230,8 @@ public final class ManualDriveTest extends BaseOpMode
 		telemetry.addData("Back Left: ", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));
 		telemetry.addData("Back Right: ", robotHardware.mecanumDrive.rightBack.getCurrent(CurrentUnit.MILLIAMPS));
 
+		telemetry.addData("Lateral Gain: ", MecanumDrive.PARAMS.lateralGain);
+
 		telemetry.addData("Intake Power: ", robotHardware.intakeMotor.getPower());
 
 		telemetry.addData("Lift 1 Power: ", robotHardware.liftMotor1.getPower());

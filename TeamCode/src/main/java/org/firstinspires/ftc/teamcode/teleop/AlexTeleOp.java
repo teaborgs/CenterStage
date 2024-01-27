@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.Utilities;
 
 import java.util.concurrent.TimeUnit;
 
-@Config
 @TeleOp(name = "Alex TeleOp", group = "TeleOp")
 public final class AlexTeleOp extends BaseOpMode
 {
@@ -64,12 +63,6 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key RESET_STACK = new InputSystem.Key("start");
 			private static final InputSystem.Key TOGGLE_PICKUP_KEY = new InputSystem.Key("back");
 		}
-	}
-	
-	public AlexTeleOp()
-	{
-		FlightRecorder.write("WHEEL_BINDINGS", WHEEL_BINDINGS);
-		FlightRecorder.write("ARM_BINDINGS", ARM_BINDINGS);
 	}
 
 	@Override
