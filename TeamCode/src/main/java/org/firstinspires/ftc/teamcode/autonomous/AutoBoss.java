@@ -244,22 +244,22 @@ public class AutoBoss extends BaseOpMode
 		if (currentAlliance == Utilities.Alliance.RED) {
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(127), 0, Math.PI);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(49), Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(85), -centimetersToInches(223), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(223), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(49), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(85), -centimetersToInches(223), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(11), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(49), Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(70), -centimetersToInches(223), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(20), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(223), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(49), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(70), -centimetersToInches(223), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), 0, Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(49), Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(85), -centimetersToInches(223), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(70), 0, -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(223), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(133), centimetersToInches(49), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(85), -centimetersToInches(223), -Math.PI / 2);
 			}
 		} else {
 			safeDistance *= -1;
@@ -436,7 +436,7 @@ public class AutoBoss extends BaseOpMode
 
 	private void ConfigureAutonomous()
 	{
-		telemetry.setMsTransmissionInterval(50);
+		telemetry.setMsTransmissionInterval(25);
 
 		telemetry.addLine("[CONFIGURE] Please select an alliance");
 		telemetry.addLine("[CONFIGURE] Press A for Red Alliance");
@@ -447,6 +447,7 @@ public class AutoBoss extends BaseOpMode
 			else if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.BLUE;
 		}
 
+		telemetry.clear();
 		telemetry.addLine("[CONFIGURE] Please select a path");
 		telemetry.addLine("[CONFIGURE] Press X for Short Path");
 		telemetry.addLine("[CONFIGURE] Press Y for Long Path");
@@ -456,6 +457,7 @@ public class AutoBoss extends BaseOpMode
 			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
 		}
 
+		telemetry.clear();
 		telemetry.addLine("[CONFIGURE] Please select a parking strategy");
 		telemetry.addLine("[CONFIGURE] Press A for Center Parking");
 		telemetry.addLine("[CONFIGURE] Press B for Wall Parking");
@@ -466,10 +468,10 @@ public class AutoBoss extends BaseOpMode
 		}
 
 		if (currentPath == Utilities.PathType.LONG) {
+			telemetry.clear();
 			telemetry.addLine("[CONFIGURE] Long path selected. Please select a delay");
 			telemetry.addLine("[CONFIGURE] Press X for 0 second delay");
 			telemetry.addLine("[CONFIGURE] Press Y for 2.5 second delay");
-
 			telemetry.update();
 			while (longDelay < 0 && !isStopRequested()) {
 				if (gamepad1.x || gamepad2.x) longDelay = 0;
