@@ -223,6 +223,8 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Telemetry()
 	{
+		telemetry.addData("Robot Vel", robotHardware.mecanumDrive.updatePoseEstimate().linearVel);
+
 		telemetry.addData("Front Left", robotHardware.mecanumDrive.leftFront.getCurrent(CurrentUnit.MILLIAMPS));
 		telemetry.addData("Front Right", robotHardware.mecanumDrive.rightFront.getCurrent(CurrentUnit.MILLIAMPS));
 		telemetry.addData("Back Left", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));

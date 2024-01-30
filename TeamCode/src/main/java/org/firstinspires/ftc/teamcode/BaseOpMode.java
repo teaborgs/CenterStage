@@ -9,7 +9,6 @@ public abstract class BaseOpMode extends LinearOpMode
 	@Override
 	public void runOpMode()
 	{
-		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 		telemetry.addLine("[STATUS] Initializing...");
 		telemetry.update();
 
@@ -25,7 +24,7 @@ public abstract class BaseOpMode extends LinearOpMode
 			OnRun();
 
 		// Stop the robot
-		telemetry.clearAll();
+		telemetry.clear();
 		telemetry.addLine("[STATUS] Stopping...");
 		telemetry.update();
 		OnStop();

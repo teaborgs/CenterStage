@@ -49,7 +49,7 @@ public class Constants
 					TUMBLER_IDLE = 400;
 					TUMBLER_BACKDROP = 925;
 					TUMBLER_STACK_POSES = new int[]{1550, 1510, 1480, 1440, 1400};
-					TUMBLER_SPIKE_MARK = 1300;
+					TUMBLER_SPIKE_MARK = 1350;
 					LIFT_PICKUP = -10;
 					LIFT_LEVEL_1 = 50;
 					LIFT_LEVEL_2 = 250;
