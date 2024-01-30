@@ -41,7 +41,7 @@ public class MecanumDriveLocalizer implements Localizer
 
 		if(mecanumDrive.imu==null) throw new IllegalArgumentException("IMU cannot be null");
 		if(mecanumDrive.kinematics==null) throw new IllegalArgumentException("Kinematics cannot be null");
-		this.imu = mecanumDrive.imu;
+		this.imu = mecanumDrive.imu.get();
 		this.kinematics = mecanumDrive.kinematics;
 
 		lastHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));

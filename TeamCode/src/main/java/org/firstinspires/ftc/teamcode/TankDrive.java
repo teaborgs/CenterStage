@@ -30,6 +30,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -96,7 +97,7 @@ public final class TankDrive
 
 	public final List<DcMotorEx> leftMotors, rightMotors;
 
-	public final IMU imu;
+	public final LazyImu imu;
 
 	public final VoltageSensor voltageSensor;
 
@@ -121,11 +122,10 @@ public final class TankDrive
 		for (DcMotorEx m : leftMotors) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		for (DcMotorEx m : rightMotors) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-		imu = hardwareMap.get(IMU.class, "imu");
-		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+		imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
 				RevHubOrientationOnRobot.LogoFacingDirection.UP,
-				RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-		imu.initialize(parameters);
+				RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+		));
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
 

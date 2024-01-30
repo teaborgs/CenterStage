@@ -323,9 +323,9 @@ public class AutoBoss extends BaseOpMode
 				RunInParallel(
 						mecanumDrive.actionBuilder(purplePose)
 								.setTangent(0)
-								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), backdropIntermediaryPose.heading.toDouble() / 2)
-								.setTangent(-backdropIntermediaryPose.heading.toDouble())
+								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), -backdropIntermediaryPose.heading.toDouble())
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
+								.splineToConstantHeading(new Vector2d(yellowPose.position.x, yellowPose.position.y - safeDistance), -yellowPose.heading.toDouble())
 								.build(),
 						RunSequentially(
 								RunInParallel(
@@ -338,16 +338,10 @@ public class AutoBoss extends BaseOpMode
 				),
 				// Drive to backdrop
 				RunInParallel(
-						RunSequentially(
-								mecanumDrive.actionBuilder(backdropIntermediaryPose)
-										.setTangent(backdropIntermediaryPose.heading.toDouble())
-										.splineToLinearHeading(new Pose2d(yellowPose.position.x, yellowPose.position.y - safeDistance, yellowPose.heading.toDouble()), -yellowPose.heading.toDouble())
-										.build(),
-								yellowApproach
-						),
-						liftSystem.MoveToPositionWithDelay(Constants.getLiftLevel2(), 0.5),
-						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.5),
-						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.7)
+						yellowApproach,
+						liftSystem.MoveToPositionWithDelay(Constants.getLiftLevel2(), 0.3),
+						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.3),
+						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5)
 				),
 				WaitForMovementStop(mecanumDrive),
 				// Drop pixel
@@ -379,10 +373,9 @@ public class AutoBoss extends BaseOpMode
 				// Drive to stack
 				RunInParallel(
 						mecanumDrive.actionBuilder(backdropPose)
-								.setTangent(0)
-								.lineToX(stackPose.position.x)
-								.setTangent(-stackPose.heading.toDouble())
-								.lineToY(stackPose.position.y)
+								.setTangent(-backdropPose.heading.toDouble())
+								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, backdropIntermediaryPose.position.y), -backdropPose.heading.toDouble())
+								.lineToYConstantHeading(stackPose.position.y)
 								.build(),
 						tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.2),
@@ -396,10 +389,10 @@ public class AutoBoss extends BaseOpMode
 				// Drive to intermediate backdrop position
 				RunInParallel(
 						mecanumDrive.actionBuilder(stackPose)
-								.setTangent(-backdropIntermediaryPose.heading.toDouble())
-								.lineToYLinearHeading(backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble())
 								.setTangent(0)
-								.lineToX(backdropIntermediaryPose.position.x)
+								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), -backdropIntermediaryPose.heading.toDouble())
+								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
+								.splineToConstantHeading(new Vector2d(backdropPose.position.x, backdropPose.position.y - safeDistance), -backdropPose.heading.toDouble())
 								.build(),
 						intakeSystem.RunIntakeFor(0.6),
 						RunSequentially(
@@ -409,13 +402,7 @@ public class AutoBoss extends BaseOpMode
 				),
 				// Drive to backdrop
 				RunInParallel(
-						RunSequentially(
-								mecanumDrive.actionBuilder(backdropIntermediaryPose)
-										.setTangent(-backdropPose.heading.toDouble())
-										.splineToLinearHeading(new Pose2d(backdropPose.position.x, backdropPose.position.y - safeDistance, backdropPose.heading.toDouble()), -backdropPose.heading.toDouble())
-										.build(),
-								backdropApproach
-						),
+						backdropApproach,
 						liftSystem.MoveToPosition(Constants.getLiftLevel2()),
 						tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
 						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.2)

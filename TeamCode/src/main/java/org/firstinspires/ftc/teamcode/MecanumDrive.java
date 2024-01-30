@@ -25,6 +25,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -32,7 +33,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.localizer.Localizer;
@@ -163,7 +163,7 @@ public final class MecanumDrive
 
 	public final VoltageSensor voltageSensor;
 
-	public final IMU imu;
+	public final LazyImu imu;
 
 	public final Localizer localizer;
 	public Pose2d pose;
@@ -217,15 +217,13 @@ public final class MecanumDrive
 		rightBack.setPower(0);
 		rightFront.setPower(0);
 
-		imu = hardwareMap.get(IMU.class, "imu");
-		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+		imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
 				PARAMS.logoFacingDirection,
-				PARAMS.usbFacingDirection));
-		imu.initialize(parameters);
-		imu.resetYaw();
+				PARAMS.usbFacingDirection
+		));
 
 		voltageSensor = hardwareMap.voltageSensor.iterator().next();
-		localizer = new ThreeDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick);
+		localizer = new ThreeDeadWheelLocalizer(hardwareMap, imu.get(), PARAMS.inPerTick);
 		FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 	}
 
