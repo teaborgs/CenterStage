@@ -51,9 +51,7 @@ public class Utilities
 					return false;
 				}
 				mecanumDrive.setDrivePowers(
-						new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -10, 10) / 30,
-														0),
-											0));
+						new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -10, 10) / 30, 0),0));
 			}
 		};
 	}

@@ -68,7 +68,7 @@ public class Constants
 					INTAKE_MAX_POWER = 0.8d;
 					LIFT_NORMAL_POWER = 1.0d;
 					LIFT_SUSPEND_POWER = 1.0d;
-					BACKDROP_DISTANCE = 7.0d;
+					BACKDROP_DISTANCE = 12.0d;
 					ANTENNA_IDLE = 0.0d;
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
@@ -99,7 +99,7 @@ public class Constants
 					INTAKE_MAX_POWER = 0.8d;
 					LIFT_NORMAL_POWER = 0.8d;
 					LIFT_SUSPEND_POWER = 1.0d;
-					BACKDROP_DISTANCE = 7.0d;
+					BACKDROP_DISTANCE = 15.0d;
 					ANTENNA_IDLE = 0.0d;
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
