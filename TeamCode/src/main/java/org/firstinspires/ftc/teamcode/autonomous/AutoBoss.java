@@ -220,14 +220,14 @@ public class AutoBoss extends BaseOpMode
 						RunInParallel(
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5), // Move rotator to busy
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.8), // Move tumbler to backdrop
-								liftSystem.MoveToPosition(Constants.getLiftLevel1())
+								liftSystem.MoveToPosition(Constants.getLiftLevels()[1])
 						),
 						WaitForMovementStop(mecanumDrive),
 						clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.25d, Utilities.DelayDirection.BOTH), // Open claw
 						RunInParallel(
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25),
 								tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
-								liftSystem.MoveToPosition(Constants.getLiftPickup()),
+								liftSystem.MoveToPosition(Constants.getLiftLevels()[0]),
 								mecanumDrive.actionBuilder(yellowPose)
 										.setTangent(0)
 										.lineToX(parkPose.position.x)
@@ -242,31 +242,37 @@ public class AutoBoss extends BaseOpMode
 	public void RunLong()
 	{
 		Pose2d purplePose = new Pose2d(0, 0, 0);
+		Pose2d firstStackPixel = new Pose2d(0, 0, 0);
 		Pose2d backdropIntermediaryPose = new Pose2d(0, 0, 0);
 		Pose2d yellowPose = new Pose2d(0, 0, 0);
 		Pose2d stackPose = new Pose2d(0, 0, 0);
 		Pose2d backdropPose = new Pose2d(0, 0, 0);
 		double safeDistance = -centimetersToInches(30);
+		double startOffset = centimetersToInches(10);
 		Action yellowApproach, backdropApproach;
 		if (currentAlliance == Utilities.Alliance.RED) {
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
-				purplePose = new Pose2d(centimetersToInches(90), centimetersToInches(30), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(223), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(55), -Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(83), -centimetersToInches(223), -Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(42), -Math.PI / 2);
+				firstStackPixel = new Pose2d(centimetersToInches(94), centimetersToInches(62), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(136), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(65), -centimetersToInches(210), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(120), centimetersToInches(62), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(80), -centimetersToInches(219), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(68), centimetersToInches(53), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(83), -centimetersToInches(223), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(55), -Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(65), -centimetersToInches(223), -Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(68), centimetersToInches(62), -Math.PI / 2);
+				firstStackPixel = new Pose2d(centimetersToInches(68), centimetersToInches(62), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(136), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(80), -centimetersToInches(210), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(125), centimetersToInches(62), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(65), -centimetersToInches(219), -Math.PI / 2);
+				startOffset = 0;
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(68), 0, -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(140), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(55), -centimetersToInches(223), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(55), -Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(83), -centimetersToInches(223), -Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(68), centimetersToInches(6), -Math.PI / 2);
+				firstStackPixel = new Pose2d(centimetersToInches(68), centimetersToInches(62), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(130), -centimetersToInches(136), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(50), -centimetersToInches(210), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(125), centimetersToInches(63), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(80), -centimetersToInches(219), -Math.PI / 2);
 			}
 		} else {
 			safeDistance *= -1;
@@ -312,6 +318,8 @@ public class AutoBoss extends BaseOpMode
 				// Place purple
 				RunInParallel(
 						mecanumDrive.actionBuilder(mecanumDrive.pose)
+								.setTangent(purplePose.component2())
+								.lineToY(startOffset)
 								.splineToLinearHeading(new Pose2d(purplePose.position.x, purplePose.position.y / 2, purplePose.heading.toDouble()), 0)
 								.setTangent(purplePose.heading.toDouble())
 								.lineToYConstantHeading(purplePose.position.y)
@@ -319,15 +327,24 @@ public class AutoBoss extends BaseOpMode
 						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.5),
 						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.75)
 				),
-				clawSystem.MoveToPosition(Constants.getClawIdle()),
-				intakeSystem.RunIntakeWithAntennaFor(0.3),
-				// Drive to intermediate backdrop position
+				clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2),
 				RunInParallel(
 						mecanumDrive.actionBuilder(purplePose)
+								.setTangent(purplePose.heading.toDouble())
+								.lineToY(firstStackPixel.position.y)
+								.setTangent(0)
+								.lineToX(firstStackPixel.position.x)
+								.build(),
+						tumblerSystem.MoveToPosition(Constants.getTumblerIdle())
+				),
+				intakeSystem.RunIntakeWithAntennaFor(0.5),
+				// Drive to intermediate backdrop position
+				RunInParallel(
+						mecanumDrive.actionBuilder(firstStackPixel)
 								.setTangent(0)
 								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), backdropIntermediaryPose.heading.toDouble())
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
-								.splineToConstantHeading(new Vector2d(yellowPose.position.x, yellowPose.position.y - safeDistance), yellowPose.heading.toDouble())
+								.splineToConstantHeading(new Vector2d(yellowPose.position.x, yellowPose.position.y - safeDistance), yellowPose.heading.toDouble(), (pose2dDual, posePath, v) -> 30)
 								.build(),
 						RunSequentially(
 								RunSequentially(
@@ -339,11 +356,12 @@ public class AutoBoss extends BaseOpMode
 										clawSystem.MoveToPosition(Constants.getClawBusy())
 								),
 								WaitFor(0.5),
-								liftSystem.MoveToPosition(Constants.getLiftLevel2()),
+								liftSystem.MoveToPosition(Constants.getLiftLevels()[3]),
 								rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.2),
 								tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.2)
 						)
 				),
+				WaitForMovementStop(mecanumDrive),
 				// Drive to backdrop
 				yellowApproach,
 				WaitForMovementStop(mecanumDrive),
@@ -369,7 +387,7 @@ public class AutoBoss extends BaseOpMode
 						clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER)
 				),
 				RunInParallel(
-						liftSystem.MoveToPosition(Constants.getLiftLevel2()),
+						liftSystem.MoveToPosition(Constants.getLiftLevels()[2]),
 						tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
 						rotatorSystem.MoveToPosition(Constants.getRotatorBusy())
 				),
@@ -384,7 +402,7 @@ public class AutoBoss extends BaseOpMode
 								.build(),
 						tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.2),
-						liftSystem.MoveToPositionWithDelay(Constants.getLiftPickup(), 0.3)
+						liftSystem.MoveToPositionWithDelay(Constants.getLiftLevels()[0], 0.3)
 				),
 				// Take 2 pixels
 				WaitForMovementStop(mecanumDrive),
@@ -407,25 +425,25 @@ public class AutoBoss extends BaseOpMode
 				// Drive to backdrop
 				RunInParallel(
 						backdropApproach,
-						liftSystem.MoveToPosition(Constants.getLiftLevel3()),
+						liftSystem.MoveToPosition(Constants.getLiftLevels()[2]),
 						tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.2)
 				),
-				WaitForMovementStop(mecanumDrive),
 				tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
+				WaitForMovementStop(mecanumDrive),
 				// Drop first stack pixel
-				clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.4, Utilities.DelayDirection.AFTER),
+				clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.AFTER),
 				RunInParallel(
 						intakeSystem.RunIntakeFor(1),
-						tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						liftSystem.MoveToPositionWithDelay(Constants.getSuspenderIdle(), 0.2),
-						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.2)
+						tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.2),
+						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.3)
 				),
 				tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
 				// Pickup second stack pixel and drop
 				clawSystem.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER),
 				RunInParallel(
-						liftSystem.MoveToPosition(Constants.getLiftLevel3()),
+						liftSystem.MoveToPosition(Constants.getLiftLevels()[2]),
 						tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.2)
 				),

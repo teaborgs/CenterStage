@@ -82,7 +82,6 @@ public final class ManualDriveTest extends BaseOpMode
 			private static final InputSystem.Key TUMBLER_LOAD_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key TUMBLER_BACKDROP_KEY = new InputSystem.Key("dpad_up");
 			private static final InputSystem.Key TUMBLER_IDLE_KEY = new InputSystem.Key("dpad_left");
-			private static final InputSystem.Key TUMBLER_STACK_KEY = new InputSystem.Key("dpad_right");
 			private static final InputSystem.Axis LIFT_AXIS = new InputSystem.Axis("right_stick_y");
 		}
 	}
@@ -158,15 +157,6 @@ public final class ManualDriveTest extends BaseOpMode
 		{
 			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 			stackTaps = 0;
-		}
-		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_STACK_KEY))
-		{
-			stackTaps++;
-			if (stackTaps > 5)
-				stackTaps = 1;
-
-			int targetPos = Constants.getTumblerStackPoses()[stackTaps - 1];
-			robotHardware.tumblerMotor.setTargetPosition(targetPos);
 		}
 
 		if (Math.abs(robotHardware.tumblerMotor.getTargetPosition() - robotHardware.tumblerMotor.getCurrentPosition()) > 10)

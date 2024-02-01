@@ -33,8 +33,8 @@ public final class LiftSystem extends SystemEx
 		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor1.setTargetPosition(Constants.getLiftPickup());
-		motor2.setTargetPosition(Constants.getLiftPickup());
+		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
+		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
 		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);

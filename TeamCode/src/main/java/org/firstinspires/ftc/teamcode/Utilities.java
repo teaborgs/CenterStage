@@ -56,11 +56,6 @@ public class Utilities
 		};
 	}
 
-	public static int LiftLevelToValue(int liftLevel)
-	{
-		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? Constants.getLiftLevel3() : Constants.getLiftLevel4();
-	}
-
 	public static double Clamp(double value, double lower, double higher)
 	{
 		return value <= lower ? lower : Math.min(value, higher);

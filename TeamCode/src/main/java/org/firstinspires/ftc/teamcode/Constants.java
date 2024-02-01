@@ -14,13 +14,8 @@ public class Constants
 		public int TUMBLER_LOAD = 0;
 		public int TUMBLER_IDLE = 0;
 		public int TUMBLER_BACKDROP = 0;
-		public int[] TUMBLER_STACK_POSES = new int[]{};
 		public int TUMBLER_SPIKE_MARK = 0;
-		public int LIFT_PICKUP = 0;
-		public int LIFT_LEVEL_1 = 0;
-		public int LIFT_LEVEL_2 = 0;
-		public int LIFT_LEVEL_3 = 0;
-		public int LIFT_LEVEL_4 = 0;
+		public int[] LIFT_LEVELS = new int[]{};
 		public int SUSPENDER_IDLE = 0;
 		public int SUSPENDER_SUSPEND = 0;
 		public double CLAW_IDLE = 0;
@@ -48,13 +43,8 @@ public class Constants
 					TUMBLER_LOAD = 0;
 					TUMBLER_IDLE = 400;
 					TUMBLER_BACKDROP = 925;
-					TUMBLER_STACK_POSES = new int[]{1550, 1510, 1480, 1440, 1400};
 					TUMBLER_SPIKE_MARK = 1350;
-					LIFT_PICKUP = -10;
-					LIFT_LEVEL_1 = 50;
-					LIFT_LEVEL_2 = 250;
-					LIFT_LEVEL_3 = 500;
-					LIFT_LEVEL_4 = 1000;
+					LIFT_LEVELS = new int[] {-10, 50, 250, 500, 750, 1000};
 					SUSPENDER_IDLE = 0;
 					SUSPENDER_SUSPEND = 960;
 					CLAW_IDLE = 0.45d;
@@ -79,13 +69,8 @@ public class Constants
 					TUMBLER_LOAD = 0;
 					TUMBLER_IDLE = 400;
 					TUMBLER_BACKDROP = 850;
-					TUMBLER_STACK_POSES = new int[]{1495, 1460, 1420, 1395, 1350};
 					TUMBLER_SPIKE_MARK = 1300;
-					LIFT_PICKUP = -10;
-					LIFT_LEVEL_1 = 0;
-					LIFT_LEVEL_2 = 400;
-					LIFT_LEVEL_3 = 1050;
-					LIFT_LEVEL_4 = 1700;
+					LIFT_LEVELS = new int[] {-10, 50, 250, 500, 750, 1000};
 					SUSPENDER_IDLE = 0;
 					SUSPENDER_SUSPEND = 1900;
 					CLAW_IDLE = 0.45d;
@@ -178,13 +163,8 @@ public class Constants
 	public static int getTumblerLoad() { return parameters.TUMBLER_LOAD; }
 	public static int getTumblerIdle() { return parameters.TUMBLER_IDLE; }
 	public static int getTumblerBackdrop() { return parameters.TUMBLER_BACKDROP; }
-	public static int[] getTumblerStackPoses() { return parameters.TUMBLER_STACK_POSES; }
 	public static int getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
-	public static int getLiftPickup() {	return parameters.LIFT_PICKUP;	}
-	public static int getLiftLevel1() {	return parameters.LIFT_LEVEL_1; }
-	public static int getLiftLevel2() { return parameters.LIFT_LEVEL_2; }
-	public static int getLiftLevel3() { return parameters.LIFT_LEVEL_3; }
-	public static int getLiftLevel4() { return parameters.LIFT_LEVEL_4; }
+	public static int[] getLiftLevels() {	return parameters.LIFT_LEVELS;	}
 	public static int getSuspenderIdle() { return parameters.SUSPENDER_IDLE; }
 	public static int getSuspenderSuspend() { return parameters.SUSPENDER_SUSPEND; }
 	public static double getClawIdle() { return parameters.CLAW_IDLE; }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.Constants.getSuspenderSuspend;
+import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -29,8 +30,6 @@ public final class AlexTeleOp extends BaseOpMode
 {
 	private RobotHardware robotHardware;
 	private InputSystem wheelInput, armInput;
-	private static Bindings.Wheel WHEEL_BINDINGS = new Bindings.Wheel();
-	private static Bindings.Arm ARM_BINDINGS = new Bindings.Arm();
 
 	private final static class Bindings
 	{
@@ -54,14 +53,12 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key SUSPENDER_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key SUSPENDER_CANCEL_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key ARM_KEY = new InputSystem.Key("a");
-			private static final InputSystem.Key ARM_CONFIRM_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key LEVEL_1_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key LEVEL_2_KEY = new InputSystem.Key("dpad_up");
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
 			private static final InputSystem.Key LEVEL_4_KEY = new InputSystem.Key("dpad_right");
+			private static final InputSystem.Key LEVEL_5_KEY = new InputSystem.Key("back");
 			private static final InputSystem.Key RESET_MODE_KEY = new InputSystem.Key("y");
-			private static final InputSystem.Key RESET_STACK = new InputSystem.Key("start");
-			private static final InputSystem.Key TOGGLE_PICKUP_KEY = new InputSystem.Key("back");
 		}
 	}
 
@@ -85,14 +82,13 @@ public final class AlexTeleOp extends BaseOpMode
 		UpdateMotorPowers();
 		Suspender();
 		Antenna();
-		if (!robotSuspended) Wheels();
+		Wheels();
 		if (suspending) return;
 		ManualReset();
 		Leveler();
 		Pickup();
 		Arm();
 		Plane();
-		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_STACK)) stackLevel = 5;
 	}
 
 
@@ -109,24 +105,12 @@ public final class AlexTeleOp extends BaseOpMode
 		robotHardware.mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel.times(-1), -angle));
 	}
 
-	private Utilities.PickupMode pickupMode = Utilities.PickupMode.INTAKE;
-
 	private void Pickup()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.TOGGLE_PICKUP_KEY)) {
-			pickupMode = pickupMode == Utilities.PickupMode.INTAKE ? Utilities.PickupMode.STACK : Utilities.PickupMode.INTAKE;
-			if (pickupMode == Utilities.PickupMode.STACK) {
-				robotHardware.intakeMotor.setMotorDisable();
-				robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
-			} else robotHardware.intakeMotor.setMotorEnable();
-			gamepad2.rumble(500);
-		}
-		if (pickupMode == Utilities.PickupMode.INTAKE && !wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaIntakeRunTime()) {
+		if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaIntakeRunTime()) {
 			robotHardware.intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
-			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
-				robotHardware.antennaServo.setPosition(Constants.getAntennaGuide());
-			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
-				robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
+			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY)) robotHardware.antennaServo.setPosition(Constants.getAntennaGuide());
+			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY)) robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
 		}
 	}
 
@@ -182,9 +166,10 @@ public final class AlexTeleOp extends BaseOpMode
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_2_KEY)) liftLevel = 2;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_3_KEY)) liftLevel = 3;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 4;
+		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_5_KEY)) liftLevel = 5;
 		if (initialLevel != liftLevel && armState == Utilities.State.BUSY) {
-			robotHardware.liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
-			robotHardware.liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
+			robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
+			robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
 		}
 	}
 
@@ -200,8 +185,7 @@ public final class AlexTeleOp extends BaseOpMode
 		robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
 		robotHardware.clawServo.setPosition(Constants.getClawIdle());
 
-		if (robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS) > Constants.getTumblerMaxCurrent())
-		{
+		if (robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS) > Constants.getTumblerMaxCurrent()) {
 			robotHardware.tumblerMotor.setPower(0);
 			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 			robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -214,7 +198,7 @@ public final class AlexTeleOp extends BaseOpMode
 				@Override
 				public void run()
 				{
-					while(robotHardware.tumblerMotor.getCurrentPosition() <= 90) {
+					while (robotHardware.tumblerMotor.getCurrentPosition() <= 90) {
 						// hehe empty while go brrr
 					};
 					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -231,91 +215,40 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private Utilities.State armState = Utilities.State.IDLE;
 	private volatile boolean armBusy = false;
-	private boolean atLevel = false;
-	private boolean pixelInStorage = false;
-	private boolean waitingSecondInstruction = false;
-	private short stackLevel = 5;
 
 	private void Arm()
 	{
 		if (armBusy) return;
-		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_CONFIRM_KEY) && waitingSecondInstruction && !pixelInStorage) {
-			armBusy = true;
-			robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
-			setTimeout(() -> {
-				robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
-				setTimeout(() -> {
-					robotHardware.clawServo.setPosition(Constants.getClawIdle());
-					setTimeout(() -> {
-						robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-						armBusy = false;
-						waitingSecondInstruction = false;
-						pixelInStorage = true;
-					}, 500);
-				}, 500);
-			}, 500);
-		} else if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) {
+		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) {
 			if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle
 				armBusy = true;
 				robotHardware.clawServo.setPosition(Constants.getClawIdle());
 				setTimeout(() -> {
 					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 					setTimeout(() -> {
-						robotHardware.liftMotor1.setTargetPosition(Constants.getLiftPickup());
-						robotHardware.liftMotor2.setTargetPosition(Constants.getLiftPickup());
+						robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[0]);
+						robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[0]);
 						robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
 						armState = Utilities.State.IDLE;
 						armBusy = false;
 					}, 500);
 				}, 750);
-			} else { // Pickup Pixel and go to Backdrop
-				if (pickupMode == Utilities.PickupMode.INTAKE) {
-					armBusy = true;
-					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
+			} else {
+				armBusy = true;
+				robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
+				setTimeout(() -> {
+					robotHardware.clawServo.setPosition(Constants.getClawBusy());
 					setTimeout(() -> {
-						robotHardware.clawServo.setPosition(Constants.getClawBusy());
+						robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
+						robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
+						robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
 						setTimeout(() -> {
-							robotHardware.liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
-							robotHardware.liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
-							robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
-							setTimeout(() -> {
-								robotHardware.rotatorServo.setPosition(Constants.getRotatorBusy());
-								armBusy = false;
-								armState = Utilities.State.BUSY;
-							}, 200 * liftLevel);
-						}, 500);
-					}, 500);
-				} else if (stackLevel > 0) {
-					if (!atLevel && !waitingSecondInstruction) {
-						armBusy = true;
-						robotHardware.rotatorServo.setPosition(Constants.getRotatorBusy());
-						setTimeout(() -> {
-							robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerStackPoses()[stackLevel - 1] - 100);
-							atLevel = true;
+							robotHardware.rotatorServo.setPosition(Constants.getRotatorBusy());
 							armBusy = false;
-						}, 100);
-					} else if (atLevel && !waitingSecondInstruction) {
-						armBusy = true;
-						robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerStackPoses()[stackLevel - 1]);
-						setTimeout(() -> {
-							robotHardware.clawServo.setPosition(Constants.getClawBusy());
-							setTimeout(() -> {
-								robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
-								armBusy = false;
-								atLevel = false;
-								waitingSecondInstruction = true;
-								stackLevel--;
-							}, 500);
-						}, 300);
-					} else if (!atLevel) {
-						armBusy = true;
-						robotHardware.liftMotor1.setTargetPosition(LiftLevelToValue(liftLevel));
-						robotHardware.liftMotor2.setTargetPosition(LiftLevelToValue(liftLevel));
-						armBusy = false;
-						waitingSecondInstruction = false;
-						armState = Utilities.State.BUSY;
-					}
-				}
+							armState = Utilities.State.BUSY;
+						}, 200 * liftLevel);
+					}, 500);
+				}, 500);
 			}
 		}
 	}
@@ -357,6 +290,9 @@ public final class AlexTeleOp extends BaseOpMode
 				robotHardware.liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 				robotHardware.liftMotor2.setTargetPosition(Constants.getSuspenderSuspend() - 800);
 				robotHardware.liftMotor1.setTargetPosition(Constants.getSuspenderSuspend() - 800);
+				CutPower(robotHardware.mecanumDrive.leftBack, robotHardware.mecanumDrive.rightBack, robotHardware.mecanumDrive.leftFront, robotHardware.mecanumDrive.rightFront);
+				CutPower(robotHardware.intakeMotor, robotHardware.tumblerMotor);
+				CutPower(robotHardware.planeLevelServo, robotHardware.planeShooterServo);
 				robotSuspended = true;
 			}
 		}
@@ -364,14 +300,6 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void Telemetry()
 	{
-		// Warn the user if the robot is out of bounds
-		if (stackLevel == 0 && pickupMode == Utilities.PickupMode.STACK) {
-			telemetry.clearAll();
-			telemetry.addLine("[WARN] Robot is out of bounds. Please change pickup mode or reset by pressing start!");
-			telemetry.update();
-			return;
-		}
-
 		// Warn the user when in manual override mode
 		if (inResetMode) {
 			telemetry.clearAll();
@@ -390,7 +318,6 @@ public final class AlexTeleOp extends BaseOpMode
 			return;
 		}
 
-		telemetry.addData("[INFO] Pickup Mode", pickupMode.toString());
 		telemetry.addData("[INFO] Arm State", armState.toString());
 		telemetry.addData("[INFO] Lift Level", liftLevel);
 		telemetry.addData("[INFO] Plane Launched", planeLaunched ? "Yes" : "No");
@@ -415,18 +342,7 @@ public final class AlexTeleOp extends BaseOpMode
 			telemetry.addData("[DEBUG] Plane Level", robotHardware.planeLevelServo.getPosition());
 			telemetry.addData("[DEBUG] Plane Release", robotHardware.planeShooterServo.getPosition());
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);
-			telemetry.addData("[DEBUG] Arm Waiting", waitingSecondInstruction);
-			telemetry.addData("[DEBUG] Arm At Level", atLevel);
-			telemetry.addData("[DEBUG] Arm Out Of Bounds", stackLevel == 0);
-			telemetry.addData("[DEBUG] Arm Has 2 Stack Pixels", pixelInStorage);
-			telemetry.addData("[DEBUG] Stack Level", stackLevel);
 		}
-
 		telemetry.update();
-	}
-
-	public static int LiftLevelToValue(int liftLevel)
-	{
-		return liftLevel == 1 ? Constants.getLiftLevel1() : liftLevel == 2 ? Constants.getLiftLevel2() : liftLevel == 3 ? (Constants.getLiftLevel3() + 125) : Constants.getLiftLevel4();
 	}
 }
