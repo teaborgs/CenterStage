@@ -5,36 +5,31 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 /*
- * Move 1 meter on the Y axis
+ * Move 2 meters on the Y axis
  */
 @Autonomous(name = "Auto Test Y", group = "Testing")
-public class AutoTestY extends LinearOpMode
+public class AutoTestY extends BaseOpMode
 {
 	private MecanumDrive mecanumDrive;
 
 	@Override
-	public void runOpMode()
-	{
-		Init();
-		waitForStart();
-		Run();
-	}
-
-	private void Init()
+	protected void OnInitialize()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
 		mecanumDrive = new MecanumDrive(hardwareMap);
 	}
 
-	private void Run()
+	@Override
+	protected void OnRun()
 	{
 		Actions.runBlocking(mecanumDrive.actionBuilder(new Pose2d(0, 0, 0))
 				.setTangent(Math.PI / 2)
-				.lineToY(39.37)
+				.lineToY(39.37 * 2)
 				.build());
 	}
 }

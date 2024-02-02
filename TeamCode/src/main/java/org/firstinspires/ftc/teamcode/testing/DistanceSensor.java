@@ -5,14 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.BaseOpMode;
 
 @TeleOp(name = "DistanceSensorTest", group = "Testing")
-public class DistanceSensor extends LinearOpMode
+public class DistanceSensor extends BaseOpMode
 {
-	Rev2mDistanceSensor distanceSensor;
+	private Rev2mDistanceSensor distanceSensor;
 
 	@Override
-	public void runOpMode() throws InterruptedException
+	protected void OnInitialize()
 	{
 		telemetry.setMsTransmissionInterval(100);
 
@@ -26,14 +27,10 @@ public class DistanceSensor extends LinearOpMode
 			telemetry.update();
 			while (!isStopRequested());
 		}
-
-		waitForStart();
-
-		while (!isStopRequested())
-			Run();
 	}
 
-	private void Run()
+	@Override
+	protected void OnRun()
 	{
 		telemetry.addData("Distance", distanceSensor.getDistance(DistanceUnit.CM));
 		telemetry.update();

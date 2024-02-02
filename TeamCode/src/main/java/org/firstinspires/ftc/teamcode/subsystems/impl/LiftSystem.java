@@ -49,6 +49,7 @@ public final class LiftSystem extends SystemEx
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)
 	{
+		if(!internal_Enabled) throw new IllegalStateException("System is disabled");
 		return new SequentialAction(
 				new SleepAction(delayDirection == Utilities.DelayDirection.BEFORE ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0),
 				new InstantAction(() -> {

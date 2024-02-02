@@ -99,8 +99,6 @@ public class Constants
 
 	public static void Init() { parameters = new Container(); }
 
-	public static Container getParameters() { return parameters; }
-
 	public static final int TOLERANCE = 10;
 
 	public static class Camera

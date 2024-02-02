@@ -6,6 +6,39 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.HashMap;
 
+/**
+ * A class that simplifies input handling for gamepads
+ * Uses reflection to get the state of the gamepad buttons and axes
+ * <p>
+ * Example usage:
+ * <pre>
+ *         InputSystem input = new InputSystem(gamepad1);
+ *         if (input.wasPressedThisFrame(new InputSystem.Key("a"))) {
+ *            // do something only the first frame A is pressed down
+ *         }
+ *         if (input.isPressed(new InputSystem.Key("b"))) {
+ *            // do something while B is pressed down
+ *         }
+ *         if (input.wasPressedThisFrame(new InputSystem.BindingCombo("combo", new InputSystem.Key("a"), new InputSystem.Key("b")))) {
+ *            // do something only the first frame A and B are pressed down
+ *         }
+ *         if (input.isPressed(new InputSystem.BindingCombo("combo", new InputSystem.Key("a"), new InputSystem.Key("b")))) {
+ *            // do something while A and B are pressed down
+ *         }
+ *         if (input.getValue(new InputSystem.Axis("left_stick_x")) > 0.5) {
+ *            // do something while the left stick is pushed to the right more than 50%
+ *         }
+ *     </pre>
+ * <p>
+ * The gamepad buttons and axes are represented by the following classes:
+ * <ul>
+ *     <li>{@link Key} - Represents a button on the gamepad</li>
+ *     <li>{@link Axis} - Represents an axis on the gamepad</li>
+ *     <li>{@link BindingCombo} - Represents a combination of buttons and axes on the gamepad</li>
+ *     <li>{@link Binding} - Base class for all the above classes</li>
+ *     <li>{@link Gamepad} - The gamepad class</li>
+ * </ul>
+ */
 public class InputSystem
 {
 	private final Gamepad gamepad;
@@ -13,7 +46,10 @@ public class InputSystem
 	private final Telemetry telemetry;
 	private final HashMap<Key, Boolean> keyStates = new HashMap<>();
 
-	public InputSystem(Gamepad gamepad) { this(gamepad, null); }
+	public InputSystem(Gamepad gamepad)
+	{
+		this(gamepad, null);
+	}
 
 	public InputSystem(Gamepad gamepad, Telemetry telemetry)
 	{
@@ -87,19 +123,31 @@ public class InputSystem
 	{
 		private final String id;
 
-		public Binding(String id) { this.id = id; }
+		public Binding(String id)
+		{
+			this.id = id;
+		}
 
-		public String getId() { return id; }
+		public String getId()
+		{
+			return id;
+		}
 	}
 
 	public static class Key extends Binding
 	{
-		public Key(String id) { super(id); }
+		public Key(String id)
+		{
+			super(id);
+		}
 	}
 
 	public static class Axis extends Binding
 	{
-		public Axis(String id) { super(id); }
+		public Axis(String id)
+		{
+			super(id);
+		}
 	}
 
 	public static class BindingCombo extends Binding
@@ -117,6 +165,9 @@ public class InputSystem
 					throw new IllegalArgumentException("BindingCombo cannot contain BindingCombos");
 		}
 
-		public Binding[] getBindings() { return bindings; }
+		public Binding[] getBindings()
+		{
+			return bindings;
+		}
 	}
 }

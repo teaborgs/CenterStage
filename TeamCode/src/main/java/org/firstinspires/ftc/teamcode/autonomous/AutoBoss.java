@@ -432,7 +432,7 @@ public class AutoBoss extends BaseOpMode
 				tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
 				WaitForMovementStop(mecanumDrive),
 				// Drop first stack pixel
-				clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.1, Utilities.DelayDirection.AFTER),
+				clawSystem.MoveToPositionWithDelay(Constants.getClawIdle(), 0.4, Utilities.DelayDirection.AFTER),
 				RunInParallel(
 						intakeSystem.RunIntakeFor(1),
 						liftSystem.MoveToPositionWithDelay(Constants.getSuspenderIdle(), 0.2),

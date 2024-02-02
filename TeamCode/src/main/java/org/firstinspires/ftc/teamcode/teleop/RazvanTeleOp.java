@@ -199,7 +199,6 @@ public final class RazvanTeleOp extends BaseOpMode
 					while (robotHardware.tumblerMotor.getCurrentPosition() <= 90) {
 						// hehe empty while go brrr
 					}
-					;
 					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 					robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 					robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);

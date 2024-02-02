@@ -50,8 +50,7 @@ public class Utilities
 					mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
 					return false;
 				}
-				mecanumDrive.setDrivePowers(
-						new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -10, 10) / 30, 0),0));
+				mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -10, 10) / 30, 0),0));
 			}
 		};
 	}
@@ -140,12 +139,6 @@ public class Utilities
 		BUSY
 	}
 
-	public enum PickupMode
-	{
-		INTAKE,
-		STACK
-	}
-
 	public enum DelayDirection
 	{
 		BEFORE,
@@ -155,7 +148,7 @@ public class Utilities
 
 	public enum DetectionCase
 	{
-		NONE, LEFT, CENTER, RIGHT
+		LEFT, CENTER, RIGHT
 	}
 
 	public enum Alliance

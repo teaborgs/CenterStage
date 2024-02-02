@@ -45,5 +45,7 @@ public class TeamPropDetectionTest extends BaseOpMode
 	@Override
 	protected void OnRun()
 	{
+		telemetry.addData("[DEBUG] Detection Case", detectionPipeline.getDetectionCase());
+		telemetry.update();
 	}
 }

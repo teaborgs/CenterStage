@@ -55,7 +55,6 @@ public final class AprilTagDetectionTest extends BaseOpMode
 	protected void OnRun()
 	{
 		ArrayList<AprilTagDetection> currentDetections = detectionPipeline.getLatestDetections();
-
 		telemetry.addData("No. Objects", currentDetections.size());
 		for (int i = 0; i < currentDetections.size(); i++) {
 			AprilTagDetection detection = currentDetections.get(i);

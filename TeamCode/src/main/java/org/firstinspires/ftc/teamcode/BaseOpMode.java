@@ -6,9 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public abstract class BaseOpMode extends LinearOpMode
 {
+	protected MultipleTelemetry telemetry;
+
 	@Override
 	public void runOpMode()
 	{
+		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 		telemetry.addLine("[STATUS] Initializing...");
 		telemetry.update();
 

@@ -47,7 +47,7 @@ public final class ColorBlobDetectionTest extends BaseOpMode
 	@Override
 	protected void OnRun()
 	{
-		telemetry.addData("No. Objects", detectionPipeline.getLatestDetections().size());
+		telemetry.addData("No. of Objects", detectionPipeline.getLatestDetections().size());
 		telemetry.update();
 	}
 }

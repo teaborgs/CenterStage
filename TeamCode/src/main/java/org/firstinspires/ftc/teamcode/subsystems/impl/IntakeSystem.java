@@ -41,6 +41,7 @@ public final class IntakeSystem extends SystemEx
 
 	public Action RunIntakeFor(double time)
 	{
+		if(!internal_Enabled) throw new IllegalStateException("System is disabled");
 		return new SequentialAction(
 				new InstantAction(() -> motor.setPower(Constants.getIntakeMaxPower())),
 				new SleepAction(time),
@@ -50,6 +51,7 @@ public final class IntakeSystem extends SystemEx
 
 	public Action RunIntakeWithAntennaFor(double time)
 	{
+		if(!internal_Enabled) throw new IllegalStateException("System is disabled");
 		return new SequentialAction(
 				new InstantAction(() -> {
 					servo.setPosition(Constants.getAntennaGrab());
