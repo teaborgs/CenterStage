@@ -165,8 +165,8 @@ public final class AlexTeleOp extends BaseOpMode
 		if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_1_KEY)) liftLevel = 1;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_2_KEY)) liftLevel = 2;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_3_KEY)) liftLevel = 3;
-		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 4;
-		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_5_KEY)) liftLevel = 5;
+		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 5;
+
 		if (initialLevel != liftLevel && armState == Utilities.State.BUSY) {
 			robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
 			robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
