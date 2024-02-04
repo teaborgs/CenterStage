@@ -174,7 +174,7 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW_KEY))
 			clawState = clawState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.clawServo.setPosition(clawState == Utilities.State.IDLE ? 0.5 : 0.0);
+		robotHardware.clawServo.setPosition(clawState == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
 	}
 
 	private Utilities.State rotatorState = Utilities.State.BUSY;
@@ -183,7 +183,7 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.ROTATOR_KEY))
 			rotatorState = rotatorState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.rotatorServo.setPosition(rotatorState == Utilities.State.IDLE ? 1.0 : 0.0);
+		robotHardware.rotatorServo.setPosition(rotatorState == Utilities.State.IDLE ? Constants.getRotatorIdle() : Constants.getRotatorBusy());
 	}
 
 	private boolean planeLeveled = false;
@@ -197,15 +197,15 @@ public final class ManualDriveTest extends BaseOpMode
 			planeLevelState = Utilities.State.IDLE;
 			planeLeveled = true;
 		}
-		robotHardware.planeLevelServo.setPosition(planeLevelState == Utilities.State.IDLE ? 0.5 : 0.0);
-		if (robotHardware.planeLevelServo.getPosition() == 0.5 && !planeLaunched && planeLeveled)
+		robotHardware.planeLevelServo.setPosition(planeLevelState == Utilities.State.IDLE ? Constants.getPlaneLevelerIdle() : Constants.getPlaneLevelerBusy());
+		if (robotHardware.planeLevelServo.getPosition() == Constants.getPlaneLevelerBusy() && !planeLaunched && planeLeveled)
 		{
 			planeLaunched = true;
 			setTimeout(() -> {
-				robotHardware.planeShooterServo.setPosition(0.0);
+				robotHardware.planeShooterServo.setPosition(Constants.getPlaneShooterBusy());
 				setTimeout(() -> {
 					planeLevelState = Utilities.State.BUSY;
-					robotHardware.planeLevelServo.setPosition(0.5);
+					robotHardware.planeLevelServo.setPosition(Constants.getPlaneLevelerIdle());
 				}, 300);
 			}, 300);
 		}

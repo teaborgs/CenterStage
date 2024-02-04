@@ -31,6 +31,28 @@ public class Utilities
 
 	public static double inchesToCentimeters(double inches) { return inches * 2.54; }
 
+	/**
+	 * Convert an angle to a servo position
+	 * @param angle The angle to convert
+	 * @param maxAngle The angle that corresponds to the maximum servo position relative to the starting position (in degrees, usually 180)
+	 * @return The servo position
+	 */
+	public static double angleToServoPosition(double angle, double maxAngle)
+	{
+		return angle / maxAngle;
+	}
+
+	/**
+	 * Convert an angle to a servo position (assuming the maximum angle is 180 degrees)
+	 * @param angle The angle to convert
+	 * @return The servo position
+	 */
+	public static double angleToServoPosition(double angle)
+	{
+		return angleToServoPosition(angle, 180);
+	}
+
+
 	public static Action WaitForMovementStop(MecanumDrive mecanumDrive)
 	{
 		return telemetryPacket -> {

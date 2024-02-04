@@ -109,8 +109,10 @@ public final class AlexTeleOp extends BaseOpMode
 	{
 		if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaIntakeRunTime()) {
 			robotHardware.intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
-			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY)) robotHardware.antennaServo.setPosition(Constants.getAntennaGuide());
-			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY)) robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
+			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
+				robotHardware.antennaServo.setPosition(Constants.getAntennaGuide());
+			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
+				robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
 		}
 	}
 
@@ -218,38 +220,35 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void Arm()
 	{
-		if (armBusy) return;
-		if (armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) {
-			if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle
-				armBusy = true;
-				robotHardware.clawServo.setPosition(Constants.getClawIdle());
+		if (armBusy || !armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) return;
+		armBusy = true;
+		if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle
+			robotHardware.clawServo.setPosition(Constants.getClawIdle());
+			setTimeout(() -> {
+				robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
 				setTimeout(() -> {
-					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-					setTimeout(() -> {
-						robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[0]);
-						robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[0]);
-						robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
-						armState = Utilities.State.IDLE;
-						armBusy = false;
-					}, 500);
-				}, 750);
-			} else {
-				armBusy = true;
-				robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
-				setTimeout(() -> {
-					robotHardware.clawServo.setPosition(Constants.getClawBusy());
-					setTimeout(() -> {
-						robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
-						robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
-						robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
-						setTimeout(() -> {
-							robotHardware.rotatorServo.setPosition(Constants.getRotatorBusy());
-							armBusy = false;
-							armState = Utilities.State.BUSY;
-						}, 200 * liftLevel);
-					}, 500);
+					robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[0]);
+					robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[0]);
+					robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
+					armState = Utilities.State.IDLE;
+					armBusy = false;
 				}, 500);
-			}
+			}, 750);
+		} else {
+			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
+			setTimeout(() -> {
+				robotHardware.clawServo.setPosition(Constants.getClawBusy());
+				setTimeout(() -> {
+					robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
+					robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
+					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
+					setTimeout(() -> {
+						robotHardware.rotatorServo.setPosition(Constants.getRotatorBusy());
+						armBusy = false;
+						armState = Utilities.State.BUSY;
+					}, 200);
+				}, 500);
+			}, 500);
 		}
 	}
 

@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public abstract class BaseOpMode extends LinearOpMode
 {
-	protected MultipleTelemetry telemetry;
-
 	@Override
 	public void runOpMode()
 	{
