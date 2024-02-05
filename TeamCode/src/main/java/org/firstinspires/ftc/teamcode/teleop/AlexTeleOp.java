@@ -226,13 +226,13 @@ public final class AlexTeleOp extends BaseOpMode
 			robotHardware.clawServo.setPosition(Constants.getClawIdle());
 			setTimeout(() -> {
 				robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+				robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
 				setTimeout(() -> {
 					robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[0]);
 					robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[0]);
-					robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
 					armState = Utilities.State.IDLE;
 					armBusy = false;
-				}, 500);
+				}, 400);
 			}, 750);
 		} else {
 			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
