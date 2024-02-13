@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.Constants.getSuspenderSuspend;
 import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
@@ -9,7 +8,6 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -69,8 +67,6 @@ public final class RazvanTeleOp extends BaseOpMode
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
-
-		telemetry.setMsTransmissionInterval(50);
 	}
 
 	@Override
@@ -78,15 +74,15 @@ public final class RazvanTeleOp extends BaseOpMode
 	{
 		Telemetry();
 		UpdateMotorPowers();
+		ManualReset();
 		Suspender();
 		Antenna();
 		Wheels();
 		if (suspending) return;
-		ManualReset();
 		Leveler();
 		Pickup();
 		Arm();
-		Plane();
+		Drone();
 	}
 
 
@@ -105,55 +101,48 @@ public final class RazvanTeleOp extends BaseOpMode
 
 	private void Pickup()
 	{
-		if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaIntakeRunTime()) {
-			robotHardware.intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
+		if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaRunTime()) {
+
+			robotHardware.intakeSystem.SetIntakePower((wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) || wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY) || antennaState == Utilities.State.BUSY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
+
+			if (antennaState == Utilities.State.BUSY) return;
 			if (wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
-				robotHardware.antennaServo.setPosition(Constants.getAntennaGuide());
-			else if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY))
-				robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
+				robotHardware.intakeSystem.SetAntennaPosition(Constants.getAntennaGuide());
+			else robotHardware.intakeSystem.SetAntennaPosition(Constants.getAntennaIdle());
 		}
 	}
 
-	ElapsedTime antennaPress = new ElapsedTime();
-
+	private final ElapsedTime antennaPress = new ElapsedTime();
+	private Utilities.State antennaState = Utilities.State.IDLE;
 	private void Antenna()
 	{
-		if (wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY)) {
+		if (wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaState == Utilities.State.IDLE) {
+			antennaState = Utilities.State.BUSY;
 			antennaPress.reset();
-			robotHardware.antennaServo.setPosition(Constants.getAntennaGrab());
-			robotHardware.intakeMotor.setPower(Constants.getIntakeMaxPower());
-		} else {
-			if (!wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY))
-				robotHardware.antennaServo.setPosition(Constants.getAntennaIdle());
-
-			if (antennaPress.time(TimeUnit.SECONDS) > Constants.getAntennaIntakeRunTime())
-				robotHardware.intakeMotor.setPower(0);
+			robotHardware.intakeSystem.SetAntennaPosition(Constants.getAntennaGrab());
+			robotHardware.intakeSystem.SetIntakePower(Constants.getIntakeMaxPower());
+		} else if (antennaPress.time(TimeUnit.MILLISECONDS) / 1000d > Constants.getAntennaRunTime() && !wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) && !wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY)) {
+			antennaState = Utilities.State.IDLE;
+			robotHardware.intakeSystem.SetAntennaPosition(Constants.getAntennaIdle());
+			robotHardware.intakeSystem.SetIntakePower(0);
 		}
 	}
 
 	private void UpdateMotorPowers()
 	{
 		if (robotSuspended || suspending)
-			robotHardware.liftMotor1.setPower(Constants.getLiftSuspendPower());
-		else if (Math.abs(robotHardware.liftMotor1.getCurrentPosition() - robotHardware.liftMotor1.getTargetPosition()) > TOLERANCE)
-			robotHardware.liftMotor1.setPower(Constants.getLiftNormalPower());
+			robotHardware.liftSystem.SetPower(Constants.getLiftSuspendPower());
+		else if (Math.abs(robotHardware.liftSystem.GetCurrentPosition() - robotHardware.liftSystem.GetTargetPosition()) > TOLERANCE)
+			robotHardware.liftSystem.SetPower(Constants.getLiftNormalPower());
 		else
-			robotHardware.liftMotor1.setPower(0.05);
-
-		if (robotSuspended || suspending)
-			robotHardware.liftMotor2.setPower(Constants.getLiftSuspendPower());
-		else if (Math.abs(robotHardware.liftMotor2.getCurrentPosition() - robotHardware.liftMotor2.getTargetPosition()) > TOLERANCE)
-			robotHardware.liftMotor2.setPower(Constants.getLiftNormalPower());
-		else
-			robotHardware.liftMotor2.setPower(0.05);
+			robotHardware.liftSystem.SetPower(0.05);
 
 		if (inResetMode) return;
-		if (Math.abs(robotHardware.tumblerMotor.getCurrentPosition() - robotHardware.tumblerMotor.getTargetPosition()) > TOLERANCE / 2)
-			robotHardware.tumblerMotor.setPower(1);
+		if (Math.abs(robotHardware.tumblerSystem.GetCurrentPosition() - robotHardware.tumblerSystem.GetTargetPosition()) > TOLERANCE / 2d)
+			robotHardware.tumblerSystem.SetPower(1);
 		else
-			robotHardware.tumblerMotor.setPower(0.05);
+			robotHardware.tumblerSystem.SetPower(0.05);
 	}
-
 
 	// ================ Arm ================
 
@@ -167,46 +156,35 @@ public final class RazvanTeleOp extends BaseOpMode
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_3_KEY)) liftLevel = 3;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 4;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_5_KEY)) liftLevel = 5;
-		if (initialLevel != liftLevel && armState == Utilities.State.BUSY) {
-			robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
-			robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
-		}
+		if (initialLevel != liftLevel && armState == Utilities.State.BUSY)
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
 	}
 
 	private boolean inResetMode = false;
 
 	private void ManualReset()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY)) inResetMode = !inResetMode;
+		if (armInput.wasPressedThisFrame(Bindings.Arm.RESET_MODE_KEY) && !suspending && !robotSuspended)
+			inResetMode = !inResetMode;
 		if (!inResetMode) return;
 
-		robotHardware.tumblerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		robotHardware.tumblerMotor.setPower(-0.5);
-		robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
-		robotHardware.clawServo.setPosition(Constants.getClawIdle());
+		robotHardware.clawSystem.SetPosition(Constants.getClawIdle());
+		robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
+		robotHardware.tumblerSystem.SetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		robotHardware.tumblerSystem.SetPower(-0.5);
 
-		if (robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS) > Constants.getTumblerMaxCurrent()) {
-			robotHardware.tumblerMotor.setPower(0);
-			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-			robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-			robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
-			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-			robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		if (robotHardware.tumblerSystem.GetCurrent(CurrentUnit.MILLIAMPS) > Constants.getTumblerMaxCurrent()) {
+			robotHardware.tumblerSystem.SetPower(0);
+			robotHardware.tumblerSystem.Init();
 			new Thread()
 			{
 				@Override
 				public void run()
 				{
-					while (robotHardware.tumblerMotor.getCurrentPosition() <= 90) {
+					while (robotHardware.tumblerSystem.GetCurrentPosition() <= 90) {
 						// hehe empty while go brrr
 					}
-					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-					robotHardware.tumblerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-					robotHardware.tumblerMotor.setDirection(DcMotorEx.Direction.REVERSE);
-					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-					robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+					robotHardware.tumblerSystem.Init();
 				}
 			}.start();
 			inResetMode = false;
@@ -221,76 +199,70 @@ public final class RazvanTeleOp extends BaseOpMode
 		if (armBusy || !armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) return;
 		armBusy = true;
 		if (armState == Utilities.State.BUSY) { // Drop Pixel and return to Idle
-			robotHardware.clawServo.setPosition(Constants.getClawIdle());
+			robotHardware.clawSystem.SetPosition(Constants.getClawIdle());
 			setTimeout(() -> {
-				robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
+				robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerIdle());
 				setTimeout(() -> {
-					robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[0]);
-					robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[0]);
-					robotHardware.rotatorServo.setPosition(Constants.getRotatorIdle());
+					robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
+					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[0]);
 					armState = Utilities.State.IDLE;
 					armBusy = false;
-				}, 500);
+				}, 400);
 			}, 750);
-		} else { // Pickup Pixel and go to Backdrop
-			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
+		} else {
+			robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
+			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerLoad());
 			setTimeout(() -> {
-				robotHardware.clawServo.setPosition(Constants.getClawBusy());
+				robotHardware.clawSystem.SetPosition(Constants.getClawBusy());
 				setTimeout(() -> {
-					robotHardware.liftMotor1.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
-					robotHardware.liftMotor2.setTargetPosition(Constants.getLiftLevels()[liftLevel]);
-					robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
+					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
+					robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerBackdrop());
 					setTimeout(() -> {
-						robotHardware.rotatorServo.setPosition(Constants.getRotatorBusy());
+						robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy());
 						armBusy = false;
 						armState = Utilities.State.BUSY;
-					}, 100);
+					}, 200);
 				}, 500);
 			}, 500);
 		}
 	}
 
-	private volatile boolean planeLaunched = false;
+	private volatile boolean droneLaunched = false;
 
-	private void Plane()
+	private void Drone()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched) {
-			planeLaunched = true;
-			robotHardware.planeLevelServo.setPosition(Constants.getPlaneLevelerBusy());
-			setTimeout(() -> {
-				robotHardware.planeShooterServo.setPosition(Constants.getPlaneShooterBusy());
-				setTimeout(() -> {
-					robotHardware.planeLevelServo.setPosition(Constants.getPlaneLevelerIdle());
-					robotHardware.planeShooterServo.setPosition(Constants.getPlaneShooterIdle());
-				}, 200);
-			}, 300);
-		}
+		if (!armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) || droneLaunched) return;
+		droneLaunched = true;
+		robotHardware.droneSystem.LaunchDrone();
 	}
 
 	private boolean robotSuspended = false;
 	private boolean suspending = false;
+	private final ElapsedTime suspendedTime = new ElapsedTime();
 
 	private void Suspender()
 	{
 		// Lift
-		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended) {
+		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended && !inResetMode) {
 			suspending = false;
-			robotHardware.liftMotor2.setTargetPosition(Constants.getSuspenderIdle());
-			robotHardware.liftMotor1.setTargetPosition(Constants.getSuspenderIdle());
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftSuspenderIdle());
 		} else if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_KEY)) {
-			if (!suspending) {
-				suspending = true;
-				robotHardware.liftMotor2.setTargetPosition(getSuspenderSuspend());
-				robotHardware.liftMotor1.setTargetPosition(Constants.getSuspenderSuspend());
-			} else if (robotHardware.liftMotor1.getCurrentPosition() >= Constants.getSuspenderSuspend() - TOLERANCE && robotHardware.liftMotor2.getCurrentPosition() >= Constants.getSuspenderSuspend() - TOLERANCE) {
-				robotHardware.liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-				robotHardware.liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-				robotHardware.liftMotor2.setTargetPosition(Constants.getSuspenderSuspend() - 800);
-				robotHardware.liftMotor1.setTargetPosition(Constants.getSuspenderSuspend() - 800);
-				CutPower(robotHardware.mecanumDrive.leftBack, robotHardware.mecanumDrive.rightBack, robotHardware.mecanumDrive.leftFront, robotHardware.mecanumDrive.rightFront);
-				CutPower(robotHardware.intakeMotor, robotHardware.tumblerMotor);
-				CutPower(robotHardware.planeLevelServo, robotHardware.planeShooterServo);
-				robotSuspended = true;
+			if (!robotSuspended) {
+				if (!suspending) {
+					suspending = true;
+					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftSuspendLevel());
+				} else if (robotHardware.liftSystem.GetCurrentPosition() >= Constants.getLiftSuspendLevel() - TOLERANCE) {
+					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftSuspendLevel() - 800);
+					robotSuspended = true;
+					suspendedTime.reset();
+				}
+			} else if (suspendedTime.seconds() > 5) {
+				robotHardware.liftSystem.SetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+				robotHardware.liftSystem.SetPower(0.5);
+				setTimeout(() -> {
+					robotHardware.liftSystem.SetPower(0);
+					robotHardware.liftSystem.Init();
+				}, 1);
 			}
 		}
 	}
@@ -317,31 +289,25 @@ public final class RazvanTeleOp extends BaseOpMode
 
 		telemetry.addData("[INFO] Arm State", armState.toString());
 		telemetry.addData("[INFO] Lift Level", liftLevel);
-		telemetry.addData("[INFO] Plane Launched", planeLaunched ? "Yes" : "No");
+		telemetry.addData("[INFO] Plane Launched", droneLaunched ? "Yes" : "No");
 
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();
-			telemetry.addData("[DEBUG] Tumbler Current", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
-			telemetry.addData("[DEBUG] Antenna Pos", robotHardware.antennaServo.getPosition());
-			telemetry.addData("[DEBUG] Last Antenna press", antennaPress.seconds());
+			telemetry.addData("[DEBUG] Last Antenna Press", antennaPress.seconds());
 			telemetry.addData("[DEBUG] Distance Sensor: ", robotHardware.distanceSensor.getDistance(DistanceUnit.CM));
-			telemetry.addData("[DEBUG] Lift 1", robotHardware.liftMotor1.getCurrentPosition());
-			telemetry.addData("[DEBUG] Lift 2", robotHardware.liftMotor2.getCurrentPosition());
-			telemetry.addData("[DEBUG] Lift 1 Target", robotHardware.liftMotor1.getTargetPosition());
-			telemetry.addData("[DEBUG] Lift 2 Target", robotHardware.liftMotor2.getTargetPosition());
-			telemetry.addData("[DEBUG] Lift 1 Power", robotHardware.liftMotor2.getPower());
-			telemetry.addData("[DEBUG] Lift 2 Power", robotHardware.liftMotor2.getPower());
-			telemetry.addData("[DEBUG] Tumbler", robotHardware.tumblerMotor.getCurrentPosition());
-			telemetry.addData("[DEBUG] Tumbler Target", robotHardware.tumblerMotor.getTargetPosition());
-			telemetry.addData("[DEBUG] Tumbler Power", robotHardware.tumblerMotor.getPower());
-			telemetry.addData("[DEBUG] Intake Power", robotHardware.intakeMotor.getPower());
-			telemetry.addData("[DEBUG] Rotator", robotHardware.rotatorServo.getPosition());
-			telemetry.addData("[DEBUG] Claw", robotHardware.clawServo.getPosition());
-			telemetry.addData("[DEBUG] Plane Level", robotHardware.planeLevelServo.getPosition());
-			telemetry.addData("[DEBUG] Plane Release", robotHardware.planeShooterServo.getPosition());
+			telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
+			telemetry.addData("[DEBUG] Lift Target", robotHardware.liftSystem.GetTargetPosition());
+			telemetry.addData("[DEBUG] Lift Power", robotHardware.liftSystem.GetPower());
+			telemetry.addData("[DEBUG] Tumbler Position", robotHardware.tumblerSystem.GetCurrentPosition());
+			telemetry.addData("[DEBUG] Tumbler Target", robotHardware.tumblerSystem.GetTargetPosition());
+			telemetry.addData("[DEBUG] Tumbler Power", robotHardware.tumblerSystem.GetPower());
+			telemetry.addData("[DEBUG] Rotator", robotHardware.rotatorSystem.GetCurrentPosition());
+			telemetry.addData("[DEBUG] Claw", robotHardware.clawSystem.GetCurrentPosition());
+			telemetry.addData("[DEBUG] Drone Level", robotHardware.droneSystem.GetLevelerPosition());
+			telemetry.addData("[DEBUG] Drone Release", robotHardware.droneSystem.GetShooterPosition());
+			telemetry.addData("[DEBUG] Antenna", robotHardware.intakeSystem.GetAntennaPosition());
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);
 		}
-
 		telemetry.update();
 	}
 }

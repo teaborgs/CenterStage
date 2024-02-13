@@ -15,8 +15,6 @@ public class DistanceSensor extends BaseOpMode
 	@Override
 	protected void OnInitialize()
 	{
-		telemetry.setMsTransmissionInterval(100);
-
 		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
 
 		distanceSensor.getDistance(DistanceUnit.CM);

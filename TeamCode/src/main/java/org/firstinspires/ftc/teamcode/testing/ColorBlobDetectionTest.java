@@ -40,8 +40,6 @@ public final class ColorBlobDetectionTest extends BaseOpMode
 				telemetry.addData("Camera Error", errorCode);
 			}
 		});
-
-		telemetry.setMsTransmissionInterval(50);
 	}
 
 	@Override

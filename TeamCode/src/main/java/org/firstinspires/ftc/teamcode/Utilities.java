@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -53,26 +52,26 @@ public class Utilities
 	}
 
 
-	public static Action WaitForMovementStop(MecanumDrive mecanumDrive)
+	public static Action WaitForMovementStop(RobotHardware robotHardware)
 	{
 		return telemetryPacket -> {
-			while (!mecanumDrive.updatePoseEstimate().linearVel.equals(new Vector2d(0, 0)));
+			while (!robotHardware.mecanumDrive.updatePoseEstimate().linearVel.equals(new Vector2d(0, 0)));
 			return false;
 		};
 	}
 
-	public static Action ApproachWithDistSensor(MecanumDrive mecanumDrive, Rev2mDistanceSensor distanceSensor, double distance)
+	public static Action ApproachWithDistSensor(RobotHardware robotHardware, double distance)
 	{
 		return telemetryPacket -> {
 			while (true)
 			{
-				double offset = distanceSensor.getDistance(DistanceUnit.CM) - distance;
+				double offset = robotHardware.distanceSensor.getDistance(DistanceUnit.CM) - distance;
 				if (offset < 2)
 				{
-					mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+					robotHardware.mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
 					return false;
 				}
-				mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -10, 10) / 30, 0),0));
+				robotHardware.mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(Utilities.Clamp(offset, -10, 10) / 30, 0),0));
 			}
 		};
 	}

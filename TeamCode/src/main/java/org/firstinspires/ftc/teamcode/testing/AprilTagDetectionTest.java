@@ -44,11 +44,10 @@ public final class AprilTagDetectionTest extends BaseOpMode
 			@Override
 			public void onError(int errorCode)
 			{
-				telemetry.addData("Camera Error", errorCode);
+				telemetry.addData("[ERROR] Camera failed to open with error code", errorCode);
+				telemetry.update();
 			}
 		});
-
-		telemetry.setMsTransmissionInterval(50);
 	}
 
 	@Override

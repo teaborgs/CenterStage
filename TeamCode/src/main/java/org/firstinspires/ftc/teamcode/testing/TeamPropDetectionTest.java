@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.opencv.TeamPropDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -21,7 +22,7 @@ public class TeamPropDetectionTest extends BaseOpMode
 	{
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-		detectionPipeline = new TeamPropDetectionPipeline();
+		detectionPipeline = new TeamPropDetectionPipeline(Utilities.Alliance.RED);
 		detectionPipeline.setDebug(true); // Comment this out to disable debug mode
 		camera.setPipeline(detectionPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -38,8 +39,6 @@ public class TeamPropDetectionTest extends BaseOpMode
 				telemetry.addData("Camera Error", errorCode);
 			}
 		});
-
-		telemetry.setMsTransmissionInterval(50);
 	}
 
 	@Override

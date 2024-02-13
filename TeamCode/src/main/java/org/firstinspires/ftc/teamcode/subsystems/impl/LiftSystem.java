@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -25,31 +26,47 @@ public final class LiftSystem extends SystemEx
 	}
 
 	@Override
-	public void Init()
+	public void Setup()
 	{
 		motor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+	}
+
+	@Override
+	public void Init()
+	{
+		this.Setup();
 		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
 		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
-		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+		motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		internal_Initialized = true;
 	}
 
 	@Override
-	public void Disable() { CutPower(motor1, motor2); }
+	public void Disable()
+	{
+		CutPower(motor1, motor2);
+	}
 
 	@Override
-	public void Enable() { RestorePower(motor1, motor2); }
+	public void Enable()
+	{
+		RestorePower(motor1, motor2);
+	}
 
 	@Override
 	public Action MoveToPositionWithDelay(double position, double delay, Utilities.DelayDirection delayDirection)
 	{
-		if(!internal_Enabled) throw new IllegalStateException("System is disabled");
+		if (!internal_Enabled || !internal_Initialized)
+			throw new IllegalStateException("System is disabled or not initialized");
 		return new SequentialAction(
 				new SleepAction(delayDirection == Utilities.DelayDirection.BEFORE ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0),
 				new InstantAction(() -> {
@@ -66,4 +83,51 @@ public final class LiftSystem extends SystemEx
 				new SleepAction(delayDirection == Utilities.DelayDirection.AFTER ? delay : delayDirection == Utilities.DelayDirection.BOTH ? delay : 0)
 		);
 	}
+
+	public void SetTargetPosition(double position, double delay)
+	{
+		if (!internal_Enabled || !internal_Initialized)
+			throw new IllegalStateException("System is disabled or not initialized");
+		Utilities.setTimeout(() -> {
+			motor1.setTargetPosition((int) position);
+			motor2.setTargetPosition((int) position);
+		}, (int) (delay * 1000));
+	}
+
+	public void SetPower(double power, double delay)
+	{
+		if (!internal_Enabled || !internal_Initialized)
+			throw new IllegalStateException("System is disabled or not initialized");
+		Utilities.setTimeout(() -> {
+			motor1.setPower(power);
+			motor2.setPower(power);
+		}, (int) (delay * 1000));
+	}
+
+	public void SetTargetPosition(double position)
+	{
+		SetTargetPosition(position, 0);
+	}
+
+	public void SetPower(double power)
+	{
+		SetPower(power, 0);
+	}
+
+	public double GetCurrentPosition()
+	{
+		return (motor1.getCurrentPosition() + motor2.getCurrentPosition()) / 2.0;
+	}
+
+	public double GetPower()
+	{
+		return (motor1.getPower() + motor2.getPower()) / 2.0;
+	}
+
+	public double GetTargetPosition()
+	{
+		return (motor1.getTargetPosition() + motor2.getTargetPosition()) / 2.0;
+	}
+
+	public void SetMode(DcMotor.RunMode mode) { motor1.setMode(mode); motor2.setMode(mode); }
 }

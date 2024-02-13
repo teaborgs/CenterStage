@@ -232,6 +232,11 @@ public final class MecanumDrive
 		this(hardwareMap, new Pose2d(0, 0, 0));
 	}
 
+	public void setStartPose(Pose2d pose)
+	{
+		this.pose = pose;
+	}
+
 	public void setDrivePowers(PoseVelocity2d powers)
 	{
 		MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(PARAMS.trackWidth).inverse(

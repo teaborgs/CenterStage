@@ -2,33 +2,18 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
-import com.acmerobotics.dashboard.DashboardCore;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Actions;
-import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.TuningFiles;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
-
-import java.util.LinkedList;
 
 @TeleOp(name = "Manual Drive Test", group = "Testing")
 public final class ManualDriveTest extends BaseOpMode
@@ -95,8 +80,6 @@ public final class ManualDriveTest extends BaseOpMode
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
-
-		telemetry.setMsTransmissionInterval(50);
 	}
 
 	@Override
@@ -129,43 +112,28 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Intake()
 	{
-		robotHardware.intakeMotor.setPower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : 0.0);
+		robotHardware.intakeSystem.SetIntakePower(wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) ? Constants.getIntakeMaxPower() : 0.0);
 	}
 
 	// ================ Arm ================
 	private void Lift()
 	{
-		robotHardware.liftMotor1.setPower(armInput.getValue(Bindings.Arm.LIFT_AXIS));
-		robotHardware.liftMotor2.setPower(armInput.getValue(Bindings.Arm.LIFT_AXIS));
+		robotHardware.liftSystem.SetPower(armInput.getValue(Bindings.Arm.LIFT_AXIS));
 	}
 
-	int stackTaps = 0;
-	double tumblerMaxCurrent = 0;
 	private void Tumbler()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_BACKDROP_KEY))
-		{
-			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerBackdrop());
-			stackTaps = 0;
-		}
+			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerBackdrop());
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_LOAD_KEY))
-		{
-			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerLoad());
-			stackTaps = 0;
-		}
+			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerLoad());
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_IDLE_KEY))
-		{
-			robotHardware.tumblerMotor.setTargetPosition(Constants.getTumblerIdle());
-			stackTaps = 0;
-		}
+			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerIdle());
 
-		if (Math.abs(robotHardware.tumblerMotor.getTargetPosition() - robotHardware.tumblerMotor.getCurrentPosition()) > 10)
-			robotHardware.tumblerMotor.setPower(0.8);
+		if (Math.abs(robotHardware.tumblerSystem.GetTargetPosition() - robotHardware.tumblerSystem.GetCurrentPosition()) > 10)
+			robotHardware.tumblerSystem.SetPower(0.8);
 		else
-			robotHardware.tumblerMotor.setPower(0.05);
-		robotHardware.tumblerMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-		tumblerMaxCurrent = Math.max(tumblerMaxCurrent, robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
+			robotHardware.tumblerSystem.SetPower(0.05);
 	}
 
 	private Utilities.State clawState = Utilities.State.BUSY;
@@ -174,7 +142,7 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW_KEY))
 			clawState = clawState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.clawServo.setPosition(clawState == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
+		robotHardware.clawSystem.SetPosition(clawState == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
 	}
 
 	private Utilities.State rotatorState = Utilities.State.BUSY;
@@ -183,31 +151,17 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.ROTATOR_KEY))
 			rotatorState = rotatorState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.rotatorServo.setPosition(rotatorState == Utilities.State.IDLE ? Constants.getRotatorIdle() : Constants.getRotatorBusy());
+		robotHardware.rotatorSystem.SetPosition(rotatorState == Utilities.State.IDLE ? Constants.getRotatorIdle() : Constants.getRotatorBusy());
 	}
 
-	private boolean planeLeveled = false;
 	private boolean planeLaunched = false;
-	private volatile Utilities.State planeLevelState = Utilities.State.BUSY;
 
 	private void Plane()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLeveled)
-		{
-			planeLevelState = Utilities.State.IDLE;
-			planeLeveled = true;
-		}
-		robotHardware.planeLevelServo.setPosition(planeLevelState == Utilities.State.IDLE ? Constants.getPlaneLevelerIdle() : Constants.getPlaneLevelerBusy());
-		if (robotHardware.planeLevelServo.getPosition() == Constants.getPlaneLevelerBusy() && !planeLaunched && planeLeveled)
+		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched)
 		{
 			planeLaunched = true;
-			setTimeout(() -> {
-				robotHardware.planeShooterServo.setPosition(Constants.getPlaneShooterBusy());
-				setTimeout(() -> {
-					planeLevelState = Utilities.State.BUSY;
-					robotHardware.planeLevelServo.setPosition(Constants.getPlaneLevelerIdle());
-				}, 300);
-			}, 300);
+			robotHardware.droneSystem.LaunchDrone();
 		}
 	}
 
@@ -219,23 +173,6 @@ public final class ManualDriveTest extends BaseOpMode
 		telemetry.addData("Front Right", robotHardware.mecanumDrive.rightFront.getCurrent(CurrentUnit.MILLIAMPS));
 		telemetry.addData("Back Left", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));
 		telemetry.addData("Back Right", robotHardware.mecanumDrive.rightBack.getCurrent(CurrentUnit.MILLIAMPS));
-
-		telemetry.addData("Intake Power", robotHardware.intakeMotor.getPower());
-
-		telemetry.addData("Lift 1 Power", robotHardware.liftMotor1.getPower());
-		telemetry.addData("Lift 1 Pos", robotHardware.liftMotor1.getCurrentPosition());
-		telemetry.addData("Lift 2 Power", robotHardware.liftMotor2.getPower());
-		telemetry.addData("Lift 2 Pos", robotHardware.liftMotor2.getCurrentPosition());
-
-		telemetry.addData("Tumbler Power", robotHardware.tumblerMotor.getPower());
-		telemetry.addData("Tumbler Pos", robotHardware.tumblerMotor.getCurrentPosition());
-		telemetry.addData("Tumbler Current", robotHardware.tumblerMotor.getCurrent(CurrentUnit.MILLIAMPS));
-		telemetry.addData("Tumbler Max Current", tumblerMaxCurrent);
-
-		telemetry.addData("Rotator Pos", robotHardware.rotatorServo.getPosition());
-		telemetry.addData("Claw Pos", robotHardware.clawServo.getPosition());
-		telemetry.addData("PlaneLevel Pos", robotHardware.planeLevelServo.getPosition());
-		telemetry.addData("PlaneRelease Pos", robotHardware.planeShooterServo.getPosition());
 
 		telemetry.update();
 	}

@@ -6,10 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public abstract class BaseOpMode extends LinearOpMode
 {
+	private boolean internal_IsAutonomous = false;
+
 	@Override
 	public void runOpMode()
 	{
 		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+		telemetry.setMsTransmissionInterval(50);
 		telemetry.addLine("[STATUS] Initializing...");
 		telemetry.update();
 
@@ -21,8 +24,10 @@ public abstract class BaseOpMode extends LinearOpMode
 			WhileWaitingForStart();
 
 		// Run the robot
-		while (!isStopRequested())
+		while (!isStopRequested()) {
 			OnRun();
+			if(internal_IsAutonomous) break;
+		}
 
 		// Stop the robot
 		telemetry.clear();
@@ -41,5 +46,10 @@ public abstract class BaseOpMode extends LinearOpMode
 
 	protected void OnStop() {
 		// Override this method to add custom stop behavior
+	}
+
+	public void setAutonomous(boolean internal_IsAutonomous)
+	{
+		this.internal_IsAutonomous = internal_IsAutonomous;
 	}
 }

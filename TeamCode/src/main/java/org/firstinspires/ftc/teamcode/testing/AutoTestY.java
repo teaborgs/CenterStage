@@ -21,6 +21,7 @@ public class AutoTestY extends BaseOpMode
 	protected void OnInitialize()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
+		setAutonomous(true);
 		mecanumDrive = new MecanumDrive(hardwareMap);
 	}
 

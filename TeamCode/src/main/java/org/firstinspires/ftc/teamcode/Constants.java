@@ -16,8 +16,8 @@ public class Constants
 		public int TUMBLER_BACKDROP = 0;
 		public int TUMBLER_SPIKE_MARK = 0;
 		public int[] LIFT_LEVELS = new int[]{};
-		public int SUSPENDER_IDLE = 0;
-		public int SUSPENDER_SUSPEND = 0;
+		public int LIFT_SUSPENDER_IDLE = 0;
+		public int LIFT_SUSPEND_LEVEL = 0;
 		public double CLAW_IDLE = 0;
 		public double CLAW_BUSY = 0;
 		public double ROTATOR_IDLE = 0;
@@ -33,7 +33,7 @@ public class Constants
 		public double ANTENNA_IDLE = 0;
 		public double ANTENNA_GUIDE = 0;
 		public double ANTENNA_GRAB = 0;
-		public double ANTENNA_INTAKE_RUN_TIME = 0;
+		public double ANTENNA_RUN_TIME = 0;
 		public double TUMBLER_MAX_CURRENT = 0;
 
 		public Container() {
@@ -45,14 +45,14 @@ public class Constants
 					TUMBLER_BACKDROP = 925;
 					TUMBLER_SPIKE_MARK = 1300;
 					LIFT_LEVELS = new int[] {-10, 50, 250, 500, 750, 1000};
-					SUSPENDER_IDLE = 0;
-					SUSPENDER_SUSPEND = 960;
+					LIFT_SUSPENDER_IDLE = 0;
+					LIFT_SUSPEND_LEVEL = 960;
 					CLAW_IDLE = 0.45d;
 					CLAW_BUSY = 1d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.5d;
-					PLANE_LEVELER_BUSY = 0.75d;
+					PLANE_LEVELER_BUSY = 0.7d;
 					PLANE_SHOOTER_IDLE = 0.5d;
 					PLANE_SHOOTER_BUSY = 0d;
 					INTAKE_MAX_POWER = 0.8d;
@@ -62,35 +62,11 @@ public class Constants
 					ANTENNA_IDLE = 0.0d;
 					ANTENNA_GUIDE = 0.5d;
 					ANTENNA_GRAB = 0.95d;
-					ANTENNA_INTAKE_RUN_TIME = 1.0d;
+					ANTENNA_RUN_TIME = 0.4d;
 					TUMBLER_MAX_CURRENT = 2500.0d;
 					break;
 				case ROBOT_2:
-					TUMBLER_LOAD = 0;
-					TUMBLER_IDLE = 400;
-					TUMBLER_BACKDROP = 850;
-					TUMBLER_SPIKE_MARK = 1300;
-					LIFT_LEVELS = new int[] {-10, 50, 250, 500, 750, 1000};
-					SUSPENDER_IDLE = 0;
-					SUSPENDER_SUSPEND = 1900;
-					CLAW_IDLE = 0.45d;
-					CLAW_BUSY = 1d;
-					ROTATOR_IDLE = 0d;
-					ROTATOR_BUSY = 1d;
-					PLANE_LEVELER_IDLE = 0d;
-					PLANE_LEVELER_BUSY = 0.5d;
-					PLANE_SHOOTER_IDLE = 0.4d;
-					PLANE_SHOOTER_BUSY = 0.6d;
-					INTAKE_MAX_POWER = 0.8d;
-					LIFT_NORMAL_POWER = 0.8d;
-					LIFT_SUSPEND_POWER = 1.0d;
-					BACKDROP_DISTANCE = 15.0d;
-					ANTENNA_IDLE = 0.0d;
-					ANTENNA_GUIDE = 0.5d;
-					ANTENNA_GRAB = 0.95d;
-					ANTENNA_INTAKE_RUN_TIME = 1.0d;
-					TUMBLER_MAX_CURRENT = 3500.0d;
-					break;
+					throw new RuntimeException("Invalid robot type! (2)");
 			}
 		}
 	}
@@ -121,11 +97,11 @@ public class Constants
 	{
 		public static class TeamProp
 		{
-			public static final double PROP_SIZE = 6500;
-			public static final Scalar RED_LOWER = new Scalar(0, 100, 100);
-			public static final Scalar RED_UPPER = new Scalar(10, 255, 255);
-			public static final Scalar BLUE_LOWER = new Scalar(10, 100, 100);
-			public static final Scalar BLUE_UPPER = new Scalar(140, 255, 255);
+			public static final double PROP_SIZE = 8000;
+			public static final Scalar RED_LOWER = new Scalar(0, 75, 75);
+			public static final Scalar RED_UPPER = new Scalar(20, 255, 255);
+			public static final Scalar BLUE_LOWER = new Scalar(90, 75, 75);
+			public static final Scalar BLUE_UPPER = new Scalar(130, 255, 255);
 		}
 
 		public static class AprilTag
@@ -163,8 +139,8 @@ public class Constants
 	public static int getTumblerBackdrop() { return parameters.TUMBLER_BACKDROP; }
 	public static int getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
 	public static int[] getLiftLevels() {	return parameters.LIFT_LEVELS;	}
-	public static int getSuspenderIdle() { return parameters.SUSPENDER_IDLE; }
-	public static int getSuspenderSuspend() { return parameters.SUSPENDER_SUSPEND; }
+	public static int getLiftSuspenderIdle() { return parameters.LIFT_SUSPENDER_IDLE; }
+	public static int getLiftSuspendLevel() { return parameters.LIFT_SUSPEND_LEVEL; }
 	public static double getClawIdle() { return parameters.CLAW_IDLE; }
 	public static double getClawBusy() { return parameters.CLAW_BUSY; }
 	public static double getRotatorIdle() { return parameters.ROTATOR_IDLE; }
@@ -180,6 +156,6 @@ public class Constants
 	public static double getAntennaIdle() { return parameters.ANTENNA_IDLE; }
 	public static double getAntennaGuide() { return parameters.ANTENNA_GUIDE; }
 	public static double getAntennaGrab() { return parameters.ANTENNA_GRAB; }
-	public static double getAntennaIntakeRunTime() { return parameters.ANTENNA_INTAKE_RUN_TIME; }
+	public static double getAntennaRunTime() { return parameters.ANTENNA_RUN_TIME; }
 	public static double getTumblerMaxCurrent() { return parameters.TUMBLER_MAX_CURRENT; }
 }
