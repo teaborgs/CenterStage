@@ -13,21 +13,21 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.io.File;
+import java.util.Date;
+
 @TeleOp(name = "Media Recorder Test", group = "Testing")
 public class MediaRecorderTest extends BaseOpMode
 {
 	private OpenCvCamera camera;
-	private InputSystem inputSystem;
 	private VideoWriterPipeline videoWriterPipeline;
-
-	private static InputSystem.Key START_RECORDING = new InputSystem.Key("a");
-	private static InputSystem.Key STOP_RECORDING = new InputSystem.Key("b");
 
 	@Override
 	protected void OnInitialize()
 	{
-		inputSystem = new InputSystem(gamepad1);
-		videoWriterPipeline = new VideoWriterPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/video.mp4");
+		File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings");
+		if (!directory.exists()) directory.mkdir();
+		videoWriterPipeline = new VideoWriterPipeline(directory.getAbsolutePath() + "/recording_" + new Date().getTime() + ".mp4");
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		camera.setPipeline(videoWriterPipeline);
@@ -51,15 +51,19 @@ public class MediaRecorderTest extends BaseOpMode
 	@Override
 	protected void OnRun()
 	{
-		if (inputSystem.wasPressedThisFrame(START_RECORDING) && !videoWriterPipeline.isRecording()) {
-			videoWriterPipeline.startRecording();
-			telemetry.addData("Recording?", "Started???????????");
-		} else if (inputSystem.wasPressedThisFrame(STOP_RECORDING) && videoWriterPipeline.isRecording()) {
-			videoWriterPipeline.stopRecording();
-			telemetry.addData("Recording?", "Stopped???????????");
-		}
-
 		telemetry.addData("Recording", videoWriterPipeline.isRecording());
 		telemetry.update();
+	}
+
+	@Override
+	protected void OnStart()
+	{
+		videoWriterPipeline.startRecording();
+	}
+
+	@Override
+	protected void OnStop()
+	{
+		videoWriterPipeline.stopRecording();
 	}
 }

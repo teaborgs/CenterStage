@@ -12,7 +12,7 @@ public class VideoWriterPipeline extends OpenCvPipeline
 
 	private static final int CAMERA_WIDTH = 640;
 	private static final int CAMERA_HEIGHT = 480;
-	private static final int CAMERA_FPS = 30;
+	private static final int CAMERA_FPS = 15;
 	private static final int CAMERA_FOURCC = VideoWriter.fourcc('H', '2', '6', '4');
 
 	private final String filename;
@@ -32,20 +32,20 @@ public class VideoWriterPipeline extends OpenCvPipeline
 			return input;
 
 		converted.release();
-		Imgproc.cvtColor(input, converted, Imgproc.COLOR_RGBA2RGB);
+		Imgproc.cvtColor(input, converted, Imgproc.COLOR_RGBA2BGR);
 		videoWriter.write(converted);
 		return input;
 	}
 
 	public void startRecording()
 	{
-		if (!videoWriter.open(filename, CAMERA_FOURCC, CAMERA_FPS, new Size(CAMERA_WIDTH, CAMERA_HEIGHT)))
+		if (!videoWriter.open(filename, CAMERA_FOURCC, CAMERA_FPS, new Size(CAMERA_WIDTH, CAMERA_HEIGHT), true))
 			throw new RuntimeException("Failed to open video writer");
 	}
 
 	public void stopRecording()
 	{
-		videoWriter.release();
+		if(videoWriter.isOpened()) videoWriter.release();
 	}
 
 	public boolean isRecording()
