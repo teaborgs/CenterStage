@@ -1,38 +1,36 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.opencv.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
-import org.openftc.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.InputSystem;
+import org.firstinspires.ftc.teamcode.opencv.VideoWriterPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.ArrayList;
-
-/*
- * Test the camera by displaying the AprilTag detections on the screen
- */
-@TeleOp(name = "April Tag Detection Test", group = "Testing")
-public final class AprilTagDetectionTest extends BaseOpMode
+@TeleOp(name = "Media Recorder Test", group = "Testing")
+public class MediaRecorderTest extends BaseOpMode
 {
 	private OpenCvCamera camera;
-	private AprilTagDetectionPipeline detectionPipeline;
+	private InputSystem inputSystem;
+	private VideoWriterPipeline videoWriterPipeline;
+
+	private static InputSystem.Key START_RECORDING = new InputSystem.Key("a");
+	private static InputSystem.Key STOP_RECORDING = new InputSystem.Key("b");
 
 	@Override
 	protected void OnInitialize()
 	{
+		inputSystem = new InputSystem(gamepad1);
+		videoWriterPipeline = new VideoWriterPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/video.mp4");
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-		detectionPipeline = new AprilTagDetectionPipeline(
-				Constants.Camera.CAMERA_FX,
-				Constants.Camera.CAMERA_FY,
-				Constants.Camera.CAMERA_CX,
-				Constants.Camera.CAMERA_CY);
-		camera.setPipeline(detectionPipeline);
+		camera.setPipeline(videoWriterPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
 		{
 			@Override
@@ -53,15 +51,15 @@ public final class AprilTagDetectionTest extends BaseOpMode
 	@Override
 	protected void OnRun()
 	{
-		ArrayList<AprilTagDetection> currentDetections = detectionPipeline.getLatestDetections();
-		telemetry.addData("No. Objects", currentDetections.size());
-		for (int i = 0; i < currentDetections.size(); i++) {
-			AprilTagDetection detection = currentDetections.get(i);
-
-			telemetry.addData("Object " + i, detection.id);
-			telemetry.addData("Margin", detection.decisionMargin);
-			telemetry.addData("Center", detection.center);
+		if (inputSystem.wasPressedThisFrame(START_RECORDING) && !videoWriterPipeline.isRecording()) {
+			videoWriterPipeline.startRecording();
+			telemetry.addData("Recording?", "Started???????????");
+		} else if (inputSystem.wasPressedThisFrame(STOP_RECORDING) && videoWriterPipeline.isRecording()) {
+			videoWriterPipeline.stopRecording();
+			telemetry.addData("Recording?", "Stopped???????????");
 		}
+
+		telemetry.addData("Recording", videoWriterPipeline.isRecording());
 		telemetry.update();
 	}
 }

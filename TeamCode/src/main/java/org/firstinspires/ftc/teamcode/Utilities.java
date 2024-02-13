@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -11,6 +13,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.Scalar;
+
+import java.io.File;
 
 public class Utilities
 {
@@ -152,6 +156,16 @@ public class Utilities
 	public static void RestorePower(Servo... devices)
 	{
 		for (Servo device : devices) device.getController().pwmEnable();
+	}
+
+	public static void CreateVideoFolder()
+	{
+		File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret");
+		if (!file.exists()) file.mkdir();
+		File file2 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/alex");
+		if (!file2.exists()) file2.mkdir();
+		File file3 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/razvan");
+		if (!file3.exists()) file3.mkdir();
 	}
 
 	public enum State

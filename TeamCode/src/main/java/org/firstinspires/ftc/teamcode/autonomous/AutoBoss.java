@@ -88,7 +88,7 @@ public class AutoBoss extends BaseOpMode
 				backdropPose = new Pose2d(centimetersToInches(60), -centimetersToInches(96), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), 0, -Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(110), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(72), centimetersToInches(180), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(70), centimetersToInches(180), -Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
@@ -98,7 +98,7 @@ public class AutoBoss extends BaseOpMode
 				backdropPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), 0, -Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(110), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(72), centimetersToInches(180), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(70), centimetersToInches(180), -Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.setTangent(purplePose.heading.toDouble())
 						.lineToY(0)
@@ -109,37 +109,50 @@ public class AutoBoss extends BaseOpMode
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(42), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(60), -centimetersToInches(96), -Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(96), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), 0, -Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(110), -Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(72), centimetersToInches(180), -Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(70), centimetersToInches(180), -Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
 			}
 		} else {
 			offset1 *= -1;
-			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 5), centimetersToInches(80), Math.PI / 2);
+			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(4), 0));
+			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 5), centimetersToInches(76), Math.PI / 2);
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
-				purplePose = new Pose2d(centimetersToInches(80), centimetersToInches(4), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(104), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(92), centimetersToInches(20), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(96), Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(52), centimetersToInches(96), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
+				stackIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(110), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(67.5), -centimetersToInches(180), Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(42), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(50), centimetersToInches(104), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(96), Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(75), centimetersToInches(96), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
+				stackIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(110), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(67.5), -centimetersToInches(180), Math.PI / 2);
+				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
+						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
+						.build();
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
+				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(10), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(85), centimetersToInches(96), Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(52), centimetersToInches(96), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
+				stackIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(110), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(67.5), -centimetersToInches(180), Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.setTangent(purplePose.heading.toDouble())
 						.lineToY(0)
 						.setTangent(0)
 						.lineToX(purplePose.position.x / 4 * 3)
-						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
-						.build();
-			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(6), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(90), centimetersToInches(104), Math.PI / 2);
-				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
 			}
@@ -251,16 +264,12 @@ public class AutoBoss extends BaseOpMode
 								robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerLoad()),
 								robotHardware.liftSystem.MoveToPositionWithDelay(Constants.getLiftSuspenderIdle(), 0.2),
 								robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.1)
-						)
+						),
+						robotHardware.mecanumDrive.actionBuilder(backdropPose)
+								.setTangent(-backdropPose.heading.toDouble())
+								.splineToConstantHeading(parkPose.component1(), parkPose.heading.toDouble() * 2)
+								.build()
 				)
-		);
-		robotHardware.mecanumDrive.updatePoseEstimate();
-		Actions.runBlocking(
-				robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
-						.lineToX(parkPose.position.x)
-						.setTangent(Math.PI / 2)
-						.lineToY(parkPose.position.y)
-						.build()
 		);
 	}
 

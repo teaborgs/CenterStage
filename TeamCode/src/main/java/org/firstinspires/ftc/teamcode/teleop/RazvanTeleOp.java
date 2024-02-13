@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.Utilities.CreateVideoFolder;
 import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
+
+import android.os.Environment;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -18,7 +21,9 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
+import org.firstinspires.ftc.teamcode.opencv.VideoWriterPipeline;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Razvan TeleOp", group = "TeleOp")
@@ -58,12 +63,18 @@ public final class RazvanTeleOp extends BaseOpMode
 		}
 	}
 
+	private VideoWriterPipeline videoWriterPipeline;
+
 	@Override
 	protected void OnInitialize()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2); // This is to make sure the robot is selected before the init is done
 		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
+
+		CreateVideoFolder();
+		videoWriterPipeline = new VideoWriterPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/razvan/" + new Date().toString().replace(' ', '_') + ".mp4");
+		robotHardware.camera.setPipeline(videoWriterPipeline);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -309,5 +320,17 @@ public final class RazvanTeleOp extends BaseOpMode
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);
 		}
 		telemetry.update();
+	}
+
+	@Override
+	protected void OnStart()
+	{
+		videoWriterPipeline.startRecording();
+	}
+
+	@Override
+	protected void OnStop()
+	{
+		videoWriterPipeline.stopRecording();
 	}
 }

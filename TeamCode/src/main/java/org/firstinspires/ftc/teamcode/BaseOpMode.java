@@ -24,16 +24,17 @@ public abstract class BaseOpMode extends LinearOpMode
 			WhileWaitingForStart();
 
 		// Run the robot
+		OnStart();
 		while (!isStopRequested()) {
 			OnRun();
 			if(internal_IsAutonomous) break;
 		}
+		OnStop();
 
 		// Stop the robot
 		telemetry.clear();
 		telemetry.addLine("[STATUS] Stopping...");
 		telemetry.update();
-		OnStop();
 	}
 
 	protected abstract void OnInitialize();
@@ -42,6 +43,10 @@ public abstract class BaseOpMode extends LinearOpMode
 
 	protected void WhileWaitingForStart() {
 		// Override this method to add custom behavior while waiting for start
+	}
+
+	protected void OnStart() {
+		// Override this method to add custom start behavior
 	}
 
 	protected void OnStop() {

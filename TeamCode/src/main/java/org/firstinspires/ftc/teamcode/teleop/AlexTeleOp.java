@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.Utilities.CreateVideoFolder;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
+
+import android.os.Environment;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -17,7 +20,9 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
+import org.firstinspires.ftc.teamcode.opencv.VideoWriterPipeline;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Alex TeleOp", group = "TeleOp")
@@ -57,12 +62,18 @@ public final class AlexTeleOp extends BaseOpMode
 		}
 	}
 
+	private VideoWriterPipeline videoWriterPipeline;
+
 	@Override
 	protected void OnInitialize()
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2); // This is to make sure the robot is selected before the init is done
 		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
+
+		CreateVideoFolder();
+		videoWriterPipeline = new VideoWriterPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/alex/" + new Date().toString().replace(' ', '_') + ".mp4");
+		robotHardware.camera.setPipeline(videoWriterPipeline);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -286,7 +297,8 @@ public final class AlexTeleOp extends BaseOpMode
 			telemetry.addData("[INFO] Robot Suspended:", robotSuspended ? "Yes" : "No");
 			if (robotSuspended) {
 				telemetry.addData("[INFO] Time since suspend: ", suspendedTime.seconds());
-				if (suspendedTime.seconds() > 5) telemetry.addLine("Press the suspend key again to lower robot");
+				if (suspendedTime.seconds() > 5)
+					telemetry.addLine("Press the suspend key again to lower robot");
 			}
 			telemetry.update();
 			return;
@@ -314,5 +326,17 @@ public final class AlexTeleOp extends BaseOpMode
 			telemetry.addData("[DEBUG] Arm Busy", armBusy);
 		}
 		telemetry.update();
+	}
+
+	@Override
+	protected void OnStart()
+	{
+		videoWriterPipeline.startRecording();
+	}
+
+	@Override
+	protected void OnStop()
+	{
+		videoWriterPipeline.stopRecording();
 	}
 }
