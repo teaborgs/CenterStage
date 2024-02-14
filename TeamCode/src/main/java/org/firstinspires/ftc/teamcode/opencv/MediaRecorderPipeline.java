@@ -10,6 +10,8 @@ import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.media.MediaRecorder;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -18,6 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
 
 public class MediaRecorderPipeline extends OpenCvPipeline
 {
@@ -25,6 +28,7 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 
 	private final String filename;
 	private MediaRecorder mediaRecorder;
+	private ElapsedTime elapsedTime;
 
 	private boolean isVoiceRecording = false;
 
@@ -88,6 +92,8 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 
 				if (!videoWriter.open(filename, VideoWriter.fourcc('H', '2', '6', '4'), 15, new Size(CAMERA_WIDTH, CAMERA_HEIGHT), true))
 					System.out.println("Failed to open video writer");
+
+				elapsedTime = new ElapsedTime();
 			} catch (Exception e) {
 				System.out.println("Failed to start recording: " + e.getMessage());
 				e.printStackTrace();
@@ -124,13 +130,12 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 
 			if (videoOk)
 				mux(filename, filename.replace(".mp4", ".3gp"), filename.replace(".mp4", "_final.mp4"), !voiceOk);
-			else System.out.println("Failed to mux");
-		}
-		).start();
+			else System.out.println("Failed to mux video. Are you sure the video file exists?");
+		}).start();
 	}
 
 	@SuppressLint("WrongConstant")
-	public static void mux(String videoFile, String audioFile, String outputFile, boolean videoOnly)
+	private void mux(String videoFile, String audioFile, String outputFile, boolean videoOnly)
 	{
 		try {
 			System.out.println("Muxing " + videoFile + " and " + audioFile + " to " + outputFile);
@@ -152,7 +157,6 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 			int originalVideoTrackIndex = -1;
 			int originalAudioTrackIndex = -1;
 
-			System.out.println("Video track count: " + videoExtractor.getTrackCount());
 			for (int i = 0; i < videoExtractor.getTrackCount(); i++) {
 				MediaFormat format = videoExtractor.getTrackFormat(i);
 				String mime = format.getString(MediaFormat.KEY_MIME);
@@ -165,7 +169,6 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 			}
 
 			if (!videoOnly) {
-				System.out.println("Audio track count: " + audioExtractor.getTrackCount());
 				for (int i = 0; i < audioExtractor.getTrackCount(); i++) {
 					MediaFormat format = audioExtractor.getTrackFormat(i);
 					String mime = format.getString(MediaFormat.KEY_MIME);
@@ -178,8 +181,6 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 				}
 			}
 
-			System.out.println("Video track index: " + videoTrackIndex);
-			System.out.println("Audio track index: " + audioTrackIndex);
 			muxer.start();
 
 			ByteBuffer videoBuffer = ByteBuffer.allocate(1024 * 1024);
@@ -213,22 +214,34 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 				}
 			}
 
-			System.out.println("Muxing done");
 			muxer.stop();
 			muxer.release();
 			videoExtractor.release();
 			if (!videoOnly) audioExtractor.release();
-			System.out.println("Mux succeeded");
-
-			try {
-				new File(videoFile).delete();
-				new File(audioFile).delete();
-			} catch (Exception e) {
-				System.out.println("Failed to delete original files");
-				e.printStackTrace();
-			}
+			System.out.println("Mux succeeded!");
 		} catch (Exception e) {
-			System.out.println("Mux failed");
+			System.out.println("Mux failed. Are you sure the video and audio files exist?");
+			e.printStackTrace();
+		}
+
+		cleanArtifacts();
+	}
+
+	private void cleanArtifacts()
+	{
+		try {
+			File audioFile = new File(filename.replace(".mp4", ".3gp"));
+			if (audioFile.exists()) {
+				if (!audioFile.delete()) System.out.println("Failed to delete audio file");
+				else System.out.println("Deleted audio file");
+			} else System.out.println("Audio file does not exist");
+			File videoFile = new File(filename);
+			if (videoFile.exists()) {
+				if (!videoFile.delete()) System.out.println("Failed to delete video file");
+				else System.out.println("Deleted video file");
+			} else System.out.println("Video file does not exist");
+		} catch (Exception e) {
+			System.out.println("Fatal error: failed to clean artifacts");
 			e.printStackTrace();
 		}
 	}
@@ -241,5 +254,10 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 	public boolean isVoiceRecording()
 	{
 		return isVoiceRecording;
+	}
+
+	public double getRecordTime()
+	{
+		return elapsedTime == null ? 0 : elapsedTime.time(TimeUnit.SECONDS);
 	}
 }

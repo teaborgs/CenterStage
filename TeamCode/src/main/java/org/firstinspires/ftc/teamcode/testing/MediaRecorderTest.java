@@ -76,6 +76,8 @@ public class MediaRecorderTest extends BaseOpMode
 	{
 		telemetry.addData("Recording", mediaRecorderPipeline.isRecording());
 		telemetry.addData("Voice Recording", mediaRecorderPipeline.isVoiceRecording());
+		telemetry.addData("Recording Time", mediaRecorderPipeline.getRecordTime());
+		telemetry.addData("FPS", camera.getFps());
 		telemetry.update();
 	}
 
