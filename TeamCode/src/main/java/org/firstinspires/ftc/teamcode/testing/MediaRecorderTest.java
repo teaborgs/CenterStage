@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import static org.firstinspires.ftc.teamcode.Utilities.MakeVideoFile;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
@@ -32,25 +34,7 @@ public class MediaRecorderTest extends BaseOpMode
 	@Override
 	protected void OnInitialize()
 	{
-		List<String> microphoneNames = new ArrayList<>();
-		AudioManager audioManager = hardwareMap.appContext.getSystemService(AudioManager.class);
-		if (audioManager != null) {
-			AudioDeviceInfo[] audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS);
-
-			for (AudioDeviceInfo deviceInfo : audioDevices) {
-				if (deviceInfo.getType() == AudioDeviceInfo.TYPE_BUILTIN_MIC ||
-						deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-						deviceInfo.getType() == AudioDeviceInfo.TYPE_USB_DEVICE ||
-						deviceInfo.getType() == AudioDeviceInfo.TYPE_USB_HEADSET) {
-					microphoneNames.add(deviceInfo.getProductName().toString());
-				}
-			}
-		}
-		System.out.println("Microphones:");
-		microphoneNames.forEach(System.out::println);
-		File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings");
-		if (!directory.exists()) directory.mkdir();
-		mediaRecorderPipeline = new MediaRecorderPipeline(directory.getAbsolutePath() + "/recording_" + new Date().getTime() + ".mp4");
+		mediaRecorderPipeline = new MediaRecorderPipeline(MakeVideoFile("tests"));
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		camera.setPipeline(mediaRecorderPipeline);

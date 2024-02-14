@@ -3,14 +3,19 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public abstract class BaseOpMode extends LinearOpMode
 {
 	private boolean internal_IsAutonomous = false;
 
+	private ElapsedTime internal_ElapsedTimeSinceInit;
+	private ElapsedTime internal_ElapsedTimeSinceStart;
+
 	@Override
 	public void runOpMode()
 	{
+		internal_ElapsedTimeSinceInit = new ElapsedTime();
 		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 		telemetry.setMsTransmissionInterval(50);
 		telemetry.addLine("[STATUS] Initializing...");
@@ -24,6 +29,7 @@ public abstract class BaseOpMode extends LinearOpMode
 			WhileWaitingForStart();
 
 		// Run the robot
+		internal_ElapsedTimeSinceStart = new ElapsedTime();
 		OnStart();
 		while (!isStopRequested()) {
 			OnRun();
@@ -53,8 +59,20 @@ public abstract class BaseOpMode extends LinearOpMode
 		// Override this method to add custom stop behavior
 	}
 
-	public void setAutonomous(boolean internal_IsAutonomous)
+	protected void setAutonomous(boolean internal_IsAutonomous)
 	{
 		this.internal_IsAutonomous = internal_IsAutonomous;
+	}
+
+	protected double getElapsedTimeSinceInit()
+	{
+		if(internal_ElapsedTimeSinceInit == null) return -1;
+		return internal_ElapsedTimeSinceInit.seconds();
+	}
+
+	protected double getElapsedTimeSinceStart()
+	{
+		if(internal_ElapsedTimeSinceStart == null) return -1;
+		return internal_ElapsedTimeSinceStart.seconds();
 	}
 }

@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.Utilities.CreateVideoFolder;
+import static org.firstinspires.ftc.teamcode.Utilities.MakeVideoFile;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
-
-import android.os.Environment;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -22,7 +20,6 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.opencv.MediaRecorderPipeline;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Alex TeleOp", group = "! TeleOp")
@@ -71,9 +68,9 @@ public final class AlexTeleOp extends BaseOpMode
 		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
 
-		CreateVideoFolder();
-		mediaRecorderPipeline = new MediaRecorderPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings/alex/" + new Date().toString().replace(' ', '_') + ".mp4");
+		mediaRecorderPipeline = new MediaRecorderPipeline(MakeVideoFile("alex"));
 		robotHardware.camera.setPipeline(mediaRecorderPipeline);
+		robotHardware.openCameraAsync();
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);

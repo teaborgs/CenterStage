@@ -15,6 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.Scalar;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Utilities
 {
@@ -158,14 +161,18 @@ public class Utilities
 		for (Servo device : devices) device.getController().pwmEnable();
 	}
 
-	public static void CreateVideoFolder()
+	public static File MakeVideoFile(String subFolder)
 	{
+		SimpleDateFormat ddMMyyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+		SimpleDateFormat hhmmss = new SimpleDateFormat("HH-mm-ss", Locale.getDefault());
+
 		File recordings = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings");
 		if (!recordings.exists()) recordings.mkdir();
-		File alexRecordings = new File(recordings.getAbsolutePath() + "/alex");
-		if (!alexRecordings.exists()) alexRecordings.mkdir();
-		File razvanRecordings = new File(recordings.getAbsolutePath() + "/razvan");
-		if (!razvanRecordings.exists()) razvanRecordings.mkdir();
+		File subfolder = new File(recordings.getAbsolutePath() + "/" + subFolder);
+		if (!subfolder.exists()) subfolder.mkdir();
+		File dateFolder = new File(subfolder.getAbsolutePath() + "/" + ddMMyyyy.format(new Date()));
+		if (!dateFolder.exists()) dateFolder.mkdir();
+		return new File(dateFolder.getAbsolutePath() + "/" + hhmmss.format(new Date()) + ".mp4");
 	}
 
 	public enum State

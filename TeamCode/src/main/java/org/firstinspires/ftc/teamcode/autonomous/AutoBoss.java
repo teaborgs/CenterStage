@@ -81,7 +81,7 @@ public class AutoBoss extends BaseOpMode
 
 		if (currentAlliance == Utilities.Alliance.RED) {
 			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(8), 0));
-			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 5), -centimetersToInches(76), -Math.PI / 2);
+			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 10), -centimetersToInches(80), -Math.PI / 2);
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(92), -centimetersToInches(20), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
@@ -120,7 +120,7 @@ public class AutoBoss extends BaseOpMode
 		} else {
 			offset1 *= -1;
 			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(4), 0));
-			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 5), centimetersToInches(76), Math.PI / 2);
+			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 10), centimetersToInches(80), Math.PI / 2);
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(92), centimetersToInches(20), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(96), Math.PI / 2);

@@ -20,19 +20,21 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 public class MediaRecorderPipeline extends OpenCvPipeline
 {
 	private final VideoWriter videoWriter;
 
-	private final String filename;
+	private final File filename;
 	private MediaRecorder mediaRecorder;
 	private ElapsedTime elapsedTime;
 
 	private boolean isVoiceRecording = false;
 
-	public MediaRecorderPipeline(String filename)
+	public MediaRecorderPipeline(File filename)
 	{
 		this.filename = filename;
 		videoWriter = new VideoWriter();
@@ -49,6 +51,7 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 		converted.release();
 		Imgproc.cvtColor(input, converted, Imgproc.COLOR_RGBA2BGR);
 		videoWriter.write(converted);
+
 		return input;
 	}
 
@@ -62,7 +65,7 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 				mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 				mediaRecorder.setMaxDuration(-1);
 				mediaRecorder.setMaxFileSize(-1);
-				mediaRecorder.setOutputFile(filename.replace(".mp4", ".3gp"));
+				mediaRecorder.setOutputFile(filename.getAbsolutePath().replace(".mp4", "_temp.3gp"));
 
 				mediaRecorder.setOnInfoListener((mr, what, extra) -> {
 					System.out.println("MediaRecorder info: " + what + ", " + extra);
@@ -90,7 +93,7 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 					e.printStackTrace();
 				}
 
-				if (!videoWriter.open(filename, VideoWriter.fourcc('H', '2', '6', '4'), 15, new Size(CAMERA_WIDTH, CAMERA_HEIGHT), true))
+				if (!videoWriter.open(filename.getAbsolutePath().replace(".mp4", "_temp.mp4"), VideoWriter.fourcc('H', '2', '6', '4'), 15, new Size(CAMERA_WIDTH, CAMERA_HEIGHT), true))
 					System.out.println("Failed to open video writer");
 
 				elapsedTime = new ElapsedTime();
@@ -129,7 +132,7 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 			}
 
 			if (videoOk)
-				mux(filename, filename.replace(".mp4", ".3gp"), filename.replace(".mp4", "_final.mp4"), !voiceOk);
+				mux(filename.getAbsolutePath().replace(".mp4", "_temp.mp4"), filename.getAbsolutePath().replace(".mp4", "_temp.3gp"), filename.getAbsolutePath(), !voiceOk);
 			else System.out.println("Failed to mux video. Are you sure the video file exists?");
 		}).start();
 	}
@@ -230,12 +233,12 @@ public class MediaRecorderPipeline extends OpenCvPipeline
 	private void cleanArtifacts()
 	{
 		try {
-			File audioFile = new File(filename.replace(".mp4", ".3gp"));
+			File audioFile = new File(filename.getAbsolutePath().replace(".mp4", "_temp.3gp"));
 			if (audioFile.exists()) {
 				if (!audioFile.delete()) System.out.println("Failed to delete audio file");
 				else System.out.println("Deleted audio file");
 			} else System.out.println("Audio file does not exist");
-			File videoFile = new File(filename);
+			File videoFile = new File(filename.getAbsolutePath().replace(".mp4", "_temp.mp4"));
 			if (videoFile.exists()) {
 				if (!videoFile.delete()) System.out.println("Failed to delete video file");
 				else System.out.println("Deleted video file");
