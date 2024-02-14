@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.Utilities.CreateVideoFolder;
-import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
 import android.os.Environment;
@@ -21,12 +20,12 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
-import org.firstinspires.ftc.teamcode.opencv.VideoWriterPipeline;
+import org.firstinspires.ftc.teamcode.opencv.MediaRecorderPipeline;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Razvan TeleOp", group = "TeleOp")
+@TeleOp(name = "Razvan TeleOp", group = "! TeleOp")
 public final class RazvanTeleOp extends BaseOpMode
 {
 	private RobotHardware robotHardware;
@@ -63,7 +62,7 @@ public final class RazvanTeleOp extends BaseOpMode
 		}
 	}
 
-	private VideoWriterPipeline videoWriterPipeline;
+	private MediaRecorderPipeline mediaRecorderPipeline;
 
 	@Override
 	protected void OnInitialize()
@@ -73,8 +72,8 @@ public final class RazvanTeleOp extends BaseOpMode
 		robotHardware = new RobotHardware(hardwareMap);
 
 		CreateVideoFolder();
-		videoWriterPipeline = new VideoWriterPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/razvan/" + new Date().toString().replace(' ', '_') + ".mp4");
-		robotHardware.camera.setPipeline(videoWriterPipeline);
+		mediaRecorderPipeline = new MediaRecorderPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings/razvan/" + new Date().toString().replace(' ', '_') + ".mp4");
+		robotHardware.camera.setPipeline(mediaRecorderPipeline);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -125,6 +124,7 @@ public final class RazvanTeleOp extends BaseOpMode
 
 	private final ElapsedTime antennaPress = new ElapsedTime();
 	private Utilities.State antennaState = Utilities.State.IDLE;
+
 	private void Antenna()
 	{
 		if (wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaState == Utilities.State.IDLE) {
@@ -325,12 +325,12 @@ public final class RazvanTeleOp extends BaseOpMode
 	@Override
 	protected void OnStart()
 	{
-		videoWriterPipeline.startRecording();
+		mediaRecorderPipeline.startRecording();
 	}
 
 	@Override
 	protected void OnStop()
 	{
-		videoWriterPipeline.stopRecording();
+		mediaRecorderPipeline.stopRecording();
 	}
 }

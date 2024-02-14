@@ -20,12 +20,12 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
-import org.firstinspires.ftc.teamcode.opencv.VideoWriterPipeline;
+import org.firstinspires.ftc.teamcode.opencv.MediaRecorderPipeline;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Alex TeleOp", group = "TeleOp")
+@TeleOp(name = "Alex TeleOp", group = "! TeleOp")
 public final class AlexTeleOp extends BaseOpMode
 {
 	private RobotHardware robotHardware;
@@ -62,7 +62,7 @@ public final class AlexTeleOp extends BaseOpMode
 		}
 	}
 
-	private VideoWriterPipeline videoWriterPipeline;
+	private MediaRecorderPipeline mediaRecorderPipeline;
 
 	@Override
 	protected void OnInitialize()
@@ -72,8 +72,8 @@ public final class AlexTeleOp extends BaseOpMode
 		robotHardware = new RobotHardware(hardwareMap);
 
 		CreateVideoFolder();
-		videoWriterPipeline = new VideoWriterPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/alex/" + new Date().toString().replace(' ', '_') + ".mp4");
-		robotHardware.camera.setPipeline(videoWriterPipeline);
+		mediaRecorderPipeline = new MediaRecorderPipeline(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings/alex/" + new Date().toString().replace(' ', '_') + ".mp4");
+		robotHardware.camera.setPipeline(mediaRecorderPipeline);
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -331,12 +331,12 @@ public final class AlexTeleOp extends BaseOpMode
 	@Override
 	protected void OnStart()
 	{
-		videoWriterPipeline.startRecording();
+		mediaRecorderPipeline.startRecording();
 	}
 
 	@Override
 	protected void OnStop()
 	{
-		videoWriterPipeline.stopRecording();
+		mediaRecorderPipeline.stopRecording();
 	}
 }

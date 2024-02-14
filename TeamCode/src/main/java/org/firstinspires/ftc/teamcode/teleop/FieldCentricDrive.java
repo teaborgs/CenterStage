@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
-@TeleOp(name = "Field Centric Drive", group = "TeleOp")
+@TeleOp(name = "Field Centric Drive", group = "! TeleOp")
 public class FieldCentricDrive extends BaseOpMode
 {
 	private RobotHardware robotHardware;

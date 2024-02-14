@@ -160,12 +160,12 @@ public class Utilities
 
 	public static void CreateVideoFolder()
 	{
-		File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret");
-		if (!file.exists()) file.mkdir();
-		File file2 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/alex");
-		if (!file2.exists()) file2.mkdir();
-		File file3 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/secret/razvan");
-		if (!file3.exists()) file3.mkdir();
+		File recordings = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/recordings");
+		if (!recordings.exists()) recordings.mkdir();
+		File alexRecordings = new File(recordings.getAbsolutePath() + "/alex");
+		if (!alexRecordings.exists()) alexRecordings.mkdir();
+		File razvanRecordings = new File(recordings.getAbsolutePath() + "/razvan");
+		if (!razvanRecordings.exists()) razvanRecordings.mkdir();
 	}
 
 	public enum State
