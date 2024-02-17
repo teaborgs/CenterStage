@@ -48,7 +48,7 @@ public class Constants
 					LIFT_SUSPENDER_IDLE = 0;
 					LIFT_SUSPEND_LEVEL = 960;
 					CLAW_IDLE = 0.45d;
-					CLAW_BUSY = 1d;
+					CLAW_BUSY = 0d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.5d;
