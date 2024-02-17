@@ -119,10 +119,10 @@ public class AutoBoss extends BaseOpMode
 			}
 		} else {
 			offset1 *= -1;
-			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(4), 0));
+			robotHardware.mecanumDrive.setStartPose(new Pose2d(centimetersToInches(4), centimetersToInches(4), 0));
 			parkPose = new Pose2d(centimetersToInches(parkingType == Utilities.ParkingPosition.CENTER ? 130 : 10), centimetersToInches(80), Math.PI / 2);
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
-				purplePose = new Pose2d(centimetersToInches(92), centimetersToInches(20), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(20), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(96), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(52), centimetersToInches(96), Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
@@ -142,11 +142,11 @@ public class AutoBoss extends BaseOpMode
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(10), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(85), centimetersToInches(96), Math.PI / 2);
-				backdropPose = new Pose2d(centimetersToInches(52), centimetersToInches(96), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
-				stackIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(110), Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(9), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(85), centimetersToInches(97), Math.PI / 2);
+				backdropPose = new Pose2d(centimetersToInches(55), centimetersToInches(97), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(14), 0, Math.PI / 2);
+				stackIntermediaryPose = new Pose2d(centimetersToInches(14), -centimetersToInches(110), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(67.5), -centimetersToInches(180), Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.setTangent(purplePose.heading.toDouble())
@@ -308,27 +308,27 @@ public class AutoBoss extends BaseOpMode
 			}
 		} else {
 			safeDistance *= -1;
-			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(12), 0));
+			robotHardware.mecanumDrive.setStartPose(new Pose2d(centimetersToInches(4), centimetersToInches(12), 0));
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), -centimetersToInches(30), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), -centimetersToInches(54), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(125), centimetersToInches(140), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(67), centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(125), -centimetersToInches(56), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(123), centimetersToInches(140), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(223), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(123), -centimetersToInches(56), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), 0, Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(54), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(125), centimetersToInches(140), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(50), centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(125), -centimetersToInches(56), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(123), centimetersToInches(140), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(223), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(123), -centimetersToInches(56), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), -centimetersToInches(54), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(54), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(125), centimetersToInches(140), Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(80), centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(125), -centimetersToInches(56), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(123), centimetersToInches(140), Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(87), centimetersToInches(223), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(123), -centimetersToInches(56), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(65), centimetersToInches(223), Math.PI / 2);
 			}
 		}
@@ -524,12 +524,10 @@ public class AutoBoss extends BaseOpMode
 		telemetry.addData("[INFO] Parking", parkingType.name());
 		telemetry.addData("[INFO] Case", detectionCase.name());
 		if (currentPath == Utilities.PathType.LONG) telemetry.addData("[INFO] Timeout", longDelay);
+
 		telemetry.addLine();
 		telemetry.addLine("> We are ready to go!");
-		if (currentPath == Utilities.PathType.SHORT)
-			telemetry.addLine("> Make sure to place robot ~4 fingers away from the right hand side of the start tile!");
-		else if (currentPath == Utilities.PathType.LONG)
-			telemetry.addLine("> Make sure to place robot ~4 fingers away from the left hand side of the start tile!");
+		telemetry.addLine("> Make sure to place robot ~4 fingers away from the left hand side of the start tile!");
 		telemetry.addLine("> Press play to start...");
 
 		telemetry.update();

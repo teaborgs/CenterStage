@@ -104,7 +104,7 @@ public class RobotHardware
 				if(telemetry != null) {
 					telemetry.addLine("[ERROR] Camera failed to open with error code " + errorCode);
 					telemetry.update();
-				} else throw new RuntimeException("Camera failed to open with error code " + errorCode);
+				}
 			}
 		});
 	}
