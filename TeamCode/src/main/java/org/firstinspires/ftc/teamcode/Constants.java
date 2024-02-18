@@ -48,7 +48,7 @@ public class Constants
 					LIFT_SUSPENDER_IDLE = 0;
 					LIFT_SUSPEND_LEVEL = 960;
 					CLAW_IDLE = 0.45d;
-					CLAW_BUSY = 0d;
+					CLAW_BUSY = 1d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.5d;
@@ -59,9 +59,9 @@ public class Constants
 					LIFT_NORMAL_POWER = 1.0d;
 					LIFT_SUSPEND_POWER = 1.0d;
 					BACKDROP_DISTANCE = 8.0d;
-					ANTENNA_IDLE = 0.0d;
-					ANTENNA_GUIDE = 0.5d;
-					ANTENNA_GRAB = 0.95d;
+					ANTENNA_IDLE = 0.5d;
+					ANTENNA_GUIDE = 0.3d;
+					ANTENNA_GRAB = 0d;
 					ANTENNA_RUN_TIME = 0.4d;
 					TUMBLER_MAX_CURRENT = 2500.0d;
 					break;
