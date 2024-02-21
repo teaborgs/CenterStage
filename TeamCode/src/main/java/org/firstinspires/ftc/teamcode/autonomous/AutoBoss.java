@@ -181,10 +181,10 @@ public class AutoBoss extends BaseOpMode
 								purpleApproach,
 								robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 1), // Move rotator to busy
 								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerBackdrop(), 0.75), // Move tumbler to backdrop
-								robotHardware.intakeSystem.MoveAntennaToPositionWithDelay(Constants.getAntennaGrab() + 0.1d, 0.2), // Move antenna to idle
+								robotHardware.intakeSystem.MoveAntennaToPositionWithDelay(Constants.getAntennaGrab() + 0.05d, 0.2), // Move antenna to idle
 								RunSequentially(
 										WaitFor(0.5),
-										robotHardware.intakeSystem.RunIntakeFor(0.75, true)
+										robotHardware.intakeSystem.RunIntakeFor(1, true)
 								)
 						),
 						WaitForMovementStop(robotHardware), // Wait for movement to stop
