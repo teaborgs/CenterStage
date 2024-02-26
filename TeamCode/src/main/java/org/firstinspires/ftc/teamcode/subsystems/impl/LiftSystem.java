@@ -30,6 +30,8 @@ public final class LiftSystem extends SystemEx
 	{
 		motor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -39,14 +41,12 @@ public final class LiftSystem extends SystemEx
 	public void Init()
 	{
 		this.Setup();
-		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
-		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
 		motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
+		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
 		internal_Initialized = true;
 	}
 
