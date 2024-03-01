@@ -124,16 +124,11 @@ public final class ManualDriveTest extends BaseOpMode
 	private void Tumbler()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_BACKDROP_KEY))
-			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerBackdrop());
+			robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_LOAD_KEY))
-			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerLoad());
+			robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.TUMBLER_IDLE_KEY))
-			robotHardware.tumblerSystem.SetTargetPosition(Constants.getTumblerIdle());
-
-		if (Math.abs(robotHardware.tumblerSystem.GetTargetPosition() - robotHardware.tumblerSystem.GetCurrentPosition()) > 10)
-			robotHardware.tumblerSystem.SetPower(0.8);
-		else
-			robotHardware.tumblerSystem.SetPower(0.05);
+			robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
 	}
 
 	private Utilities.State clawState = Utilities.State.BUSY;
@@ -142,7 +137,7 @@ public final class ManualDriveTest extends BaseOpMode
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW_KEY))
 			clawState = clawState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.clawSystem.SetPosition(clawState == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
+		robotHardware.clawSystem1.SetPosition(clawState == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
 	}
 
 	private Utilities.State rotatorState = Utilities.State.BUSY;

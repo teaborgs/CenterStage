@@ -20,7 +20,7 @@ public class ValueTest extends BaseOpMode
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
 		Constants.Init();
-		robotHardware = new RobotHardware(hardwareMap, true);
+		robotHardware = new RobotHardware(hardwareMap);
 	}
 
 	@Override
@@ -33,7 +33,6 @@ public class ValueTest extends BaseOpMode
 		telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
 		telemetry.addData("[DEBUG] Tumbler Position", robotHardware.tumblerSystem.GetCurrentPosition());
 		telemetry.addData("[DEBUG] Rotator", robotHardware.rotatorSystem.GetCurrentPosition());
-		telemetry.addData("[DEBUG] Claw", robotHardware.clawSystem.GetCurrentPosition());
 		telemetry.addData("[DEBUG] Antenna", robotHardware.intakeSystem.GetAntennaPosition());
 		telemetry.addData("[DEBUG] Plane Level", robotHardware.droneSystem.GetLevelerPosition());
 		telemetry.addData("[DEBUG] Plane Release", robotHardware.droneSystem.GetShooterPosition());

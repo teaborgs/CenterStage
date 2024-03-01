@@ -42,9 +42,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer
 
 	public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick)
 	{
-		par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "rightFront")));
+		par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftFront")));
 		par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "intake")));
-		perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftFront")));
+		perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "rightFront")));
 		this.imu = imu;
 
 		par0.setDirection(DcMotorSimple.Direction.REVERSE);

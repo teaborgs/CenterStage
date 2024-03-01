@@ -11,10 +11,10 @@ public class Constants
 {
 	public static class Container
 	{
-		public int TUMBLER_LOAD = 0;
-		public int TUMBLER_IDLE = 0;
-		public int TUMBLER_BACKDROP = 0;
-		public int TUMBLER_SPIKE_MARK = 0;
+		public double TUMBLER_LOAD = 0;
+		public double TUMBLER_IDLE = 0;
+		public double TUMBLER_BACKDROP = 0;
+		public double TUMBLER_SPIKE_MARK = 0;
 		public int[] LIFT_LEVELS = new int[]{};
 		public int LIFT_SUSPENDER_IDLE = 0;
 		public int LIFT_SUSPEND_LEVEL = 0;
@@ -40,15 +40,15 @@ public class Constants
 			switch (Globals.GetCurrentRobotType())
 			{
 				case ROBOT_1:
-					TUMBLER_LOAD = 0;
-					TUMBLER_IDLE = 400;
-					TUMBLER_BACKDROP = 925;
-					TUMBLER_SPIKE_MARK = 1300;
+					TUMBLER_LOAD = 1d;
+					TUMBLER_IDLE = 0.7d;
+					TUMBLER_BACKDROP = 0.25d;
+					TUMBLER_SPIKE_MARK = 0d;
 					LIFT_LEVELS = new int[] {-10, 50, 250, 500, 750, 1000};
 					LIFT_SUSPENDER_IDLE = 0;
-					LIFT_SUSPEND_LEVEL = 960;
-					CLAW_IDLE = 0.35d;
-					CLAW_BUSY = 1d;
+					LIFT_SUSPEND_LEVEL = 1300;
+					CLAW_IDLE = 1d;
+					CLAW_BUSY = 0.75d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.5d;
@@ -134,10 +134,10 @@ public class Constants
 		}
 	}
 
-	public static int getTumblerLoad() { return parameters.TUMBLER_LOAD; }
-	public static int getTumblerIdle() { return parameters.TUMBLER_IDLE; }
-	public static int getTumblerBackdrop() { return parameters.TUMBLER_BACKDROP; }
-	public static int getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
+	public static double getTumblerLoad() { return parameters.TUMBLER_LOAD; }
+	public static double getTumblerIdle() { return parameters.TUMBLER_IDLE; }
+	public static double getTumblerBackdrop() { return parameters.TUMBLER_BACKDROP; }
+	public static double getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
 	public static int[] getLiftLevels() {	return parameters.LIFT_LEVELS;	}
 	public static int getLiftSuspenderIdle() { return parameters.LIFT_SUSPENDER_IDLE; }
 	public static int getLiftSuspendLevel() { return parameters.LIFT_SUSPEND_LEVEL; }

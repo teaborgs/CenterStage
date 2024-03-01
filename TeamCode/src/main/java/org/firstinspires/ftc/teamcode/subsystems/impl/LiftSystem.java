@@ -32,6 +32,7 @@ public final class LiftSystem extends SystemEx
 		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motor1.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
