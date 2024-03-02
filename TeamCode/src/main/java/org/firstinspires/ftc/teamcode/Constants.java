@@ -16,7 +16,6 @@ public class Constants
 		public double TUMBLER_BACKDROP = 0;
 		public double TUMBLER_SPIKE_MARK = 0;
 		public int[] LIFT_LEVELS = new int[]{};
-		public int LIFT_SUSPENDER_IDLE = 0;
 		public int LIFT_SUSPEND_LEVEL = 0;
 		public double CLAW_IDLE = 0;
 		public double CLAW_BUSY = 0;
@@ -44,8 +43,7 @@ public class Constants
 					TUMBLER_IDLE = 0.7d;
 					TUMBLER_BACKDROP = 0.25d;
 					TUMBLER_SPIKE_MARK = 0d;
-					LIFT_LEVELS = new int[] {-10, 50, 250, 500, 750, 1000};
-					LIFT_SUSPENDER_IDLE = 0;
+					LIFT_LEVELS = new int[] {-10, 100, 500, 1000, 1500, 2000}; // test
 					LIFT_SUSPEND_LEVEL = 1300;
 					CLAW_IDLE = 1d;
 					CLAW_BUSY = 0.75d;
@@ -139,7 +137,6 @@ public class Constants
 	public static double getTumblerBackdrop() { return parameters.TUMBLER_BACKDROP; }
 	public static double getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
 	public static int[] getLiftLevels() {	return parameters.LIFT_LEVELS;	}
-	public static int getLiftSuspenderIdle() { return parameters.LIFT_SUSPENDER_IDLE; }
 	public static int getLiftSuspendLevel() { return parameters.LIFT_SUSPEND_LEVEL; }
 	public static double getClawIdle() { return parameters.CLAW_IDLE; }
 	public static double getClawBusy() { return parameters.CLAW_BUSY; }

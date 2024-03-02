@@ -89,20 +89,20 @@ public final class LiftSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout(() -> {
+		Utilities.setTimeout((int) (delay * 1000), () -> {
 			motor1.setTargetPosition((int) position);
 			motor2.setTargetPosition((int) position);
-		}, (int) (delay * 1000));
+		});
 	}
 
 	public void SetPower(double power, double delay)
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout(() -> {
+		Utilities.setTimeout((int) (delay * 1000), () -> {
 			motor1.setPower(power);
 			motor2.setPower(power);
-		}, (int) (delay * 1000));
+		});
 	}
 
 	public void SetTargetPosition(double position)

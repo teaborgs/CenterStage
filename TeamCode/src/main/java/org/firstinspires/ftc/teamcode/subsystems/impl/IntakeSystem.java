@@ -115,14 +115,14 @@ public final class IntakeSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout(() -> servo.setPosition(position), (int) (delay * 1000));
+		Utilities.setTimeout((int) (delay * 1000), () -> servo.setPosition(position));
 	}
 
 	public void SetIntakePower(double power, double delay)
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout(() -> motor.setPower(power), (int) (delay * 1000));
+		Utilities.setTimeout((int) (delay * 1000), () -> motor.setPower(power));
 	}
 
 	public void SetAntennaPosition(double position)

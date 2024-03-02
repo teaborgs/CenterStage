@@ -57,16 +57,16 @@ public class DroneSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		setTimeout(() -> {
+		setTimeout((int) (delay * 1000), () -> {
 			leveler.setPosition(Constants.getPlaneLevelerBusy());
-			setTimeout(() -> {
+			setTimeout(300, () -> {
 				shooter.setPosition(Constants.getPlaneShooterBusy());
-				setTimeout(() -> {
+				setTimeout(200, () -> {
 					leveler.setPosition(Constants.getPlaneLevelerIdle());
 					shooter.setPosition(Constants.getPlaneShooterIdle());
-				}, 200);
-			}, 300);
-		}, (int) (delay * 1000));
+				});
+			});
+		});
 	}
 
 	public void LaunchDrone()

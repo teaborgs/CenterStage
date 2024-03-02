@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class Utilities
 {
-	public static void setTimeout(Runnable runnable, int delay)
+	public static void setTimeout(int delay, Runnable runnable)
 	{
 		new Thread(() -> {
 			try {

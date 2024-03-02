@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
@@ -61,7 +60,7 @@ public final class TumblerSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout(() -> servo.setPosition(position), (int) (delay * 1000));
+		Utilities.setTimeout((int) (delay * 1000), () -> servo.setPosition(position));
 	}
 
 	public void SetPosition(double position)

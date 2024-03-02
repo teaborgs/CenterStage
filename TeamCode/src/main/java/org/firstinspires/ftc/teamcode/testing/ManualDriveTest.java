@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.testing;
 
-import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
-
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
@@ -18,32 +15,6 @@ import org.firstinspires.ftc.teamcode.Utilities;
 @TeleOp(name = "Manual Drive Test", group = "Testing")
 public final class ManualDriveTest extends BaseOpMode
 {
-	/**
-	 * === Configuration ===
-	 * Control Hub:
-	 * > Servos:
-	 * slot0 - locker (locker)
-	 * slot1 - plane release (shooter)
-	 * slot2 - plane level (leveler)
-	 * > Motors:
-	 * slot0 - left-front wheel (leftFront)
-	 * slot1 - left-back wheel (leftBack)
-	 * slot2 - right-back wheel (rightBack)
-	 * slot3 - right-front wheel (rightFront)
-	 * slot0 - left odometry
-	 * slot1 - right odometry
-	 * slot2 - back odometry
-	 * Expansion Hub:
-	 * > Servos:
-	 * slot0 - rotator (rotator)
-	 * slot1 - claw (claw)
-	 * > Motors:
-	 * slot0 - intake (intake)
-	 * slot1 - lift1 (lift1)
-	 * slot2 - lift2 (lift2)
-	 * slot3 - tumbler (tumbler)
-	 */
-
 	private RobotHardware robotHardware;
 	private InputSystem wheelInput, armInput;
 
@@ -61,8 +32,9 @@ public final class ManualDriveTest extends BaseOpMode
 
 		private static final class Arm
 		{
-			private static final InputSystem.Key CLAW_KEY = new InputSystem.Key("a");
-			private static final InputSystem.Key ROTATOR_KEY = new InputSystem.Key("b");
+			private static final InputSystem.Key CLAW1_KEY = new InputSystem.Key("a");
+			private static final InputSystem.Key CLAW2_KEY = new InputSystem.Key("b");
+			private static final InputSystem.Key ROTATOR_KEY = new InputSystem.Key("x");
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Axis("left_trigger"), new InputSystem.Axis("right_trigger"));
 			private static final InputSystem.Key TUMBLER_LOAD_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key TUMBLER_BACKDROP_KEY = new InputSystem.Key("dpad_up");
@@ -131,13 +103,17 @@ public final class ManualDriveTest extends BaseOpMode
 			robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
 	}
 
-	private Utilities.State clawState = Utilities.State.BUSY;
-
+	private Utilities.State claw1State = Utilities.State.IDLE;
+	private Utilities.State claw2State = Utilities.State.IDLE;
 	private void Claw()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW_KEY))
-			clawState = clawState == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.clawSystem1.SetPosition(clawState == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
+		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW1_KEY))
+			claw1State = claw1State == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
+		robotHardware.clawSystem1.SetPosition(claw1State == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
+
+		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW2_KEY))
+			claw2State = claw2State == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
+		robotHardware.clawSystem2.SetPosition(claw2State == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
 	}
 
 	private Utilities.State rotatorState = Utilities.State.BUSY;
