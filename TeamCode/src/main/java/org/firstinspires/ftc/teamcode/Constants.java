@@ -43,7 +43,7 @@ public class Constants
 					TUMBLER_IDLE = 0.7d;
 					TUMBLER_BACKDROP = 0.25d;
 					TUMBLER_SPIKE_MARK = 0d;
-					LIFT_LEVELS = new int[] {-10, 100, 500, 1000, 1500, 2000}; // test
+					LIFT_LEVELS = new int[] { -10, 80, 340, 670, 915, 1270 };
 					LIFT_SUSPEND_LEVEL = 1300;
 					CLAW_IDLE = 1d;
 					CLAW_BUSY = 0.75d;
@@ -53,7 +53,7 @@ public class Constants
 					PLANE_LEVELER_BUSY = 0.73d;
 					PLANE_SHOOTER_IDLE = 0.5d;
 					PLANE_SHOOTER_BUSY = 0.3d;
-					INTAKE_MAX_POWER = 0.8d;
+					INTAKE_MAX_POWER = 1d;
 					LIFT_NORMAL_POWER = 1.0d;
 					LIFT_SUSPEND_POWER = 1.0d;
 					BACKDROP_DISTANCE = 8.0d;

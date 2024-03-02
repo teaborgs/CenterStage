@@ -58,7 +58,7 @@ public final class AlexTeleOp extends BaseOpMode
 		}
 	}
 
-	private MediaRecorderPipeline mediaRecorderPipeline;
+	//private MediaRecorderPipeline mediaRecorderPipeline;
 
 	@Override
 	protected void OnInitialize()
@@ -67,9 +67,9 @@ public final class AlexTeleOp extends BaseOpMode
 		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
 
-		mediaRecorderPipeline = new MediaRecorderPipeline(MakeVideoFile("alex"));
-		robotHardware.camera.setPipeline(mediaRecorderPipeline);
-		robotHardware.openCameraAsync();
+	//	mediaRecorderPipeline = new MediaRecorderPipeline(MakeVideoFile("alex"));
+	//	robotHardware.camera.setPipeline(mediaRecorderPipeline);
+	//	robotHardware.openCameraAsync();
 
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
@@ -321,12 +321,12 @@ public final class AlexTeleOp extends BaseOpMode
 	@Override
 	protected void OnStart()
 	{
-		mediaRecorderPipeline.startRecording();
+	//	mediaRecorderPipeline.startRecording();
 	}
 
 	@Override
 	protected void OnStop()
 	{
-		mediaRecorderPipeline.stopRecording();
+	//	mediaRecorderPipeline.stopRecording();
 	}
 }

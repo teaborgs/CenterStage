@@ -229,7 +229,7 @@ public class AutoBoss extends BaseOpMode
 				// Take 2 pixels
 				WaitForMovementStop(robotHardware),
 				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.4),
-				robotHardware.intakeSystem.RunIntakeFor(0.1),
+				robotHardware.intakeSystem.RunIntakeFor(0.25),
 				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.5),
 
 				// Drive to intermediate backdrop position
@@ -239,18 +239,18 @@ public class AutoBoss extends BaseOpMode
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
 								.splineToConstantHeading(new Vector2d(backdropPose.position.x, backdropPose.position.y - offset1), backdropPose.heading.toDouble())
 								.build(),
-						robotHardware.intakeSystem.RunIntakeFor(0.5),
+						robotHardware.intakeSystem.RunIntakeFor(1),
 						RunSequentially(
-								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-								robotHardware.clawSystem1.MoveToPosition(Constants.getClawBusy()),
-								robotHardware.clawSystem2.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.AFTER)
+								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1),
+								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.BEFORE),
+								robotHardware.clawSystem2.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER)
 						)
 				),
 
 				// Drive to backdrop
 				RunInParallel(
 						backdropApproach,
-						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[2]),
+						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[3]),
 						robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.2)
 				),
@@ -374,8 +374,8 @@ public class AutoBoss extends BaseOpMode
 
 		Actions.runBlocking(RunSequentially(
 				// Get claws to position
-				robotHardware.clawSystem1.MoveToPosition(Constants.getClawBusy()),
-				robotHardware.clawSystem2.MoveToPosition(Constants.getClawIdle()),
+				robotHardware.clawSystem1.MoveToPosition(Constants.getClawIdle()),
+				robotHardware.clawSystem2.MoveToPosition(Constants.getClawBusy()),
 
 				// Wait the delay
 				WaitFor(delay),
@@ -390,7 +390,7 @@ public class AutoBoss extends BaseOpMode
 						robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.25),
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5)
 				),
-				robotHardware.clawSystem1.MoveToPosition(Constants.getClawIdle()),
+				robotHardware.clawSystem2.MoveToPosition(Constants.getClawIdle()),
 
 				// Take one pixel from stack
 				initialStackApproach,
@@ -470,7 +470,7 @@ public class AutoBoss extends BaseOpMode
 				// Take 2 pixels
 				WaitForMovementStop(robotHardware),
 				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.4),
-				robotHardware.intakeSystem.RunIntakeFor(0.2),
+				robotHardware.intakeSystem.RunIntakeFor(0.25),
 				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.5),
 
 				// Drive to intermediate backdrop position
@@ -480,20 +480,19 @@ public class AutoBoss extends BaseOpMode
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
 								.splineToConstantHeading(new Vector2d(backdropPose.position.x, backdropPose.position.y - safeDistance), backdropPose.heading.toDouble())
 								.build(),
-						robotHardware.intakeSystem.RunIntakeFor(0.5),
+						robotHardware.intakeSystem.RunIntakeFor(1),
 						RunSequentially(
-								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-								RunInParallel(
-										robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER),
-										robotHardware.clawSystem2.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER)
-								)
+								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1),
+								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.BEFORE),
+								robotHardware.clawSystem2.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER)
+
 						)
 				),
 
 				// Drive to backdrop
 				RunInParallel(
 						backdropApproach,
-						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[2]),
+						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[3]),
 						robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.2)
 				),
