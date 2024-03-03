@@ -239,10 +239,10 @@ public class AutoBoss extends BaseOpMode
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
 								.splineToConstantHeading(new Vector2d(backdropPose.position.x, backdropPose.position.y - offset1), backdropPose.heading.toDouble())
 								.build(),
-						robotHardware.intakeSystem.RunIntakeFor(1),
+						robotHardware.intakeSystem.RunIntakeFor(1.25),
 						RunSequentially(
-								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1),
-								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.BEFORE),
+								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1.25),
+								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.BEFORE),
 								robotHardware.clawSystem2.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER)
 						)
 				),
@@ -433,15 +433,11 @@ public class AutoBoss extends BaseOpMode
 						),
 						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[3] / 5d * 3)
 				),
+				WaitForMovementStop(robotHardware),
 
 				// Place yellow
-				RunInParallel(
-						RunSequentially(
-								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2, Utilities.DelayDirection.BOTH),
-								robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerIdle())
-						),
-						robotHardware.intakeSystem.RunIntakeFor(1)
-				)
+				robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawIdle(), 0.2, Utilities.DelayDirection.AFTER),
+				robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerIdle())
 		));
 		robotHardware.mecanumDrive.updatePoseEstimate();
 		Actions.runBlocking(RunSequentially(
@@ -480,10 +476,10 @@ public class AutoBoss extends BaseOpMode
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
 								.splineToConstantHeading(new Vector2d(backdropPose.position.x, backdropPose.position.y - safeDistance), backdropPose.heading.toDouble())
 								.build(),
-						robotHardware.intakeSystem.RunIntakeFor(1),
+						robotHardware.intakeSystem.RunIntakeFor(1.25),
 						RunSequentially(
-								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1),
-								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.BEFORE),
+								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1.25),
+								robotHardware.clawSystem1.MoveToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.BEFORE),
 								robotHardware.clawSystem2.MoveToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER)
 
 						)
