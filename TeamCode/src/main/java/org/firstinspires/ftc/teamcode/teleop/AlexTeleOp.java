@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.Utilities.MakeVideoFile;
 import static org.firstinspires.ftc.teamcode.Utilities.setTimeout;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -17,7 +16,6 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
-import org.firstinspires.ftc.teamcode.opencv.MediaRecorderPipeline;
 
 import java.util.concurrent.TimeUnit;
 
@@ -58,8 +56,6 @@ public final class AlexTeleOp extends BaseOpMode
 		}
 	}
 
-	//private MediaRecorderPipeline mediaRecorderPipeline;
-
 	@Override
 	protected void OnInitialize()
 	{
@@ -67,22 +63,13 @@ public final class AlexTeleOp extends BaseOpMode
 		Constants.Init();
 		robotHardware = new RobotHardware(hardwareMap);
 
-	//	mediaRecorderPipeline = new MediaRecorderPipeline(MakeVideoFile("alex"));
-	//	robotHardware.camera.setPipeline(mediaRecorderPipeline);
-	//	robotHardware.openCameraAsync();
-
 		wheelInput = new InputSystem(gamepad1);
 		armInput = new InputSystem(gamepad2);
-
-		robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
 	}
 
-	ElapsedTime loopTimer = new ElapsedTime();
-	double loopTimeMs = 0;
 	@Override
 	protected void OnRun()
 	{
-		loopTimer.reset();
 		Telemetry();
 		UpdateMotorPowers();
 		Suspender();
@@ -94,7 +81,6 @@ public final class AlexTeleOp extends BaseOpMode
 		Lift();
 		Arm();
 		Drone();
-		loopTimeMs = loopTimer.milliseconds();
 	}
 
 
@@ -156,74 +142,72 @@ public final class AlexTeleOp extends BaseOpMode
 	}
 
 	private Utilities.State armState = Utilities.State.IDLE;
-	private volatile boolean armMoving = false;
+	private volatile boolean armInTask = false;
 	private volatile boolean droppedFirstPixel = false;
 	private void Arm()
 	{
-		if (!armMoving && armInput.wasPressedThisFrame(Bindings.Arm.RESET_ARM)) // go back to IDLE phase
+		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.RESET_ARM)) // go back to IDLE phase
 		{
 			droppedFirstPixel = false;
-			armMoving = true;
-			robotHardware.clawSystem1.SetPosition(Constants.getClawIdle());
-			robotHardware.clawSystem2.SetPosition(Constants.getClawIdle());
-			setTimeout(200, () -> {
+			armInTask = true;
+			robotHardware.clawSystem.OpenClaws();
+			setTimeout(() -> {
 				robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
-				setTimeout(500, () -> {
+				setTimeout(() -> {
 					robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
 					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[0]);
 					armState = Utilities.State.IDLE;
-					armMoving = false;
-				});
-			});
+					armInTask = false;
+				}, 500);
+			}, 200);
 			return;
 		}
 
-		if (armMoving || !armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) return;
-		armMoving = true;
+		if (armInTask || !armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) return;
+		armInTask = true;
 		if (armState == Utilities.State.BUSY)
 		{
 			if (!droppedFirstPixel) // drop first pixel and allow it to retract
 			{
 				droppedFirstPixel = true;
-				robotHardware.clawSystem1.SetPosition(Constants.getClawIdle());
-				setTimeout(200, () -> {
+				robotHardware.clawSystem.OpenFirstClaw();
+				setTimeout(() -> {
 					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
-					setTimeout(200, () -> {
+					setTimeout(() -> {
 						robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
-						armMoving = false;
-					});
-				});
+						armInTask = false;
+					}, 200);
+				}, 200);
 			}
 			else // Drop second pixel and return to idle phase
 			{
 				droppedFirstPixel = false;
-				robotHardware.clawSystem2.SetPosition(Constants.getClawIdle());
-				setTimeout(200, () -> {
+				robotHardware.clawSystem.OpenSecondClaw();
+				setTimeout(() -> {
 					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
-					setTimeout(200, () -> {
+					setTimeout(() -> {
 						robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
 						robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[0]);
 						armState = Utilities.State.IDLE;
-						armMoving = false;
-					});
-				});
+						armInTask = false;
+					}, 200);
+				}, 200);
 			}
 		} else { // pick up pixels and extend to backdrop
 			robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
 			robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
-			setTimeout(400, () -> {
-				robotHardware.clawSystem1.SetPosition(Constants.getClawBusy());
-				robotHardware.clawSystem2.SetPosition(Constants.getClawBusy());
-				setTimeout(300, () -> {
+			setTimeout(() -> {
+				robotHardware.clawSystem.CloseClaws();
+				setTimeout(() -> {
 					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
 					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
-					setTimeout(200, () -> {
+					setTimeout(() -> {
 						robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy());
 						armState = Utilities.State.BUSY;
-						armMoving = false;
-					});
-				});
-			});
+						armInTask = false;
+					}, 200);
+				}, 300);
+			}, 400);
 		}
 	}
 
@@ -258,10 +242,10 @@ public final class AlexTeleOp extends BaseOpMode
 			} else if (suspendedTime.seconds() > 5) {
 				robotHardware.liftSystem.SetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 				robotHardware.liftSystem.SetPower(0.5);
-				setTimeout(1, () -> {
+				setTimeout(() -> {
 					robotHardware.liftSystem.SetPower(0);
 					robotHardware.liftSystem.Init();
-				});
+				}, 1);
 			}
 		}
 	}
@@ -301,14 +285,14 @@ public final class AlexTeleOp extends BaseOpMode
 
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();
-			telemetry.addData("[DEBUG] Loop Time", loopTimeMs);
+			telemetry.addData("[DEBUG] Loop Time", getLoopTime());
 			telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
 			telemetry.addData("[DEBUG] Lift Target", robotHardware.liftSystem.GetTargetPosition());
 			telemetry.addData("[DEBUG] Lift Power", robotHardware.liftSystem.GetPower());
 			telemetry.addData("[DEBUG] Tumbler Position", robotHardware.tumblerSystem.GetCurrentPosition());
 			telemetry.addData("[DEBUG] Rotator", robotHardware.rotatorSystem.GetCurrentPosition());
-			telemetry.addData("[DEBUG] Claw 1", robotHardware.clawSystem1.GetCurrentPosition());
-			telemetry.addData("[DEBUG] Claw 2", robotHardware.clawSystem2.GetCurrentPosition());
+			telemetry.addData("[DEBUG] Claw 1", robotHardware.clawSystem.GetFirstClawPosition());
+			telemetry.addData("[DEBUG] Claw 2", robotHardware.clawSystem.GetSecondClawPosition());
 			telemetry.addData("[DEBUG] Last Antenna Press", antennaPress.seconds());
 			telemetry.addData("[DEBUG] Antenna", robotHardware.intakeSystem.GetAntennaPosition());
 			telemetry.addData("[DEBUG] Drone Level", robotHardware.droneSystem.GetLevelerPosition());
@@ -316,17 +300,5 @@ public final class AlexTeleOp extends BaseOpMode
 			telemetry.addData("[DEBUG] Distance Sensor: ", robotHardware.distanceSensor.getDistance(DistanceUnit.CM));
 		}
 		telemetry.update();
-	}
-
-	@Override
-	protected void OnStart()
-	{
-	//	mediaRecorderPipeline.startRecording();
-	}
-
-	@Override
-	protected void OnStop()
-	{
-	//	mediaRecorderPipeline.stopRecording();
 	}
 }

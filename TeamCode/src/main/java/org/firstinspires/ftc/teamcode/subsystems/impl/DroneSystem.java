@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
-public class DroneSystem extends SystemEx
+public final class DroneSystem extends SystemEx
 {
 	private final Servo leveler, shooter;
 
@@ -57,16 +57,16 @@ public class DroneSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		setTimeout((int) (delay * 1000), () -> {
+		setTimeout(() -> {
 			leveler.setPosition(Constants.getPlaneLevelerBusy());
-			setTimeout(300, () -> {
+			setTimeout(() -> {
 				shooter.setPosition(Constants.getPlaneShooterBusy());
-				setTimeout(200, () -> {
+				setTimeout(() -> {
 					leveler.setPosition(Constants.getPlaneLevelerIdle());
 					shooter.setPosition(Constants.getPlaneShooterIdle());
-				});
-			});
-		});
+				}, 200);
+			}, 300);
+		}, (int) (delay * 1000));
 	}
 
 	public void LaunchDrone()

@@ -105,15 +105,21 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private Utilities.State claw1State = Utilities.State.IDLE;
 	private Utilities.State claw2State = Utilities.State.IDLE;
+
 	private void Claw()
 	{
 		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW1_KEY))
 			claw1State = claw1State == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.clawSystem1.SetPosition(claw1State == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
-
+		if (claw1State == Utilities.State.BUSY)
+			robotHardware.clawSystem.OpenFirstClaw();
+		else
+			robotHardware.clawSystem.CloseFirstClaw();
 		if (armInput.wasPressedThisFrame(Bindings.Arm.CLAW2_KEY))
 			claw2State = claw2State == Utilities.State.IDLE ? Utilities.State.BUSY : Utilities.State.IDLE;
-		robotHardware.clawSystem2.SetPosition(claw2State == Utilities.State.IDLE ? Constants.getClawIdle() : Constants.getClawBusy());
+		if (claw2State == Utilities.State.BUSY)
+			robotHardware.clawSystem.OpenSecondClaw();
+		else
+			robotHardware.clawSystem.CloseSecondClaw();
 	}
 
 	private Utilities.State rotatorState = Utilities.State.BUSY;
@@ -129,8 +135,7 @@ public final class ManualDriveTest extends BaseOpMode
 
 	private void Plane()
 	{
-		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched)
-		{
+		if (armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) && !planeLaunched) {
 			planeLaunched = true;
 			robotHardware.droneSystem.LaunchDrone();
 		}

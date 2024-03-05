@@ -26,8 +26,7 @@ public class RobotHardware
 
 	public final DroneSystem droneSystem;
 	public final IntakeSystem intakeSystem;
-	public final ClawSystem clawSystem1;
-	public final ClawSystem clawSystem2;
+	public final ClawSystem clawSystem;
 	public final RotatorSystem rotatorSystem;
 	public final TumblerSystem tumblerSystem;
 	public final LiftSystem liftSystem;
@@ -46,8 +45,7 @@ public class RobotHardware
 
 		droneSystem = new DroneSystem(hardwareMap.get(Servo.class, "leveler"), hardwareMap.get(Servo.class, "shooter"));
 		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "intake"), hardwareMap.get(Servo.class, "antenna"));
-		clawSystem1 = new ClawSystem(hardwareMap.get(Servo.class, "claw1"));
-		clawSystem2 = new ClawSystem(hardwareMap.get(Servo.class, "claw2"));
+		clawSystem = new ClawSystem(hardwareMap.get(Servo.class, "claw1"), hardwareMap.get(Servo.class, "claw2"));
 		rotatorSystem = new RotatorSystem(hardwareMap.get(Servo.class, "rotator"));
 		tumblerSystem = new TumblerSystem(hardwareMap.get(Servo.class, "tumbler"));
 		liftSystem = new LiftSystem(hardwareMap.get(DcMotorEx.class, "lift1"), hardwareMap.get(DcMotorEx.class, "lift2"));
@@ -63,8 +61,7 @@ public class RobotHardware
 		{
 			droneSystem.Setup();
 			intakeSystem.Setup();
-			clawSystem1.Setup();
-			clawSystem2.Setup();
+			clawSystem.Setup();
 			rotatorSystem.Setup();
 			tumblerSystem.Setup();
 			liftSystem.Setup();
@@ -73,8 +70,7 @@ public class RobotHardware
 
 		droneSystem.Init();
 		intakeSystem.Init();
-		clawSystem1.Init();
-		clawSystem2.Init();
+		clawSystem.Init();
 		rotatorSystem.Init();
 		tumblerSystem.Init();
 		liftSystem.Init();

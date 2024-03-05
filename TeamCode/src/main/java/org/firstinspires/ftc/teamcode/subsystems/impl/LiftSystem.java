@@ -30,8 +30,7 @@ public final class LiftSystem extends SystemEx
 	{
 		motor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 		motor1.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
 		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -42,12 +41,14 @@ public final class LiftSystem extends SystemEx
 	public void Init()
 	{
 		this.Setup();
+		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
+		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
 		motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
-		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
 		internal_Initialized = true;
 	}
 
@@ -89,20 +90,20 @@ public final class LiftSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout((int) (delay * 1000), () -> {
+		Utilities.setTimeout(() -> {
 			motor1.setTargetPosition((int) position);
 			motor2.setTargetPosition((int) position);
-		});
+		}, (int) (delay * 1000));
 	}
 
 	public void SetPower(double power, double delay)
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout((int) (delay * 1000), () -> {
+		Utilities.setTimeout(() -> {
 			motor1.setPower(power);
 			motor2.setPower(power);
-		});
+		}, (int) (delay * 1000));
 	}
 
 	public void SetTargetPosition(double position)

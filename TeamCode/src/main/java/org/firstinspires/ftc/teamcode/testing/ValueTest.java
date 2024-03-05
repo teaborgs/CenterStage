@@ -20,12 +20,7 @@ public class ValueTest extends BaseOpMode
 	{
 		Globals.ValidateConfig(hardwareMap, telemetry, gamepad1, gamepad2);
 		Constants.Init();
-		robotHardware = new RobotHardware(hardwareMap);
-
-		robotHardware.clawSystem1.SetPosition(Constants.getClawBusy());
-		robotHardware.clawSystem2.SetPosition(Constants.getClawBusy());
-		robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy(), 1.2);
-		robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop(), 1);
+		robotHardware = new RobotHardware(hardwareMap, true);
 	}
 
 	@Override
@@ -35,6 +30,13 @@ public class ValueTest extends BaseOpMode
 		telemetry.addData("[DEBUG] Robot Y", robotHardware.mecanumDrive.pose.position.y);
 		telemetry.addData("[DEBUG] Robot Heading", robotHardware.mecanumDrive.pose.heading.toDouble());
 		telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
+		telemetry.addData("[DEBUG] Claw 1 Position", robotHardware.clawSystem.GetFirstClawPosition());
+		telemetry.addData("[DEBUG] Claw 2 Position", robotHardware.clawSystem.GetSecondClawPosition());
+		telemetry.addData("[DEBUG] Tumbler Position", robotHardware.tumblerSystem.GetCurrentPosition());
+		telemetry.addData("[DEBUG] Rotator", robotHardware.rotatorSystem.GetCurrentPosition());
+		telemetry.addData("[DEBUG] Antenna", robotHardware.intakeSystem.GetAntennaPosition());
+		telemetry.addData("[DEBUG] Plane Level", robotHardware.droneSystem.GetLevelerPosition());
+		telemetry.addData("[DEBUG] Plane Release", robotHardware.droneSystem.GetShooterPosition());
 		telemetry.update();
 	}
 }

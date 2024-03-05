@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.testing;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.InputSystem;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
-@TeleOp(name = "Field Centric Drive", group = "! TeleOp")
-public class FieldCentricDrive extends BaseOpMode
+@TeleOp(name = "Field Centric Drive", group = "Testing")
+public class FieldCentricTest extends BaseOpMode
 {
 	private RobotHardware robotHardware;
 	private InputSystem wheelInput;

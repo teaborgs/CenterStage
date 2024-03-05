@@ -33,7 +33,6 @@ public class Constants
 		public double ANTENNA_GUIDE = 0;
 		public double ANTENNA_GRAB = 0;
 		public double ANTENNA_RUN_TIME = 0;
-		public double TUMBLER_MAX_CURRENT = 0;
 
 		public Container() {
 			switch (Globals.GetCurrentRobotType())
@@ -61,7 +60,6 @@ public class Constants
 					ANTENNA_GUIDE = 0.3d;
 					ANTENNA_GRAB = 0d;
 					ANTENNA_RUN_TIME = 0.4d;
-					TUMBLER_MAX_CURRENT = 2500.0d;
 					break;
 				case ROBOT_2:
 					throw new RuntimeException("Invalid robot type! (2)");
@@ -154,5 +152,4 @@ public class Constants
 	public static double getAntennaGuide() { return parameters.ANTENNA_GUIDE; }
 	public static double getAntennaGrab() { return parameters.ANTENNA_GRAB; }
 	public static double getAntennaRunTime() { return parameters.ANTENNA_RUN_TIME; }
-	public static double getTumblerMaxCurrent() { return parameters.TUMBLER_MAX_CURRENT; }
 }

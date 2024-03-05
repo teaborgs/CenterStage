@@ -63,7 +63,7 @@ public final class RotatorSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout((int) (delay * 1000), () -> servo.setPosition(position));
+		Utilities.setTimeout(() -> servo.setPosition(position), (int) (delay * 1000));
 	}
 
 	public void SetPosition(double position)

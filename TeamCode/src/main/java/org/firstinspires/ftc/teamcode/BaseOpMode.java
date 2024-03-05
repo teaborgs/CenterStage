@@ -11,6 +11,8 @@ public abstract class BaseOpMode extends LinearOpMode
 
 	private ElapsedTime internal_ElapsedTimeSinceInit;
 	private ElapsedTime internal_ElapsedTimeSinceStart;
+	private final ElapsedTime internal_LoopTime = new ElapsedTime();
+	private double internal_LoopTimeMs = 0;
 
 	@Override
 	public void runOpMode()
@@ -32,7 +34,9 @@ public abstract class BaseOpMode extends LinearOpMode
 		internal_ElapsedTimeSinceStart = new ElapsedTime();
 		OnStart();
 		while (!isStopRequested()) {
+			internal_LoopTime.reset();
 			OnRun();
+			internal_LoopTimeMs = internal_LoopTime.milliseconds();
 			if(internal_IsAutonomous) break;
 		}
 		OnStop();
@@ -74,5 +78,10 @@ public abstract class BaseOpMode extends LinearOpMode
 	{
 		if(internal_ElapsedTimeSinceStart == null) return -1;
 		return internal_ElapsedTimeSinceStart.seconds();
+	}
+
+	protected double getLoopTime()
+	{
+		return internal_LoopTimeMs;
 	}
 }

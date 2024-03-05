@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems.impl;
 
+import static org.firstinspires.ftc.teamcode.Utilities.CutPower;
+import static org.firstinspires.ftc.teamcode.Utilities.RestorePower;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
 
@@ -15,9 +19,9 @@ public final class TumblerSystem extends SystemEx
 {
 	private final Servo servo;
 
-	public TumblerSystem(Servo s)
+	public TumblerSystem(Servo servo)
 	{
-		this.servo = s;
+		this.servo = servo;
 	}
 
 	@Override
@@ -29,19 +33,20 @@ public final class TumblerSystem extends SystemEx
 	public void Init()
 	{
 		this.Setup();
+		servo.setPosition(Constants.getTumblerIdle());
 		internal_Initialized = true;
 	}
 
 	@Override
 	public void Disable()
 	{
-		servo.getController().pwmDisable();
+		CutPower(servo);
 	}
 
 	@Override
 	public void Enable()
 	{
-		servo.getController().pwmEnable();
+		RestorePower(servo);
 	}
 
 	@Override
@@ -60,7 +65,7 @@ public final class TumblerSystem extends SystemEx
 	{
 		if (!internal_Enabled || !internal_Initialized)
 			throw new IllegalStateException("System is disabled or not initialized");
-		Utilities.setTimeout((int) (delay * 1000), () -> servo.setPosition(position));
+		Utilities.setTimeout(() -> servo.setPosition(position), (int) (delay * 1000));
 	}
 
 	public void SetPosition(double position)
@@ -71,11 +76,6 @@ public final class TumblerSystem extends SystemEx
 	public double GetCurrentPosition()
 	{
 		// TODO: read axon 4th pin
-		throw new NotImplementedError();
-	}
-
-	public double GetTargetPosition()
-	{
 		return servo.getPosition();
 	}
 }
