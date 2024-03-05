@@ -44,8 +44,8 @@ public class Constants
 					TUMBLER_SPIKE_MARK = 0d;
 					LIFT_LEVELS = new int[] { -10, 80, 340, 670, 915, 1270 };
 					LIFT_SUSPEND_LEVEL = 1300;
-					CLAW_IDLE = 1d;
-					CLAW_BUSY = 0.75d;
+					CLAW_IDLE = 0.92d;
+					CLAW_BUSY = 0.70d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.5d;

@@ -173,7 +173,7 @@ public final class RazvanTeleOp extends BaseOpMode
 				droppedFirstPixel = true;
 				robotHardware.clawSystem.OpenFirstClaw();
 				setTimeout(() -> {
-					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
+					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle() / 2);
 					setTimeout(() -> {
 						robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
 						armInTask = false;
