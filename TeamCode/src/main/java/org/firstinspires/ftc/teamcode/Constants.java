@@ -52,7 +52,7 @@ public class Constants
 					PLANE_LEVELER_BUSY = 0.73d;
 					PLANE_SHOOTER_IDLE = 0.5d;
 					PLANE_SHOOTER_BUSY = 0.3d;
-					INTAKE_MAX_POWER = 1d;
+					INTAKE_MAX_POWER = 0.8d;
 					LIFT_NORMAL_POWER = 1.0d;
 					LIFT_SUSPEND_POWER = 1.0d;
 					BACKDROP_DISTANCE = 8.0d;
