@@ -177,7 +177,7 @@ public final class AlexTeleOp extends BaseOpMode
 						robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
 						armInTask = false;
 					}, 200);
-				}, 200);
+				}, 400);
 			}
 			else // Drop second pixel and return to idle phase
 			{
@@ -191,7 +191,7 @@ public final class AlexTeleOp extends BaseOpMode
 						armState = Utilities.State.IDLE;
 						armInTask = false;
 					}, 200);
-				}, 200);
+				}, 400);
 			}
 		} else { // pick up pixels and extend to backdrop
 			robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());

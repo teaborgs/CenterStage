@@ -316,23 +316,23 @@ public final class AutoBoss extends BaseOpMode
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), -centimetersToInches(30), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), -centimetersToInches(58), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), centimetersToInches(140), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(126), -centimetersToInches(58), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), 0, Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(58), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), centimetersToInches(140), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(126), -centimetersToInches(58), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), -centimetersToInches(54), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(58), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), centimetersToInches(140), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(87), centimetersToInches(223), Math.PI / 2);
-				stackPose = new Pose2d(centimetersToInches(126), -centimetersToInches(58), Math.PI / 2);
+				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(65), centimetersToInches(223), Math.PI / 2);
 			}
 		}
