@@ -46,8 +46,9 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Key("left_bumper"), new InputSystem.Key("right_bumper"));
 			private static final InputSystem.Key SUSPENDER_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key SUSPENDER_CANCEL_KEY = new InputSystem.Key("y");
+			private static final InputSystem.Key PRESS_ARM_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key ARM_KEY = new InputSystem.Key("a");
-			private static final InputSystem.Key RESET_ARM = new InputSystem.Key("b");
+			private static final InputSystem.Key RELEASE_ARM_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key LEVEL_1_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key LEVEL_2_KEY = new InputSystem.Key("dpad_up");
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
@@ -112,6 +113,7 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private final ElapsedTime antennaPress = new ElapsedTime();
 	private Utilities.State antennaState = Utilities.State.IDLE;
+
 	private void Antenna()
 	{
 		if (wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaState == Utilities.State.IDLE) {
@@ -129,6 +131,7 @@ public final class AlexTeleOp extends BaseOpMode
 
 	// ====================== Arm =========================
 	private short liftLevel = 1;
+
 	private void Lift()
 	{
 		int initialLevel = liftLevel;
@@ -144,9 +147,11 @@ public final class AlexTeleOp extends BaseOpMode
 	private Utilities.State armState = Utilities.State.IDLE;
 	private volatile boolean armInTask = false;
 	private volatile boolean droppedFirstPixel = false;
+	private volatile boolean armPressing = false;
+
 	private void Arm()
 	{
-		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.RESET_ARM)) // go back to IDLE phase
+		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.RELEASE_ARM_KEY)) // go back to IDLE phase
 		{
 			droppedFirstPixel = false;
 			armInTask = true;
@@ -163,10 +168,24 @@ public final class AlexTeleOp extends BaseOpMode
 			return;
 		}
 
+		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.PRESS_ARM_KEY) && armState == Utilities.State.IDLE) {
+			if (!armPressing) {
+				robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
+				robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
+				armInTask = false;
+				armPressing = true;
+			} else {
+				robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
+				robotHardware.tumblerSystem.SetPosition(Constants.getTumblerIdle());
+				armInTask = false;
+				armPressing = false;
+			}
+			return;
+		}
+
 		if (armInTask || !armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) return;
 		armInTask = true;
-		if (armState == Utilities.State.BUSY)
-		{
+		if (armState == Utilities.State.BUSY) {
 			if (!droppedFirstPixel) // drop first pixel and allow it to retract
 			{
 				droppedFirstPixel = true;
@@ -178,8 +197,7 @@ public final class AlexTeleOp extends BaseOpMode
 						armInTask = false;
 					}, 200);
 				}, 400);
-			}
-			else // Drop second pixel and return to idle phase
+			} else // Drop second pixel and return to idle phase
 			{
 				droppedFirstPixel = false;
 				robotHardware.clawSystem.OpenSecondClaw();
@@ -205,6 +223,7 @@ public final class AlexTeleOp extends BaseOpMode
 						robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy());
 						armState = Utilities.State.BUSY;
 						armInTask = false;
+						armPressing = false;
 					}, 200);
 				}, 300);
 			}, 400);
@@ -212,6 +231,7 @@ public final class AlexTeleOp extends BaseOpMode
 	}
 
 	private boolean droneLaunched = false;
+
 	private void Drone()
 	{
 		if (!armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) || droneLaunched) return;
@@ -222,6 +242,7 @@ public final class AlexTeleOp extends BaseOpMode
 	private boolean robotSuspended = false;
 	private boolean suspending = false;
 	private final ElapsedTime suspendedTime = new ElapsedTime();
+
 	private void Suspender()
 	{
 		// Lift

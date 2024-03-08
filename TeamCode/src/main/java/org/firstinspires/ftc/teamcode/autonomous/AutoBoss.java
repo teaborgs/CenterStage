@@ -379,8 +379,8 @@ public final class AutoBoss extends BaseOpMode
 								.setTangent(purplePose.heading.toDouble())
 								.lineToYConstantHeading(purplePose.position.y)
 								.build(),
-						robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.25),
-						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.5)
+						robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.1),
+						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.3)
 				),
 				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawIdle()),
 

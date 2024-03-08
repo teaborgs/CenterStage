@@ -39,13 +39,13 @@ public class Constants
 			{
 				case ROBOT_1:
 					TUMBLER_LOAD = 1d;
-					TUMBLER_IDLE = 0.7d;
-					TUMBLER_BACKDROP = 0.25d;
+					TUMBLER_IDLE = 0.8d;
+					TUMBLER_BACKDROP = 0.35d;
 					TUMBLER_SPIKE_MARK = 0d;
 					LIFT_LEVELS = new int[] { -10, 80, 340, 670, 915, 1270 };
 					LIFT_SUSPEND_LEVEL = 1300;
-					CLAW_IDLE = 0.92d;
-					CLAW_BUSY = 0.70d;
+					CLAW_IDLE = 0d;
+					CLAW_BUSY = 1d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.5d;
@@ -93,7 +93,7 @@ public class Constants
 	{
 		public static class TeamProp
 		{
-			public static final double PROP_SIZE = 8000;
+			public static final double PROP_SIZE = 7000;
 			public static final Scalar RED_LOWER = new Scalar(0, 75, 75);
 			public static final Scalar RED_UPPER = new Scalar(20, 255, 255);
 			public static final Scalar BLUE_LOWER = new Scalar(90, 75, 75);

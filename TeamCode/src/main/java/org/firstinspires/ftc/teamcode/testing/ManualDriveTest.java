@@ -150,6 +150,9 @@ public final class ManualDriveTest extends BaseOpMode
 		telemetry.addData("Back Left", robotHardware.mecanumDrive.leftBack.getCurrent(CurrentUnit.MILLIAMPS));
 		telemetry.addData("Back Right", robotHardware.mecanumDrive.rightBack.getCurrent(CurrentUnit.MILLIAMPS));
 
+		telemetry.addData("Claw 1 Pos", robotHardware.clawSystem.GetFirstClawPosition());
+		telemetry.addData("Claw 2 Pos", robotHardware.clawSystem.GetSecondClawPosition());
+
 		telemetry.update();
 	}
 }

@@ -47,7 +47,7 @@ public final class RazvanTeleOp extends BaseOpMode
 			private static final InputSystem.Key SUSPENDER_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key SUSPENDER_CANCEL_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key ARM_KEY = new InputSystem.Key("a");
-			private static final InputSystem.Key RESET_ARM = new InputSystem.Key("b");
+			private static final InputSystem.Key RELEASE_ARM_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key LEVEL_1_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key LEVEL_2_KEY = new InputSystem.Key("dpad_up");
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
@@ -144,9 +144,10 @@ public final class RazvanTeleOp extends BaseOpMode
 	private Utilities.State armState = Utilities.State.IDLE;
 	private volatile boolean armInTask = false;
 	private volatile boolean droppedFirstPixel = false;
+	private volatile boolean armPressing = false;
 	private void Arm()
 	{
-		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.RESET_ARM)) // go back to IDLE phase
+		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.RELEASE_ARM_KEY)) // go back to IDLE phase
 		{
 			droppedFirstPixel = false;
 			armInTask = true;
@@ -194,21 +195,25 @@ public final class RazvanTeleOp extends BaseOpMode
 					}, 200);
 				}, 400);
 			}
-		} else { // Pick up pixels and extend to backdrop
+		} else if(!armPressing) { // Pick up pixels and extend to backdrop
 			robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
 			robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
 			setTimeout(() -> {
 				robotHardware.clawSystem.CloseClaws();
-				setTimeout(() -> {
-					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
-					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
-					setTimeout(() -> {
-						robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy());
-						armState = Utilities.State.BUSY;
-						armInTask = false;
-					}, 200);
-				}, 300);
+				armPressing = true;
+				armInTask = false;
 			}, 400);
+		} else {
+			setTimeout(() -> {
+				robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
+				robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
+				setTimeout(() -> {
+					robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy());
+					armState = Utilities.State.BUSY;
+					armPressing = false;
+					armInTask = false;
+				}, 200);
+			}, 300);
 		}
 	}
 
