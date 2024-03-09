@@ -46,8 +46,8 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Key("left_bumper"), new InputSystem.Key("right_bumper"));
 			private static final InputSystem.Key SUSPENDER_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key SUSPENDER_CANCEL_KEY = new InputSystem.Key("y");
-			private static final InputSystem.Key PRESS_ARM_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key ARM_KEY = new InputSystem.Key("a");
+			private static final InputSystem.Key PRESS_ARM_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key RELEASE_ARM_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key LEVEL_1_KEY = new InputSystem.Key("dpad_down");
 			private static final InputSystem.Key LEVEL_2_KEY = new InputSystem.Key("dpad_up");

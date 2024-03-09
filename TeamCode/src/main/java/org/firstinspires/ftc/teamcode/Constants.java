@@ -48,7 +48,7 @@ public class Constants
 					CLAW_BUSY = 1d;
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
-					PLANE_LEVELER_IDLE = 0.5d;
+					PLANE_LEVELER_IDLE = 0.55d;
 					PLANE_LEVELER_BUSY = 0.73d;
 					PLANE_SHOOTER_IDLE = 0.5d;
 					PLANE_SHOOTER_BUSY = 0.3d;
