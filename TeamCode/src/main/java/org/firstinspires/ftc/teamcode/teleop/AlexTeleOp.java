@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Axis;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -54,6 +55,8 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key LEVEL_3_KEY = new InputSystem.Key("dpad_left");
 			private static final InputSystem.Key LEVEL_4_KEY = new InputSystem.Key("dpad_right");
 			private static final InputSystem.Key LEVEL_5_KEY = new InputSystem.Key("back");
+			private static final InputSystem.Axis LEVEL_6_KEY = new InputSystem.Axis("left_trigger");
+			private static final InputSystem.Axis LEVEL_LOWER_KEY = new InputSystem.Axis("right_trigger");
 		}
 	}
 
@@ -131,6 +134,7 @@ public final class AlexTeleOp extends BaseOpMode
 
 	// ====================== Arm =========================
 	private short liftLevel = 1;
+	private int liftOffset = 0;
 
 	private void Lift()
 	{
@@ -140,8 +144,13 @@ public final class AlexTeleOp extends BaseOpMode
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_3_KEY)) liftLevel = 3;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_4_KEY)) liftLevel = 4;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_5_KEY)) liftLevel = 5;
+
+		if (armInput.getValue(Bindings.Arm.LEVEL_6_KEY) > 0.1) liftLevel = 6;
+		if (armInput.getValue(Bindings.Arm.LEVEL_LOWER_KEY) > 0.1) liftOffset = Constants.getLiftLowerOffset();
+		else liftOffset = 0;
+
 		if (initialLevel != liftLevel && armState == Utilities.State.BUSY)
-			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
 	}
 
 	private Utilities.State armState = Utilities.State.IDLE;
@@ -168,7 +177,7 @@ public final class AlexTeleOp extends BaseOpMode
 			return;
 		}
 
-		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.PRESS_ARM_KEY) && armState == Utilities.State.IDLE) {
+		if (!suspending && !armInTask && armInput.wasPressedThisFrame(Bindings.Arm.PRESS_ARM_KEY) && armState == Utilities.State.IDLE) {
 			if (!armPressing) {
 				robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
 				robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
@@ -195,7 +204,7 @@ public final class AlexTeleOp extends BaseOpMode
 					setTimeout(() -> {
 						robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
 						armInTask = false;
-					}, 200);
+					}, 500);
 				}, 400);
 			} else // Drop second pixel and return to idle phase
 			{
@@ -218,7 +227,7 @@ public final class AlexTeleOp extends BaseOpMode
 				robotHardware.clawSystem.CloseClaws();
 				setTimeout(() -> {
 					robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
-					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel]);
+					robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
 					setTimeout(() -> {
 						robotHardware.rotatorSystem.SetPosition(Constants.getRotatorBusy());
 						armState = Utilities.State.BUSY;

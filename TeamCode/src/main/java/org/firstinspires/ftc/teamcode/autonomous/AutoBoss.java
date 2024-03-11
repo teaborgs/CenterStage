@@ -395,7 +395,7 @@ public final class AutoBoss extends BaseOpMode
 				// Get claws to position
 				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawIdle()),
 				robotHardware.clawSystem.MoveFirstClawToPosition(Constants.getClawBusy()),
-				WaitFor(0.75),
+				WaitFor(1),
 				// Place purple
 				RunInParallel(
 						robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -418,8 +418,6 @@ public final class AutoBoss extends BaseOpMode
 						robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawBusy(), 1),
 						robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawBusy(), 1)
 				),
-				WaitFor(0.75),
-
 				// Drive to intermediate backdrop position
 				robotHardware.mecanumDrive.actionBuilder(firstStackPixel)
 						.setTangent(0)
@@ -489,7 +487,7 @@ public final class AutoBoss extends BaseOpMode
 						robotHardware.intakeSystem.RunIntakeFor(1.25),
 						RunSequentially(
 								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 1.25),
-								robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawBusy(), 0.5, Utilities.DelayDirection.BEFORE),
+								robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawBusy(), 0.7, Utilities.DelayDirection.BEFORE),
 								robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawBusy(), 0.4, Utilities.DelayDirection.AFTER)
 						)
 				),

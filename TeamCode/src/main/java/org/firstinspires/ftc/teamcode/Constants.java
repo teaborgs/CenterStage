@@ -17,6 +17,7 @@ public class Constants
 		public double TUMBLER_SPIKE_MARK = 0;
 		public int[] LIFT_LEVELS = new int[]{};
 		public int LIFT_SUSPEND_LEVEL = 0;
+		public int LIFT_LOWER_OFFSET = 0;
 		public double CLAW_IDLE = 0;
 		public double CLAW_BUSY = 0;
 		public double ROTATOR_IDLE = 0;
@@ -40,10 +41,11 @@ public class Constants
 				case ROBOT_1:
 					TUMBLER_LOAD = 1d;
 					TUMBLER_IDLE = 0.8d;
-					TUMBLER_BACKDROP = 0.35d;
+					TUMBLER_BACKDROP = 0.37d;
 					TUMBLER_SPIKE_MARK = 0d;
-					LIFT_LEVELS = new int[] { -10, 80, 340, 670, 915, 1270 };
+					LIFT_LEVELS = new int[] { -10, 80, 340, 670, 915, 1270, 1400 };
 					LIFT_SUSPEND_LEVEL = 1300;
+					LIFT_LOWER_OFFSET = 75;
 					CLAW_IDLE = 0d;
 					CLAW_BUSY = 1d;
 					ROTATOR_IDLE = 0d;
@@ -56,9 +58,9 @@ public class Constants
 					LIFT_NORMAL_POWER = 1.0d;
 					LIFT_SUSPEND_POWER = 1.0d;
 					BACKDROP_DISTANCE = 8.0d;
-					ANTENNA_IDLE = 0.5d;
-					ANTENNA_GUIDE = 0.3d;
-					ANTENNA_GRAB = 0d;
+					ANTENNA_IDLE = 0.6d;
+					ANTENNA_GUIDE = 0.4d;
+					ANTENNA_GRAB = 0.1d;
 					ANTENNA_RUN_TIME = 0.4d;
 					break;
 				case ROBOT_2:
@@ -136,6 +138,7 @@ public class Constants
 	public static double getTumblerSpikeMark() { return parameters.TUMBLER_SPIKE_MARK; }
 	public static int[] getLiftLevels() {	return parameters.LIFT_LEVELS;	}
 	public static int getLiftSuspendLevel() { return parameters.LIFT_SUSPEND_LEVEL; }
+	public static int getLiftLowerOffset() { return parameters.LIFT_LOWER_OFFSET; }
 	public static double getClawIdle() { return parameters.CLAW_IDLE; }
 	public static double getClawBusy() { return parameters.CLAW_BUSY; }
 	public static double getRotatorIdle() { return parameters.ROTATOR_IDLE; }
