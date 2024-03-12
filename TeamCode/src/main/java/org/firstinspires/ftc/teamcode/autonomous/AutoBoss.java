@@ -70,7 +70,7 @@ public final class AutoBoss extends BaseOpMode
 		Pose2d backdropPose = new Pose2d(0, 0, 0);
 		Pose2d parkPose;
 		double offset1 = -centimetersToInches(10);
-		Action yellowApproach, backdropApproach, purpleApproach = null;
+		Action yellowApproach, backdropApproach, purpleApproach = null, stackApproach;
 
 		if (currentAlliance == Utilities.Alliance.RED) {
 			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(8), 0));
@@ -151,6 +151,27 @@ public final class AutoBoss extends BaseOpMode
 			}
 		}
 
+		if(pathPosition == Utilities.PathPosition.WALL) {
+			stackApproach = robotHardware.mecanumDrive.actionBuilder(yellowPose)
+					.setTangent(-yellowPose.heading.toDouble())
+					.splineToConstantHeading(backdropIntermediaryPose.component1(), -backdropIntermediaryPose.heading.toDouble())
+					.lineToY(stackIntermediaryPose.position.y)
+					.setTangent(-backdropIntermediaryPose.heading.toDouble())
+					.splineToConstantHeading(new Vector2d(stackPose.position.x, stackPose.position.y - offset1 * -3), -stackPose.heading.toDouble(), (pose2dDual, posePath, v) -> 30, (pose2dDual, posePath, v) -> new MinMax(-30, 30))
+					.setTangent(Math.PI / 2)
+					.lineToY(stackPose.position.y, (pose2dDual, posePath, v) -> 20, (pose2dDual, posePath, v) -> new MinMax(-20, 20))
+					.build();
+		} else {
+			stackIntermediaryPose = new Pose2d(centimetersToInches(126), centimetersToInches(80), -Math.PI / 2);
+			stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(182), -Math.PI / 2);
+			backdropIntermediaryPose = new Pose2d(centimetersToInches(126), 0, -Math.PI / 2);
+			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
+					.setTangent(-backdropPose.heading.toDouble())
+					.splineToConstantHeading(backdropIntermediaryPose.component1(), -backdropPose.heading.toDouble())
+					.lineToYConstantHeading(stackPose.position.y, (pose2dDual, posePath, v) -> 30)
+					.build();
+		}
+
 		// Add fallbacks for distance sensor
 		if (!robotHardware.isDistanceSensorWorking()) {
 			yellowApproach = ApproachWithDistSensor(robotHardware, Constants.getBackdropDistance());
@@ -202,15 +223,7 @@ public final class AutoBoss extends BaseOpMode
 
 				// Drive to stack
 				RunInParallel(
-						robotHardware.mecanumDrive.actionBuilder(yellowPose)
-								.setTangent(-yellowPose.heading.toDouble())
-								.splineToConstantHeading(backdropIntermediaryPose.component1(), -backdropIntermediaryPose.heading.toDouble())
-								.lineToY(stackIntermediaryPose.position.y)
-								.setTangent(-backdropIntermediaryPose.heading.toDouble())
-								.splineToConstantHeading(new Vector2d(stackPose.position.x, stackPose.position.y - offset1 * -3), -stackPose.heading.toDouble(), (pose2dDual, posePath, v) -> 30, (pose2dDual, posePath, v) -> new MinMax(-30, 30))
-								.setTangent(Math.PI / 2)
-								.lineToY(stackPose.position.y, (pose2dDual, posePath, v) -> 20, (pose2dDual, posePath, v) -> new MinMax(-20, 20))
-								.build(),
+						stackApproach,
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25),
 						robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[0])
@@ -518,7 +531,7 @@ public final class AutoBoss extends BaseOpMode
 		telemetry.addData("[INFO] Alliance", currentAlliance.name());
 		telemetry.addData("[INFO] Path", currentPath.name());
 		telemetry.addData("[INFO] Case", detectionCase.name());
-		telemetry.addData("[INFO] Position", pathPosition.name());
+		telemetry.addData("[INFO] Route", pathPosition.name());
 
 		telemetry.addLine();
 		telemetry.addLine("> We are ready to go!");
@@ -533,8 +546,8 @@ public final class AutoBoss extends BaseOpMode
 		while (currentAlliance == null && !isStopRequested()) {
 			telemetry.clear();
 			telemetry.addLine("[CONFIGURE] Please select an alliance");
-			telemetry.addLine("[CONFIGURE] Press B for Red Alliance");
-			telemetry.addLine("[CONFIGURE] Press X for Blue Alliance");
+			telemetry.addLine("[CONFIGURE] Press B for Red alliance");
+			telemetry.addLine("[CONFIGURE] Press X for Blue alliance");
 			telemetry.update();
 			if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.RED;
 			else if (gamepad1.x || gamepad2.x) currentAlliance = Utilities.Alliance.BLUE;
@@ -543,8 +556,8 @@ public final class AutoBoss extends BaseOpMode
 		while (currentPath == null && !isStopRequested()) {
 			telemetry.clear();
 			telemetry.addLine("[CONFIGURE] Please select a path");
-			telemetry.addLine("[CONFIGURE] Press A for Short Path");
-			telemetry.addLine("[CONFIGURE] Press Y for Long Path");
+			telemetry.addLine("[CONFIGURE] Press A for Short path");
+			telemetry.addLine("[CONFIGURE] Press Y for Long path");
 			telemetry.update();
 			if (gamepad1.a || gamepad2.a) currentPath = Utilities.PathType.SHORT;
 			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
@@ -552,9 +565,9 @@ public final class AutoBoss extends BaseOpMode
 
 		while (pathPosition == null && !isStopRequested()) {
 			telemetry.clear();
-			telemetry.addLine("[CONFIGURE] Please select a position");
-			telemetry.addLine("[CONFIGURE] Press B for Center Position");
-			telemetry.addLine("[CONFIGURE] Press X for Wall Position");
+			telemetry.addLine("[CONFIGURE] Please select a route");
+			telemetry.addLine("[CONFIGURE] Press B for Center route");
+			telemetry.addLine("[CONFIGURE] Press X for Wall route");
 			telemetry.update();
 			if (gamepad1.b || gamepad2.b) pathPosition = Utilities.PathPosition.CENTER;
 			else if (gamepad1.x || gamepad2.x) pathPosition = Utilities.PathPosition.WALL;
