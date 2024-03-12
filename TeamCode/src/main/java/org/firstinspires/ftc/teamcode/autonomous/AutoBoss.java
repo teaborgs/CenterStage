@@ -27,13 +27,13 @@ public final class AutoBoss extends BaseOpMode
 {
 	private RobotHardware robotHardware;
 
-	private boolean distanceSensorFault = false;
-
 	private TeamPropDetectionPipeline detectionPipeline;
 
+	// Path configuration
 	private Utilities.Alliance currentAlliance = null;
 	private Utilities.PathType currentPath = null;
 	private Utilities.DetectionCase detectionCase = null;
+	private Utilities.PathPosition pathPosition = null;
 
 	@Override
 	protected void OnInitialize()
@@ -44,14 +44,6 @@ public final class AutoBoss extends BaseOpMode
 		setAutonomous(true);
 
 		robotHardware = new RobotHardware(hardwareMap);
-
-		if (robotHardware.testDistanceSensor())
-		{
-			distanceSensorFault = true;
-			telemetry.addLine("[ERROR] Distance sensor fault!");
-			telemetry.update();
-		}
-
 		robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
 
 		// Camera and detection
@@ -80,12 +72,10 @@ public final class AutoBoss extends BaseOpMode
 		double offset1 = -centimetersToInches(10);
 		Action yellowApproach, backdropApproach, purpleApproach = null;
 
-		if (currentAlliance == Utilities.Alliance.RED)
-		{
+		if (currentAlliance == Utilities.Alliance.RED) {
 			robotHardware.mecanumDrive.setStartPose(new Pose2d(0, centimetersToInches(8), 0));
 			parkPose = new Pose2d(centimetersToInches(10), -centimetersToInches(80), -Math.PI / 2);
-			if (detectionCase == Utilities.DetectionCase.CENTER)
-			{ // Center case is the same for both paths
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(92), -centimetersToInches(20), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(60), -centimetersToInches(96), -Math.PI / 2);
@@ -95,8 +85,7 @@ public final class AutoBoss extends BaseOpMode
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
-			} else if (detectionCase == Utilities.DetectionCase.LEFT)
-			{ // Left blue case is the same as right red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(8), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(96), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
@@ -110,8 +99,7 @@ public final class AutoBoss extends BaseOpMode
 						.lineToX(purplePose.position.x / 4 * 3)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
-			} else if (detectionCase == Utilities.DetectionCase.RIGHT)
-			{ // Right blue case is the same as left red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(42), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(60), -centimetersToInches(96), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(96), -Math.PI / 2);
@@ -122,13 +110,11 @@ public final class AutoBoss extends BaseOpMode
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
 			}
-		} else
-		{
+		} else {
 			offset1 *= -1;
 			robotHardware.mecanumDrive.setStartPose(new Pose2d(centimetersToInches(4), centimetersToInches(4), 0));
 			parkPose = new Pose2d(centimetersToInches(10), centimetersToInches(80), Math.PI / 2);
-			if (detectionCase == Utilities.DetectionCase.CENTER)
-			{ // Center case is the same for both paths
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(20), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(96), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(52), centimetersToInches(96), Math.PI / 2);
@@ -138,8 +124,7 @@ public final class AutoBoss extends BaseOpMode
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
-			} else if (detectionCase == Utilities.DetectionCase.LEFT)
-			{ // Left blue case is the same as right red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(42), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(96), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), centimetersToInches(96), Math.PI / 2);
@@ -149,8 +134,7 @@ public final class AutoBoss extends BaseOpMode
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
 						.splineToLinearHeading(purplePose, purplePose.heading.toDouble())
 						.build();
-			} else if (detectionCase == Utilities.DetectionCase.RIGHT)
-			{ // Right blue case is the same as left red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(8), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(85), centimetersToInches(97), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(55), centimetersToInches(97), Math.PI / 2);
@@ -168,12 +152,10 @@ public final class AutoBoss extends BaseOpMode
 		}
 
 		// Add fallbacks for distance sensor
-		if (!distanceSensorFault)
-		{
+		if (!robotHardware.isDistanceSensorWorking()) {
 			yellowApproach = ApproachWithDistSensor(robotHardware, Constants.getBackdropDistance());
 			backdropApproach = ApproachWithDistSensor(robotHardware, Constants.getBackdropDistance());
-		} else
-		{
+		} else {
 			yellowApproach = robotHardware.mecanumDrive.actionBuilder(new Pose2d(yellowPose.position.x, yellowPose.position.y - offset1, yellowPose.heading.toDouble()))
 					.setTangent(-yellowPose.heading.toDouble())
 					.lineToYLinearHeading(yellowPose.position.y, yellowPose.component2())
@@ -299,27 +281,24 @@ public final class AutoBoss extends BaseOpMode
 		Pose2d stackPose = new Pose2d(0, 0, 0);
 		Pose2d backdropPose = new Pose2d(0, 0, 0);
 		double safeDistance = -centimetersToInches(30);
-		Action yellowApproach, backdropApproach, initialStackApproach;
-		if (currentAlliance == Utilities.Alliance.RED)
-		{
-			if (detectionCase == Utilities.DetectionCase.CENTER)
-			{ // Center case is the same for both paths
+		int byeByeTangent = 0;
+		Action yellowApproach, backdropApproach, initialStackApproach, stackApproach;
+		if (currentAlliance == Utilities.Alliance.RED) {
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(30), -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), centimetersToInches(58), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(140), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(67), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(218), -Math.PI / 2);
-			} else if (detectionCase == Utilities.DetectionCase.LEFT)
-			{ // Left blue cas e is the same as right red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue cas e is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), centimetersToInches(54), -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), centimetersToInches(58), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(140), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(83), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(65), -centimetersToInches(218), -Math.PI / 2);
-			} else if (detectionCase == Utilities.DetectionCase.RIGHT)
-			{ // Right blue case is the same as left red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), 0, -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), centimetersToInches(58), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(140), -Math.PI / 2);
@@ -327,28 +306,24 @@ public final class AutoBoss extends BaseOpMode
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(218), -Math.PI / 2);
 			}
-		} else
-		{
+		} else {
 			safeDistance *= -1;
 			robotHardware.mecanumDrive.setStartPose(new Pose2d(centimetersToInches(4), centimetersToInches(12), 0));
-			if (detectionCase == Utilities.DetectionCase.CENTER)
-			{ // Center case is the same for both paths
+			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), -centimetersToInches(30), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), -centimetersToInches(58), Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(223), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
-			} else if (detectionCase == Utilities.DetectionCase.LEFT)
-			{ // Left blue case is the same as right red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), 0, Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(58), Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(223), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
-			} else if (detectionCase == Utilities.DetectionCase.RIGHT)
-			{ // Right blue case is the same as left red case and vice versa
+			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), -centimetersToInches(54), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(58), Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
@@ -358,13 +333,30 @@ public final class AutoBoss extends BaseOpMode
 			}
 		}
 
+		if(pathPosition == Utilities.PathPosition.WALL) {
+			byeByeTangent = 180;
+			backdropIntermediaryPose = new Pose2d(centimetersToInches(10), backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble());
+			stackPose = new Pose2d(centimetersToInches(67), stackPose.position.y, stackPose.heading.toDouble());
+			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
+					.setTangent(byeByeTangent)
+					.splineToConstantHeading(backdropIntermediaryPose.component1(), -backdropPose.heading.toDouble())
+					.lineToYConstantHeading(0, (pose2dDual, posePath, v) -> 30)
+					.splineToConstantHeading(new Vector2d(stackPose.position.x, stackPose.position.y + safeDistance), stackPose.component2(), (pose2dDual, posePath, v) -> 30)
+					.lineToYConstantHeading(stackPose.position.y, (pose2dDual, posePath, v) -> 30)
+					.build();
+		} else {
+			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
+					.setTangent(-backdropPose.heading.toDouble())
+					.splineToConstantHeading(backdropIntermediaryPose.component1(), -backdropPose.heading.toDouble())
+					.lineToYConstantHeading(stackPose.position.y, (pose2dDual, posePath, v) -> 30)
+					.build();
+		}
+
 		// Add fallbacks for distance sensor
-		if (!distanceSensorFault)
-		{
+		if (!robotHardware.isDistanceSensorWorking()) {
 			yellowApproach = ApproachWithDistSensor(robotHardware, Constants.getBackdropDistance());
 			backdropApproach = ApproachWithDistSensor(robotHardware, Constants.getBackdropDistance());
-		} else
-		{
+		} else {
 			yellowApproach = robotHardware.mecanumDrive.actionBuilder(new Pose2d(yellowPose.position.x, yellowPose.position.y - safeDistance, yellowPose.heading.toDouble()))
 					.setTangent(yellowPose.heading.toDouble())
 					.lineToYLinearHeading(yellowPose.position.y, yellowPose.heading.toDouble())
@@ -376,8 +368,7 @@ public final class AutoBoss extends BaseOpMode
 		}
 
 		if ((currentAlliance == Utilities.Alliance.RED && detectionCase != Utilities.DetectionCase.LEFT) ||
-				(currentAlliance == Utilities.Alliance.BLUE && detectionCase != Utilities.DetectionCase.RIGHT))
-		{
+				(currentAlliance == Utilities.Alliance.BLUE && detectionCase != Utilities.DetectionCase.RIGHT)) {
 			initialStackApproach = RunInParallel(
 					robotHardware.mecanumDrive.actionBuilder(purplePose)
 							.setTangent(purplePose.heading.toDouble())
@@ -395,7 +386,7 @@ public final class AutoBoss extends BaseOpMode
 				// Get claws to position
 				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawIdle()),
 				robotHardware.clawSystem.MoveFirstClawToPosition(Constants.getClawBusy()),
-				WaitFor(1),
+				WaitFor(0.5),
 				// Place purple
 				RunInParallel(
 						robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -420,7 +411,7 @@ public final class AutoBoss extends BaseOpMode
 				),
 				// Drive to intermediate backdrop position
 				robotHardware.mecanumDrive.actionBuilder(firstStackPixel)
-						.setTangent(0)
+						.setTangent(byeByeTangent)
 						.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), backdropIntermediaryPose.heading.toDouble())
 						.lineToYConstantHeading(backdropIntermediaryPose.position.y)
 						.splineToConstantHeading(new Vector2d(yellowPose.position.x, yellowPose.position.y - safeDistance), yellowPose.heading.toDouble())
@@ -461,11 +452,7 @@ public final class AutoBoss extends BaseOpMode
 
 				// Drive to stack
 				RunInParallel(
-						robotHardware.mecanumDrive.actionBuilder(backdropPose)
-								.setTangent(-backdropPose.heading.toDouble())
-								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, backdropIntermediaryPose.position.y), -backdropPose.heading.toDouble())
-								.lineToYConstantHeading(stackPose.position.y, (pose2dDual, posePath, v) -> 30)
-								.build(),
+						stackApproach,
 						robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerIdle()),
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.2),
 						robotHardware.liftSystem.MoveToPositionWithDelay(Constants.getLiftLevels()[0], 0.3)
@@ -531,6 +518,7 @@ public final class AutoBoss extends BaseOpMode
 		telemetry.addData("[INFO] Alliance", currentAlliance.name());
 		telemetry.addData("[INFO] Path", currentPath.name());
 		telemetry.addData("[INFO] Case", detectionCase.name());
+		telemetry.addData("[INFO] Position", pathPosition.name());
 
 		telemetry.addLine();
 		telemetry.addLine("> We are ready to go!");
@@ -542,26 +530,34 @@ public final class AutoBoss extends BaseOpMode
 
 	private void ConfigureAutonomous()
 	{
-		telemetry.clear();
-		telemetry.addLine("[CONFIGURE] Please select an alliance");
-		telemetry.addLine("[CONFIGURE] Press B for Red Alliance");
-		telemetry.addLine("[CONFIGURE] Press X for Blue Alliance");
-		telemetry.update();
-		while (currentAlliance == null && !isStopRequested())
-		{
+		while (currentAlliance == null && !isStopRequested()) {
+			telemetry.clear();
+			telemetry.addLine("[CONFIGURE] Please select an alliance");
+			telemetry.addLine("[CONFIGURE] Press B for Red Alliance");
+			telemetry.addLine("[CONFIGURE] Press X for Blue Alliance");
+			telemetry.update();
 			if (gamepad1.b || gamepad2.b) currentAlliance = Utilities.Alliance.RED;
 			else if (gamepad1.x || gamepad2.x) currentAlliance = Utilities.Alliance.BLUE;
 		}
 
-		telemetry.clear();
-		telemetry.addLine("[CONFIGURE] Please select a path");
-		telemetry.addLine("[CONFIGURE] Press A for Short Path");
-		telemetry.addLine("[CONFIGURE] Press Y for Long Path");
-		telemetry.update();
-		while (currentPath == null && !isStopRequested())
-		{
+		while (currentPath == null && !isStopRequested()) {
+			telemetry.clear();
+			telemetry.addLine("[CONFIGURE] Please select a path");
+			telemetry.addLine("[CONFIGURE] Press A for Short Path");
+			telemetry.addLine("[CONFIGURE] Press Y for Long Path");
+			telemetry.update();
 			if (gamepad1.a || gamepad2.a) currentPath = Utilities.PathType.SHORT;
 			else if (gamepad1.y || gamepad2.y) currentPath = Utilities.PathType.LONG;
+		}
+
+		while (pathPosition == null && !isStopRequested()) {
+			telemetry.clear();
+			telemetry.addLine("[CONFIGURE] Please select a position");
+			telemetry.addLine("[CONFIGURE] Press B for Center Position");
+			telemetry.addLine("[CONFIGURE] Press X for Wall Position");
+			telemetry.update();
+			if (gamepad1.b || gamepad2.b) pathPosition = Utilities.PathPosition.CENTER;
+			else if (gamepad1.x || gamepad2.x) pathPosition = Utilities.PathPosition.WALL;
 		}
 
 		telemetry.clearAll();

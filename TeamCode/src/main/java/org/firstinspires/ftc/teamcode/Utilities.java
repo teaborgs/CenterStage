@@ -209,7 +209,7 @@ public class Utilities
 		SHORT, LONG
 	}
 
-	public enum ParkingPosition
+	public enum PathPosition
 	{
 		CENTER, WALL
 	}

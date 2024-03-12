@@ -34,6 +34,8 @@ public class RobotHardware
 	public final Rev2mDistanceSensor distanceSensor;
 	public OpenCvCamera camera = null;
 
+	private final boolean distanceSensorWorking;
+
 	private final HardwareMap hardwareMap;
 	private Telemetry telemetry;
 
@@ -42,6 +44,14 @@ public class RobotHardware
 		this.hardwareMap = hardwareMap;
 		mecanumDrive = new MecanumDrive(hardwareMap);
 		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
+
+		// Test reading the distance sensor
+		distanceSensor.getDistance(DistanceUnit.CM);
+		distanceSensorWorking = !distanceSensor.didTimeoutOccur();
+		if (!distanceSensorWorking) {
+			telemetry.addLine("[WARNING] Distance sensor did not respond in time. Distance sensor will not be used.");
+			telemetry.update();
+		}
 
 		droneSystem = new DroneSystem(hardwareMap.get(Servo.class, "leveler"), hardwareMap.get(Servo.class, "shooter"));
 		intakeSystem = new IntakeSystem(hardwareMap.get(DcMotorEx.class, "intake"), hardwareMap.get(Servo.class, "antenna"));
@@ -57,8 +67,7 @@ public class RobotHardware
 			// We catch the exception because we don't want to crash the robot if the camera is not available
 		}
 
-		if (noLogic)
-		{
+		if (noLogic) {
 			droneSystem.Setup();
 			intakeSystem.Setup();
 			clawSystem.Setup();
@@ -76,7 +85,10 @@ public class RobotHardware
 		liftSystem.Init();
 	}
 
-	public RobotHardware(HardwareMap hardwareMap) { this(hardwareMap, false); }
+	public RobotHardware(HardwareMap hardwareMap)
+	{
+		this(hardwareMap, false);
+	}
 
 	public void setTelemetry(Telemetry telemetry)
 	{
@@ -101,7 +113,7 @@ public class RobotHardware
 			@Override
 			public void onError(int errorCode)
 			{
-				if(telemetry != null) {
+				if (telemetry != null) {
 					telemetry.addLine("[ERROR] Camera failed to open with error code " + errorCode);
 					telemetry.update();
 				}
@@ -116,14 +128,11 @@ public class RobotHardware
 	}
 
 	/**
-	 * Test the distance sensor
 	 * @return Whether the distance sensor is working
 	 */
-	public boolean testDistanceSensor()
+	public boolean isDistanceSensorWorking()
 	{
-		// Test reading the distance sensor
-		distanceSensor.getDistance(DistanceUnit.CM);
-		return !distanceSensor.didTimeoutOccur();
+		return distanceSensorWorking;
 	}
 
 	public VoltageSensor getVoltageSensor()
