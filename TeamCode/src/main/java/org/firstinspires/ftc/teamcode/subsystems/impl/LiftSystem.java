@@ -121,6 +121,9 @@ public final class LiftSystem extends SystemEx
 		return (motor1.getCurrentPosition() + motor2.getCurrentPosition()) / 2.0;
 	}
 
+	public DcMotorEx getMotor1() { return motor1; }
+	public DcMotorEx getMotor2() { return motor2; }
+
 	public double GetPower()
 	{
 		return (motor1.getPower() + motor2.getPower()) / 2.0;

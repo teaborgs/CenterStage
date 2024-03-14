@@ -316,6 +316,12 @@ public final class AlexTeleOp extends BaseOpMode
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();
 			telemetry.addData("[DEBUG] Loop Time", getLoopTime());
+			telemetry.addData("[DEBUG] Lift Position 1", robotHardware.liftSystem.getMotor1().getCurrentPosition());
+			telemetry.addData("[DEBUG] Lift Position 2", robotHardware.liftSystem.getMotor2().getCurrentPosition());
+			telemetry.addData("[DEBUG] Lift Target 1", robotHardware.liftSystem.getMotor1().getTargetPosition());
+			telemetry.addData("[DEBUG] Lift Target 2", robotHardware.liftSystem.getMotor2().getTargetPosition());
+			telemetry.addData("[DEBUG] Lift Power 1", robotHardware.liftSystem.getMotor1().getPower());
+			telemetry.addData("[DEBUG] Lift Power 2", robotHardware.liftSystem.getMotor2().getPower());
 			telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
 			telemetry.addData("[DEBUG] Lift Target", robotHardware.liftSystem.GetTargetPosition());
 			telemetry.addData("[DEBUG] Lift Power", robotHardware.liftSystem.GetPower());
