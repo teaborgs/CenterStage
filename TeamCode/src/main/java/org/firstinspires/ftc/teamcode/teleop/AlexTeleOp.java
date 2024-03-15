@@ -146,8 +146,13 @@ public final class AlexTeleOp extends BaseOpMode
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_5_KEY)) liftLevel = 5;
 
 		if (armInput.getValue(Bindings.Arm.LEVEL_6_KEY) > 0.1) liftLevel = 6;
-		if (armInput.getValue(Bindings.Arm.LEVEL_LOWER_KEY) > 0.1) liftOffset = Constants.getLiftLowerOffset();
-		else liftOffset = 0;
+		if (armInput.getValue(Bindings.Arm.LEVEL_LOWER_KEY) > 0.1) {
+			liftOffset = Constants.getLiftLowerOffset();
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
+		} else if (liftOffset != 0) {
+			liftOffset = 0;
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
+		}
 
 		if (initialLevel != liftLevel && armState == Utilities.State.BUSY)
 			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
@@ -316,12 +321,7 @@ public final class AlexTeleOp extends BaseOpMode
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();
 			telemetry.addData("[DEBUG] Loop Time", getLoopTime());
-			telemetry.addData("[DEBUG] Lift Position 1", robotHardware.liftSystem.getMotor1().getCurrentPosition());
-			telemetry.addData("[DEBUG] Lift Position 2", robotHardware.liftSystem.getMotor2().getCurrentPosition());
-			telemetry.addData("[DEBUG] Lift Target 1", robotHardware.liftSystem.getMotor1().getTargetPosition());
-			telemetry.addData("[DEBUG] Lift Target 2", robotHardware.liftSystem.getMotor2().getTargetPosition());
-			telemetry.addData("[DEBUG] Lift Power 1", robotHardware.liftSystem.getMotor1().getPower());
-			telemetry.addData("[DEBUG] Lift Power 2", robotHardware.liftSystem.getMotor2().getPower());
+			telemetry.addData("[DEBUG] Lift Offset", liftOffset);
 			telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
 			telemetry.addData("[DEBUG] Lift Target", robotHardware.liftSystem.GetTargetPosition());
 			telemetry.addData("[DEBUG] Lift Power", robotHardware.liftSystem.GetPower());

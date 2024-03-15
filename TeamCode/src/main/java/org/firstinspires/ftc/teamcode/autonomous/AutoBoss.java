@@ -348,7 +348,7 @@ public final class AutoBoss extends BaseOpMode
 
 		if(pathPosition == Utilities.PathPosition.WALL) {
 			byeByeTangent = 180;
-			backdropIntermediaryPose = new Pose2d(centimetersToInches(10), backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble());
+			backdropIntermediaryPose = new Pose2d(centimetersToInches(13), backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble());
 			stackPose = new Pose2d(centimetersToInches(67), stackPose.position.y, stackPose.heading.toDouble());
 			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
 					.setTangent(byeByeTangent)

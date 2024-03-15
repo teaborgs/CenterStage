@@ -43,9 +43,9 @@ public class Constants
 					TUMBLER_IDLE = 0.8d;
 					TUMBLER_BACKDROP = 0.37d;
 					TUMBLER_SPIKE_MARK = 0d;
-					LIFT_LEVELS = new int[] { -10, 80, 340, 670, 915, 1270, 1400 };
+					LIFT_LEVELS = new int[] { 0, 80, 340, 670, 915, 1270, 1400 };
 					LIFT_SUSPEND_LEVEL = 1300;
-					LIFT_LOWER_OFFSET = 75;
+					LIFT_LOWER_OFFSET = 100;
 					CLAW_IDLE = 0d;
 					CLAW_BUSY = 1d;
 					ROTATOR_IDLE = 0d;
@@ -73,7 +73,7 @@ public class Constants
 
 	public static void Init() { parameters = new Container(); }
 
-	public static final int TOLERANCE = 10;
+	public static final int TOLERANCE = 20;
 
 	public static class Camera
 	{

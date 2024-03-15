@@ -143,8 +143,13 @@ public final class RazvanTeleOp extends BaseOpMode
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_5_KEY)) liftLevel = 5;
 
 		if (armInput.getValue(Bindings.Arm.LEVEL_6_KEY) > 0.1) liftLevel = 6;
-		if (armInput.getValue(Bindings.Arm.LEVEL_LOWER_KEY) > 0.1) liftOffset = Constants.getLiftLowerOffset();
-		else liftOffset = 0;
+		if (armInput.getValue(Bindings.Arm.LEVEL_LOWER_KEY) > 0.1) {
+			liftOffset = Constants.getLiftLowerOffset();
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
+		} else if (liftOffset != 0) {
+			liftOffset = 0;
+			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
+		}
 
 		if (initialLevel != liftLevel && armState == Utilities.State.BUSY)
 			robotHardware.liftSystem.SetTargetPosition(Constants.getLiftLevels()[liftLevel] - liftOffset);
