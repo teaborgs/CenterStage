@@ -79,7 +79,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(92), -centimetersToInches(20), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(60), -centimetersToInches(96), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), 0, -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(10), -Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(110), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(72), centimetersToInches(182), -Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -89,7 +89,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(8), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(85), -centimetersToInches(96), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(70), -centimetersToInches(96), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), 0, -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(10), -Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(110), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(72), centimetersToInches(182), -Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -103,7 +103,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(42), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(60), -centimetersToInches(96), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(96), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), 0, -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(10), -Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(12), centimetersToInches(110), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(72), centimetersToInches(182), -Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -118,7 +118,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(20), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(65), centimetersToInches(96), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(52), centimetersToInches(96), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(10), Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(110), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(69), -centimetersToInches(182), Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -128,7 +128,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(70), centimetersToInches(42), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(96), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), centimetersToInches(96), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), 0, Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(10), Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(13), -centimetersToInches(110), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(69), -centimetersToInches(182), Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -138,7 +138,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(70), -centimetersToInches(8), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(85), centimetersToInches(97), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(55), centimetersToInches(97), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(14), 0, Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(14), -centimetersToInches(10), Math.PI / 2);
 				stackIntermediaryPose = new Pose2d(centimetersToInches(14), -centimetersToInches(110), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(69), -centimetersToInches(182), Math.PI / 2);
 				purpleApproach = robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
@@ -164,7 +164,7 @@ public final class AutoBoss extends BaseOpMode
 		} else {
 			stackIntermediaryPose = new Pose2d(centimetersToInches(126), centimetersToInches(80), -Math.PI / 2);
 			stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(182), -Math.PI / 2);
-			backdropIntermediaryPose = new Pose2d(centimetersToInches(126), 0, -Math.PI / 2);
+			backdropIntermediaryPose = new Pose2d(centimetersToInches(126), currentAlliance == Utilities.Alliance.RED ? centimetersToInches(10) : -centimetersToInches(10), -Math.PI / 2);
 			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
 					.setTangent(-backdropPose.heading.toDouble())
 					.splineToConstantHeading(backdropIntermediaryPose.component1(), -backdropPose.heading.toDouble())
@@ -300,21 +300,21 @@ public final class AutoBoss extends BaseOpMode
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(30), -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), centimetersToInches(58), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(140), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(150), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(67), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(218), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue cas e is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), centimetersToInches(54), -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), centimetersToInches(58), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(140), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(150), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(83), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(65), -centimetersToInches(218), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), 0, -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), centimetersToInches(58), -Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(140), -Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(150), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(50), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(218), -Math.PI / 2);
@@ -325,21 +325,21 @@ public final class AutoBoss extends BaseOpMode
 			if (detectionCase == Utilities.DetectionCase.CENTER) { // Center case is the same for both paths
 				purplePose = new Pose2d(centimetersToInches(94), -centimetersToInches(30), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), -centimetersToInches(58), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(150), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(70), centimetersToInches(223), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue case is the same as right red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), 0, Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(58), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(150), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(55), centimetersToInches(223), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(83), centimetersToInches(223), Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.RIGHT) { // Right blue case is the same as left red case and vice versa
 				purplePose = new Pose2d(centimetersToInches(67), -centimetersToInches(54), Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(67), -centimetersToInches(58), Math.PI / 2);
-				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(140), Math.PI / 2);
+				backdropIntermediaryPose = new Pose2d(centimetersToInches(124), centimetersToInches(150), Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(87), centimetersToInches(223), Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(124), -centimetersToInches(58), Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(65), centimetersToInches(223), Math.PI / 2);
@@ -397,8 +397,8 @@ public final class AutoBoss extends BaseOpMode
 
 		Actions.runBlocking(RunSequentially(
 				// Get claws to position
-				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawIdle()),
-				robotHardware.clawSystem.MoveFirstClawToPosition(Constants.getClawBusy()),
+				robotHardware.clawSystem.MoveFirstClawToPosition(Constants.getClawIdle()),
+				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawBusy()),
 				WaitFor(0.5),
 				// Place purple
 				RunInParallel(
@@ -410,7 +410,7 @@ public final class AutoBoss extends BaseOpMode
 						robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.1),
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.3)
 				),
-				robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawIdle(), 0.25, Utilities.DelayDirection.BOTH),
+				robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawIdle(), 0.25, Utilities.DelayDirection.BOTH),
 
 				// Take one pixel from stack
 				initialStackApproach,

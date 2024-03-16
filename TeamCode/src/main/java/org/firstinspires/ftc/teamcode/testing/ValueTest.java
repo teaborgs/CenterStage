@@ -30,6 +30,8 @@ public class ValueTest extends BaseOpMode
 		telemetry.addData("[DEBUG] Robot Y", robotHardware.mecanumDrive.pose.position.y);
 		telemetry.addData("[DEBUG] Robot Heading", robotHardware.mecanumDrive.pose.heading.toDouble());
 		telemetry.addData("[DEBUG] Lift Position", robotHardware.liftSystem.GetCurrentPosition());
+		telemetry.addData("[DEBUG] Lift 1 Position", robotHardware.liftSystem.getMotor1().getCurrentPosition());
+		telemetry.addData("[DEBUG] Lift 2 Position", robotHardware.liftSystem.getMotor2().getCurrentPosition());
 		telemetry.addData("[DEBUG] Claw 1 Position", robotHardware.clawSystem.GetFirstClawPosition());
 		telemetry.addData("[DEBUG] Claw 2 Position", robotHardware.clawSystem.GetSecondClawPosition());
 		telemetry.addData("[DEBUG] Tumbler Position", robotHardware.tumblerSystem.GetCurrentPosition());

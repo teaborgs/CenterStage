@@ -51,7 +51,7 @@ public class Constants
 					ROTATOR_IDLE = 0d;
 					ROTATOR_BUSY = 1d;
 					PLANE_LEVELER_IDLE = 0.55d;
-					PLANE_LEVELER_BUSY = 0.73d;
+					PLANE_LEVELER_BUSY = 0.7d;
 					PLANE_SHOOTER_IDLE = 0.5d;
 					PLANE_SHOOTER_BUSY = 0.3d;
 					INTAKE_MAX_POWER = 0.8d;
