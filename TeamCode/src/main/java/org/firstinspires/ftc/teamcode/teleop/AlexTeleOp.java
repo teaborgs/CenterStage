@@ -40,13 +40,13 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
+			private static final InputSystem.Key PLAME_KEY = new InputSystem.Key("dpad_up");
 		}
 
 		private final static class Arm
 		{
-			private static final InputSystem.BindingCombo PLANE_COMBO = new InputSystem.BindingCombo("_plane", new InputSystem.Key("left_bumper"), new InputSystem.Key("right_bumper"));
 			private static final InputSystem.Key SUSPENDER_KEY = new InputSystem.Key("x");
-			private static final InputSystem.Key SUSPENDER_CANCEL_KEY = new InputSystem.Key("y");
+			private static final InputSystem.Key SUSPENDER_CANCEL_KEY = new InputSystem.Key("start");
 			private static final InputSystem.Key ARM_KEY = new InputSystem.Key("a");
 			private static final InputSystem.Key PRESS_ARM_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key RELEASE_ARM_KEY = new InputSystem.Key("b");
@@ -182,7 +182,7 @@ public final class AlexTeleOp extends BaseOpMode
 			return;
 		}
 
-		if (!suspending && !armInTask && armInput.wasPressedThisFrame(Bindings.Arm.PRESS_ARM_KEY) && armState == Utilities.State.IDLE) {
+		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.PRESS_ARM_KEY) && armState == Utilities.State.IDLE) {
 			if (!armPressing) {
 				robotHardware.rotatorSystem.SetPosition(Constants.getRotatorIdle());
 				robotHardware.tumblerSystem.SetPosition(Constants.getTumblerLoad());
@@ -200,7 +200,7 @@ public final class AlexTeleOp extends BaseOpMode
 		if (armInTask || !armInput.wasPressedThisFrame(Bindings.Arm.ARM_KEY)) return;
 		armInTask = true;
 		if (armState == Utilities.State.BUSY) {
-			if (!droppedFirstPixel) // drop first pixel and allow it to retract
+			if (!droppedFirstPixel) // drop first pixel and allow it to fall
 			{
 				droppedFirstPixel = true;
 				robotHardware.clawSystem.OpenFirstClaw();
@@ -209,8 +209,8 @@ public final class AlexTeleOp extends BaseOpMode
 					setTimeout(() -> {
 						robotHardware.tumblerSystem.SetPosition(Constants.getTumblerBackdrop());
 						armInTask = false;
-					}, 500);
-				}, 400);
+					}, 300);
+				}, 300);
 			} else // Drop second pixel and return to idle phase
 			{
 				droppedFirstPixel = false;
@@ -245,10 +245,9 @@ public final class AlexTeleOp extends BaseOpMode
 	}
 
 	private boolean droneLaunched = false;
-
 	private void Drone()
 	{
-		if (!armInput.wasPressedThisFrame(Bindings.Arm.PLANE_COMBO) || droneLaunched) return;
+		if (!wheelInput.wasPressedThisFrame(Bindings.Wheel.PLAME_KEY) || droneLaunched) return;
 		droneLaunched = true;
 		robotHardware.droneSystem.LaunchDrone();
 	}

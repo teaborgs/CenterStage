@@ -190,7 +190,7 @@ public final class AutoBoss extends BaseOpMode
 		Actions.runBlocking(RunSequentially(
 				// Get claws to position
 				robotHardware.clawSystem.MoveFirstClawToPosition(Constants.getClawBusy()),
-				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawIdle()),
+				robotHardware.clawSystem.MoveSecondClawToPosition(Constants.getClawBusy()),
 
 				WaitFor(0.5),
 
@@ -219,7 +219,11 @@ public final class AutoBoss extends BaseOpMode
 						robotHardware.liftSystem.MoveToPosition(Constants.getLiftLevels()[1] + 100)
 				),
 				WaitForMovementStop(robotHardware),
-				robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawIdle(), 0.25d, Utilities.DelayDirection.BOTH), // Open claw
+
+				RunInParallel(
+						robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawIdle(), 0.25d, Utilities.DelayDirection.BOTH), // Open claw
+						robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawIdle(), 0.25d, Utilities.DelayDirection.BOTH) // Open claw
+				),
 
 				// Drive to stack
 				RunInParallel(
@@ -232,7 +236,7 @@ public final class AutoBoss extends BaseOpMode
 				// Take 2 pixels
 				WaitForMovementStop(robotHardware),
 				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.4),
-				robotHardware.intakeSystem.RunIntakeFor(0.25),
+				robotHardware.intakeSystem.RunIntakeFor(0.5),
 				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.5),
 
 				// Drive to intermediate backdrop position
@@ -305,8 +309,8 @@ public final class AutoBoss extends BaseOpMode
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(218), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue cas e is the same as right red case and vice versa
-				purplePose = new Pose2d(centimetersToInches(67), centimetersToInches(54), -Math.PI / 2);
-				firstStackPixel = new Pose2d(centimetersToInches(67), centimetersToInches(58), -Math.PI / 2);
+				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(54), -Math.PI / 2);
+				firstStackPixel = new Pose2d(centimetersToInches(94), centimetersToInches(58), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(150), -Math.PI / 2);
 				yellowPose = new Pose2d(centimetersToInches(83), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
@@ -348,7 +352,7 @@ public final class AutoBoss extends BaseOpMode
 
 		if(pathPosition == Utilities.PathPosition.WALL) {
 			byeByeTangent = 180;
-			backdropIntermediaryPose = new Pose2d(centimetersToInches(13), backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble());
+			backdropIntermediaryPose = new Pose2d(centimetersToInches(10), backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble());
 			stackPose = new Pose2d(centimetersToInches(67), stackPose.position.y, stackPose.heading.toDouble());
 			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
 					.setTangent(byeByeTangent)
@@ -422,6 +426,7 @@ public final class AutoBoss extends BaseOpMode
 						robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawBusy(), 1),
 						robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawBusy(), 1)
 				),
+
 				// Drive to intermediate backdrop position
 				robotHardware.mecanumDrive.actionBuilder(firstStackPixel)
 						.setTangent(byeByeTangent)
