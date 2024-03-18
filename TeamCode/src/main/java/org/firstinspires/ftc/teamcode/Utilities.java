@@ -73,7 +73,7 @@ public class Utilities
 			while (true)
 			{
 				double offset = robotHardware.distanceSensor.getDistance(DistanceUnit.CM) - distance;
-				if (offset < 2)
+				if (offset < 4)
 				{
 					robotHardware.mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
 					return false;

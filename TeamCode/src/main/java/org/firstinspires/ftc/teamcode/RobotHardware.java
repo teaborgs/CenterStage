@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,6 +33,7 @@ public class RobotHardware
 	public final LiftSystem liftSystem;
 
 	public final Rev2mDistanceSensor distanceSensor;
+	public final ColorSensor colorSensor;
 	public OpenCvCamera camera = null;
 
 	private final boolean distanceSensorWorking;
@@ -44,6 +46,7 @@ public class RobotHardware
 		this.hardwareMap = hardwareMap;
 		mecanumDrive = new MecanumDrive(hardwareMap);
 		distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
+		colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
 		// Test reading the distance sensor
 		distanceSensor.getDistance(DistanceUnit.CM);
@@ -138,5 +141,10 @@ public class RobotHardware
 	public VoltageSensor getVoltageSensor()
 	{
 		return hardwareMap.voltageSensor.iterator().next();
+	}
+
+	public float getColorSensorAverage()
+	{
+		return (colorSensor.red() + colorSensor.green() + colorSensor.blue() + colorSensor.alpha()) / 4f;
 	}
 }
