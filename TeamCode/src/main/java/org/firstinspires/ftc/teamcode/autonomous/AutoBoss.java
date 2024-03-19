@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.opencv.TeamPropDetectionPipeline;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Autonomous(name = "Auto Boss 🦅🦅🦅", group = "Auto")
 public final class AutoBoss extends BaseOpMode
 {
@@ -329,7 +331,7 @@ public final class AutoBoss extends BaseOpMode
 				purplePose = new Pose2d(centimetersToInches(94), centimetersToInches(30), -Math.PI / 2);
 				firstStackPixel = new Pose2d(centimetersToInches(94), centimetersToInches(58), -Math.PI / 2);
 				backdropIntermediaryPose = new Pose2d(centimetersToInches(126), -centimetersToInches(150), -Math.PI / 2);
-				yellowPose = new Pose2d(centimetersToInches(67), -centimetersToInches(218), -Math.PI / 2);
+				yellowPose = new Pose2d(centimetersToInches(64), -centimetersToInches(218), -Math.PI / 2);
 				stackPose = new Pose2d(centimetersToInches(126), centimetersToInches(58), -Math.PI / 2);
 				backdropPose = new Pose2d(centimetersToInches(75), -centimetersToInches(218), -Math.PI / 2);
 			} else if (detectionCase == Utilities.DetectionCase.LEFT) { // Left blue cas e is the same as right red case and vice versa
@@ -377,6 +379,7 @@ public final class AutoBoss extends BaseOpMode
 
 		if (pathPosition == Utilities.PathPosition.WALL) {
 			byeByeTangent = 180;
+			backdropPose = new Pose2d(centimetersToInches(50), backdropPose.position.y, backdropPose.heading.toDouble());
 			backdropIntermediaryPose = new Pose2d(centimetersToInches(11), backdropIntermediaryPose.position.y, backdropIntermediaryPose.heading.toDouble());
 			stackPose = new Pose2d(centimetersToInches(67), stackPose.position.y, stackPose.heading.toDouble());
 			stackApproach = robotHardware.mecanumDrive.actionBuilder(backdropPose)
@@ -436,11 +439,14 @@ public final class AutoBoss extends BaseOpMode
 				WaitFor(0.5),
 				// Place purple
 				RunInParallel(
-						robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
-								.splineToLinearHeading(new Pose2d(purplePose.position.x, purplePose.position.y / 2, purplePose.heading.toDouble()), 0)
-								.setTangent(purplePose.heading.toDouble())
-								.lineToYConstantHeading(purplePose.position.y)
-								.build(),
+						RunSequentially(
+								WaitFor(detectionCase == Utilities.DetectionCase.CENTER ? 0.25 : 0),
+								robotHardware.mecanumDrive.actionBuilder(robotHardware.mecanumDrive.pose)
+										.splineToLinearHeading(new Pose2d(purplePose.position.x, purplePose.position.y / 4 * 3, purplePose.heading.toDouble()), 0)
+										.setTangent(purplePose.heading.toDouble())
+										.lineToYConstantHeading(purplePose.position.y)
+										.build()
+						),
 						robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerSpikeMark(), 0.1),
 						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.3)
 				),
@@ -448,22 +454,24 @@ public final class AutoBoss extends BaseOpMode
 
 				// Take one pixel from stack
 				initialStackApproach,
-				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.75),
-				RunInParallel(
-						robotHardware.intakeSystem.RunIntakeFor(0.75),
-						robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorIdle(), 0.25),
-						robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
-						robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawBusy(), 1),
-						robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawBusy(), 1)
-				),
+				robotHardware.intakeSystem.RunIntakeWithAntennaFor(1),
+				robotHardware.rotatorSystem.MoveToPosition(Constants.getRotatorIdle()),
 
 				// Drive to intermediate backdrop position
-				robotHardware.mecanumDrive.actionBuilder(firstStackPixel)
-						.setTangent(byeByeTangent)
-						.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), backdropIntermediaryPose.heading.toDouble())
-						.lineToYConstantHeading(backdropIntermediaryPose.position.y)
-						.splineToConstantHeading(new Vector2d(yellowPose.position.x, yellowPose.position.y - safeDistance), yellowPose.heading.toDouble())
-						.build(),
+				RunInParallel(
+						robotHardware.mecanumDrive.actionBuilder(firstStackPixel)
+								.setTangent(byeByeTangent / 2f)
+								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), backdropIntermediaryPose.heading.toDouble())
+								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
+								.splineToConstantHeading(new Vector2d(yellowPose.position.x, yellowPose.position.y - safeDistance), yellowPose.heading.toDouble())
+								.build(),
+						RunInParallel(
+								robotHardware.intakeSystem.RunIntakeFor(0.5),
+								robotHardware.tumblerSystem.MoveToPositionWithDelay(Constants.getTumblerLoad(), 0.5),
+								robotHardware.clawSystem.MoveFirstClawToPositionWithDelay(Constants.getClawBusy(), 0.75),
+								robotHardware.clawSystem.MoveSecondClawToPositionWithDelay(Constants.getClawBusy(), 0.75)
+						)
+				),
 				robotHardware.tumblerSystem.MoveToPosition(Constants.getTumblerBackdrop()),
 				robotHardware.rotatorSystem.MoveToPositionWithDelay(Constants.getRotatorBusy(), 0.25),
 				WaitForMovementStop(robotHardware)
@@ -510,15 +518,16 @@ public final class AutoBoss extends BaseOpMode
 				// Take 2 pixels
 				WaitForMovementStop(robotHardware)
 		));
-		if(!goForStack) return;
+		if (!goForStack) return;
 		Actions.runBlocking(RunSequentially(
-				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.75),
-				robotHardware.intakeSystem.RunIntakeFor(0.25),
-				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.75),
+				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.6),
+				robotHardware.intakeSystem.RunIntakeFor(0.2),
+				robotHardware.intakeSystem.RunIntakeWithAntennaFor(0.6),
 
 				// Drive to intermediate backdrop position
 				RunInParallel(
 						robotHardware.mecanumDrive.actionBuilder(stackPose)
+								.lineToY(stackPose.position.y + safeDistance)
 								.splineToConstantHeading(new Vector2d(backdropIntermediaryPose.position.x, 0), backdropIntermediaryPose.heading.toDouble())
 								.lineToYConstantHeading(backdropIntermediaryPose.position.y)
 								.splineToConstantHeading(new Vector2d(backdropPose.position.x, backdropPose.position.y - safeDistance), backdropPose.heading.toDouble())

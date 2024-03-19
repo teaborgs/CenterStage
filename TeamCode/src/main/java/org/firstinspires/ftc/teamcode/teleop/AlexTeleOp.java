@@ -101,8 +101,19 @@ public final class AlexTeleOp extends BaseOpMode
 		robotHardware.mecanumDrive.setDrivePowers(new PoseVelocity2d(wheelVel.times(-1), -angle));
 	}
 
+	private boolean isIntakeFull = false;
 	private void Pickup()
 	{
+		boolean changedRecently = false;
+		boolean oldValue = isIntakeFull;
+		isIntakeFull = robotHardware.getColorSensorAverage() > Constants.getColorSensorThreshold();
+		if (isIntakeFull != oldValue) changedRecently = true;
+		if (isIntakeFull && changedRecently) {
+			robotHardware.intakeSystem.SetIntakePower(-1);
+			setTimeout(() -> robotHardware.intakeSystem.SetIntakePower(0), 1000);
+			return;
+		}
+
 		if (!wheelInput.isPressed(Bindings.Wheel.GRAB_STACK_KEY) && antennaPress.seconds() > Constants.getAntennaRunTime()) {
 
 			robotHardware.intakeSystem.SetIntakePower((wheelInput.isPressed(Bindings.Wheel.INTAKE_KEY) || wheelInput.isPressed(Bindings.Wheel.INTAKE_NO_HELP_KEY) || antennaState == Utilities.State.BUSY) ? Constants.getIntakeMaxPower() : wheelInput.isPressed(Bindings.Wheel.INTAKE_REVERSE_KEY) ? -Constants.getIntakeMaxPower() : 0);
@@ -316,6 +327,7 @@ public final class AlexTeleOp extends BaseOpMode
 		telemetry.addData("[INFO] Arm State", armState.toString());
 		telemetry.addData("[INFO] Lift Level", liftLevel);
 		telemetry.addData("[INFO] Plane Launched", droneLaunched ? "Yes" : "No");
+		telemetry.addData("[INFO] Intake Full", isIntakeFull ? "Yes" : "No");
 
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();
