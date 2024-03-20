@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
@@ -29,6 +30,7 @@ public final class IntakeSystem extends SystemEx
 	public void Setup()
 	{
 		motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+		motor.setDirection(DcMotorEx.Direction.REVERSE);
 	}
 
 	@Override
