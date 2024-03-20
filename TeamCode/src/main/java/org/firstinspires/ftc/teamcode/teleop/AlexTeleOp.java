@@ -40,7 +40,8 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key INTAKE_REVERSE_KEY = new InputSystem.Key("b");
 			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
-			private static final InputSystem.Key PLAME_KEY = new InputSystem.Key("dpad_up");
+			private static final InputSystem.Key PLANE_KEY = new InputSystem.Key("dpad_up");
+			private static final InputSystem.Key LIFT_RESET_KEY = new InputSystem.Key("back");
 		}
 
 		private final static class Arm
@@ -258,7 +259,7 @@ public final class AlexTeleOp extends BaseOpMode
 	private boolean droneLaunched = false;
 	private void Drone()
 	{
-		if (!wheelInput.wasPressedThisFrame(Bindings.Wheel.PLAME_KEY) || droneLaunched) return;
+		if (!wheelInput.wasPressedThisFrame(Bindings.Wheel.PLANE_KEY) || droneLaunched) return;
 		droneLaunched = true;
 		robotHardware.droneSystem.LaunchDrone();
 	}

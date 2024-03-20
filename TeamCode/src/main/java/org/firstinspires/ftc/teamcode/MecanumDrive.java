@@ -126,7 +126,7 @@ public final class MecanumDrive
 				minProfileAccel = -30d;
 				maxProfileAccel = 70d;
 				axialGain = 6d;
-				lateralGain = 10d;
+				lateralGain = 15d;
 				headingGain = 6d;
 				axialVelGain = 0.25d;
 				lateralVelGain = 0.25d;
