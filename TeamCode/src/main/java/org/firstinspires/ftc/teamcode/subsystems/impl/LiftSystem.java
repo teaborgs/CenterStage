@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.SystemEx;
@@ -30,9 +31,8 @@ public final class LiftSystem extends SystemEx
 	{
 		motor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-		motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-		motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+		motor1.setDirection(DcMotorEx.Direction.REVERSE);
+		motor2.setDirection(DcMotorEx.Direction.REVERSE);
 		motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 		motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 	}
@@ -43,12 +43,10 @@ public final class LiftSystem extends SystemEx
 		this.Setup();
 		motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 		motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
-		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
-		motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		motor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 		motor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+		motor1.setTargetPosition(Constants.getLiftLevels()[0]);
+		motor2.setTargetPosition(Constants.getLiftLevels()[0]);
 		internal_Initialized = true;
 	}
 
@@ -129,10 +127,17 @@ public final class LiftSystem extends SystemEx
 		return (motor1.getPower() + motor2.getPower()) / 2.0;
 	}
 
+	public double GetCurrent(CurrentUnit currentUnit)
+	{
+		return (motor1.getCurrent(currentUnit) + motor2.getCurrent(currentUnit)) / 2.0;
+	}
+
 	public double GetTargetPosition()
 	{
 		return (motor1.getTargetPosition() + motor2.getTargetPosition()) / 2.0;
 	}
 
 	public void SetMode(DcMotor.RunMode mode) { motor1.setMode(mode); motor2.setMode(mode); }
+
+	public void SetZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior behavior) { motor1.setZeroPowerBehavior(behavior); motor2.setZeroPowerBehavior(behavior); }
 }

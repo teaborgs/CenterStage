@@ -7,9 +7,10 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Axis;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -41,7 +42,6 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key INTAKE_NO_HELP_KEY = new InputSystem.Key("x");
 			private static final InputSystem.Key GRAB_STACK_KEY = new InputSystem.Key("y");
 			private static final InputSystem.Key PLANE_KEY = new InputSystem.Key("dpad_up");
-			private static final InputSystem.Key LIFT_RESET_KEY = new InputSystem.Key("back");
 		}
 
 		private final static class Arm
@@ -58,6 +58,9 @@ public final class AlexTeleOp extends BaseOpMode
 			private static final InputSystem.Key LEVEL_5_KEY = new InputSystem.Key("back");
 			private static final InputSystem.Axis LEVEL_6_KEY = new InputSystem.Axis("left_trigger");
 			private static final InputSystem.Axis LEVEL_LOWER_KEY = new InputSystem.Axis("right_trigger");
+			private static final InputSystem.Key LIFT_RESET_KEY = new InputSystem.Key("right_bumper");
+	//		private static final InputSystem.Axis LIFT_RESET_AXIS = new InputSystem.Axis("right_stick_y");
+	//		private static final InputSystem.Key LIFT_RESET_ACCEPT = new InputSystem.Key("right_bumper");
 		}
 	}
 
@@ -76,7 +79,7 @@ public final class AlexTeleOp extends BaseOpMode
 	protected void OnRun()
 	{
 		Telemetry();
-		UpdateMotorPowers();
+		UpdateLiftMotorPowers();
 		Suspender();
 		if (robotSuspended) return;
 		Antenna();
@@ -87,7 +90,6 @@ public final class AlexTeleOp extends BaseOpMode
 		Arm();
 		Drone();
 	}
-
 
 	// ===================== Wheels =======================
 	private void Wheels()
@@ -148,8 +150,29 @@ public final class AlexTeleOp extends BaseOpMode
 	private short liftLevel = 1;
 	private int liftOffset = 0;
 
+	private boolean liftInResetMode = false;
+
 	private void Lift()
 	{
+		// Resetting logic // BROKEN
+		if (armInput.wasPressedThisFrame(Bindings.Arm.LIFT_RESET_KEY) || liftInResetMode)
+		{
+			if(!liftInResetMode)
+			{
+				liftInResetMode = true;
+				robotHardware.liftSystem.SetMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+				robotHardware.liftSystem.SetPower(-0.5);
+			}
+
+			if (robotHardware.liftSystem.GetCurrent(CurrentUnit.MILLIAMPS) > Constants.getLiftCurrentThreshold())
+			{
+				robotHardware.liftSystem.SetPower(0);
+				setTimeout(() -> { robotHardware.liftSystem.Init(); liftInResetMode = false; }, 500);
+			}
+			return;
+		}
+
+		// Normal operation
 		int initialLevel = liftLevel;
 		if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_1_KEY)) liftLevel = 1;
 		else if (armInput.wasPressedThisFrame(Bindings.Arm.LEVEL_2_KEY)) liftLevel = 2;
@@ -177,6 +200,9 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void Arm()
 	{
+		if (liftInResetMode)
+			return;
+
 		if (!armInTask && armInput.wasPressedThisFrame(Bindings.Arm.RELEASE_ARM_KEY)) // go back to IDLE phase
 		{
 			droppedFirstPixel = false;
@@ -270,6 +296,9 @@ public final class AlexTeleOp extends BaseOpMode
 
 	private void Suspender()
 	{
+		if (liftInResetMode)
+			return;
+
 		// Lift
 		if (armInput.wasPressedThisFrame(Bindings.Arm.SUSPENDER_CANCEL_KEY) && suspending && !robotSuspended) {
 			suspending = false;
@@ -298,8 +327,11 @@ public final class AlexTeleOp extends BaseOpMode
 	// ====================================================
 
 
-	private void UpdateMotorPowers()
+	private void UpdateLiftMotorPowers()
 	{
+		if (liftInResetMode)
+			return;
+
 		if (robotSuspended || suspending)
 			robotHardware.liftSystem.SetPower(Constants.getLiftSuspendPower());
 		else if (Math.abs(robotHardware.liftSystem.GetCurrentPosition() - robotHardware.liftSystem.GetTargetPosition()) > TOLERANCE)
@@ -308,8 +340,17 @@ public final class AlexTeleOp extends BaseOpMode
 			robotHardware.liftSystem.SetPower(0.05);
 	}
 
+	private double maxCurrentMA = 0;
 	private void Telemetry()
 	{
+		if (robotHardware.liftSystem.GetCurrent(CurrentUnit.MILLIAMPS) > maxCurrentMA)
+			maxCurrentMA = robotHardware.liftSystem.GetCurrent(CurrentUnit.MILLIAMPS);
+
+		telemetry.addData("Resetting: ", liftInResetMode);
+		telemetry.addData("Current: ", robotHardware.liftSystem.GetCurrent(CurrentUnit.MILLIAMPS));
+		telemetry.addData("Max: ", maxCurrentMA);
+
+
 		// Warn the user if the robot is in suspension mode
 		if (suspending) {
 			telemetry.clearAll();
@@ -329,6 +370,8 @@ public final class AlexTeleOp extends BaseOpMode
 		telemetry.addData("[INFO] Lift Level", liftLevel);
 		telemetry.addData("[INFO] Plane Launched", droneLaunched ? "Yes" : "No");
 		telemetry.addData("[INFO] Intake Full", isIntakeFull ? "Yes" : "No");
+
+		telemetry.addData("[DEBUG] Lift Current", robotHardware.liftSystem.GetCurrent(CurrentUnit.MILLIAMPS));
 
 		if (Globals.IsDebugging()) {
 			telemetry.addLine();

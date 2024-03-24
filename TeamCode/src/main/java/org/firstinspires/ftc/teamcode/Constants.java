@@ -34,7 +34,8 @@ public class Constants
 		public double ANTENNA_GUIDE = 0;
 		public double ANTENNA_GRAB = 0;
 		public double ANTENNA_RUN_TIME = 0;
-		public double COLOR_SENSOR_THRESHOLD = 1500;
+		public double COLOR_SENSOR_THRESHOLD = 0;
+		public double LIFT_CURRENT_THRESHOLD = 0;
 
 		public Container() {
 			switch (Globals.GetCurrentRobotType())
@@ -58,12 +59,13 @@ public class Constants
 					INTAKE_MAX_POWER = 1d;
 					LIFT_NORMAL_POWER = 1.0d;
 					LIFT_SUSPEND_POWER = 1.0d;
-					BACKDROP_DISTANCE = 10.0d;
+					BACKDROP_DISTANCE = 9.0d;
 					ANTENNA_IDLE = 0.6d;
 					ANTENNA_GUIDE = 0.4d;
 					ANTENNA_GRAB = 0.1d;
 					ANTENNA_RUN_TIME = 0.4d;
 					COLOR_SENSOR_THRESHOLD = 1500;
+					LIFT_CURRENT_THRESHOLD = 4000; // kinda?
 					break;
 				case ROBOT_2:
 					throw new RuntimeException("Invalid robot type! (2)");
@@ -158,4 +160,5 @@ public class Constants
 	public static double getAntennaGrab() { return parameters.ANTENNA_GRAB; }
 	public static double getAntennaRunTime() { return parameters.ANTENNA_RUN_TIME; }
 	public static double getColorSensorThreshold() { return parameters.COLOR_SENSOR_THRESHOLD; }
+	public static double getLiftCurrentThreshold() { return parameters.LIFT_CURRENT_THRESHOLD; }
 }
